@@ -45,6 +45,7 @@ function traverse(curTile, entryDir, tiles, map, index) {
     next_Coord = nextCoord(curTile,entryDir)
     curTile.next.push(next_Coord)
     entryDir = exitDir(curTile,entryDir)
+    curTile.last2 = true;
     
     curTile = tiles[next_Coord]
     index++
@@ -52,7 +53,7 @@ function traverse(curTile, entryDir, tiles, map, index) {
     curTile.index.push(index)
     next_Coord = nextCoord(curTile,entryDir)
     curTile.next.push(next_Coord)
-    
+    curTile.last2 = true;
     
     
     map.indexCount = index + 1

@@ -76,7 +76,8 @@ const lineMapSchema = new Schema({
     index    : {type: [Number], min: 0},
     next     : {type: [String]},
     levelUp  : {type: String, enum: ["top", "right", "bottom", "left"]},
-    levelDown: {type: String, enum: ["top", "right", "bottom", "left"]}
+    levelDown: {type: String, enum: ["top", "right", "bottom", "left"]},
+    last2    : {type: Boolean, default: false}
   }],
   startTile        : {
     x: {type: Number, integer: true, required: true, min: 0},
