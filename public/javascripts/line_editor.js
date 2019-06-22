@@ -154,8 +154,35 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             alert(response.data.msg);
         });
     }
-    
-    
+
+    $scope.tileShow4Image = function(x,y,z){
+        if($scope.tiles[x + ',' + y + ',' + z]) return true;
+        for(let i=0,l=$scope.width;i<l;i++){
+            if($scope.tiles[i + ',' + y + ',' + z]) return true;
+        }
+
+        return false;
+    };
+
+    $scope.imgData = null;
+    $scope.makeImage = function(){
+      window.scrollTo(0,0);
+      html2canvas(document.getElementById("outputImageArea"),{
+        scale: 2
+      }).then(function(canvas) {
+        let imgData = canvas.toDataURL();
+        console.log(imgData);
+        $http.post("/api/maps/line/image/" + mapId, {img: imgData}).then(function (response) {
+          alert("Created image!");
+        }, function (response) {
+          console.log(response);
+          console.log("Error: " + response.statusText);
+          alert(response.data.msg);
+        });
+      });
+    };
+
+
     $scope.saveMap = function () {
         if ($scope.startNotSet()) {
             alert("You must define a starting tile by right-clicking a tile");
@@ -187,7 +214,8 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
             tiles: $scope.tiles,
-            victims: victims
+            victims: victims,
+            image: $scope.imgData
         };
 
         console.log(map);
@@ -382,6 +410,53 @@ app.directive('tile', function () {
                     attrs.y == scope.$parent.startTile.y &&
                     attrs.z == scope.$parent.startTile.z;
             }
+
+        }
+    };
+});
+
+app.directive('tile4image', function () {
+    return {
+        scope: {
+            tile: '='
+        },
+        restrict: 'E',
+        templateUrl: '/templates/tile4Image.html',
+        link: function (scope, element, attrs) {
+            scope.tilerotate = function (tilerot) {
+                return tilerot;
+            }
+            scope.rotateRamp = function (direction) {
+                switch (direction) {
+                    case "bottom":
+                        return "rot0";
+                    case "top":
+                        return "rot180";
+                    case "left":
+                        return "rot90";
+                    case "right":
+                        return "rot270";
+                }
+            }
+            scope.isStart = function (tile) {
+                return attrs.x == scope.$parent.startTile.x &&
+                  attrs.y == scope.$parent.startTile.y &&
+                  attrs.z == scope.$parent.startTile.z;
+            };
+
+            scope.tileNumber = function (tile) {
+                let txt = "";
+                if(!tile.items.noCheckPoint && tile.items.obstacles==0 && !tile.items.rampPoints && tile.items.speedbumps==0 && tile.tileType.gaps==0 && tile.tileType.intersections==0){
+                    for(let i=0,l=tile.index.length;i<l;i++){
+                        if(!tile.last2 || i!=l-1){
+                            if(txt != "") txt += " , ";
+                            txt += (tile.index[i]+1);
+                        }
+                    }
+                }
+                return txt;
+            };
+
 
         }
     };

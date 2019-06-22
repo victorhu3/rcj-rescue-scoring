@@ -12,6 +12,8 @@ const async = require('async')
 const ObjectId = require('mongoose').Types.ObjectId
 const logger = require('../../config/logger').mainLogger
 const fs = require('fs')
+const mkdirp = require('mkdirp');
+
 
 
 privateRouter.get('/', getLineMaps)
@@ -263,6 +265,33 @@ adminRouter.put('/:map', function (req, res, next) {
     }
   })
 })
+
+adminRouter.post('/image/:map', function (req, res, next) {
+  const id = req.params.map;
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  let base64Data = req.body.img.replace(/^data:image\/png;base64,/, "");
+  let path = __dirname + "/../../tmp/course";
+  mkdirp(path, function (err) {
+    if (err) logger.error(err);
+    else logger.info(path);
+  });
+  path += "/" + id + ".png";
+  fs.writeFile(path,base64Data,'base64',function(err){
+    console.log(err);
+    res.send(path);
+  })
+});
+
+adminRouter.get('/image/:map', function (req, res, next) {
+  const id = req.params.map
+
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  /*画像を送る*/
+});
 
 adminRouter.delete('/:map', function (req, res, next) {
   const id = req.params.map

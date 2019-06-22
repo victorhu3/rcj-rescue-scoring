@@ -104,7 +104,7 @@ const lineMapSchema = new Schema({
           set: v => v === '' ? 0 : v
       }
   }
-})
+});
 
 lineMapSchema.pre('save', function (next) {
   var self = this
