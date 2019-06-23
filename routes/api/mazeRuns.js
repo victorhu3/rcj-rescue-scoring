@@ -13,6 +13,7 @@ const logger = require('../../config/logger').mainLogger
 const fs = require('fs')
 const scoreCalculator = require('../../helper/scoreCalculator')
 const scoreSheetPDF = require('../../helper/scoreSheetPDFMaze');
+const scoreSheetPDF2 = require('../../helper/scoreSheetPDFMaze2');
 const scoreSheetProcessMaze = require('../../helper/scoreSheetProcessMaze');
 const scoreSheetProcessUtil = require('../../helper/scoreSheetProcessUtil');
 const auth = require('../../helper/authLevels')
@@ -740,6 +741,7 @@ adminRouter.get('/scoresheet', function (req, res, next) {
         if (dbRuns[i].tiles.length === 0) {
           let randomMapIndex = Math.floor(Math.random() * dbRuns[i].map.dice.length);
           dbRuns[i].map = dbRuns[i].map.dice[randomMapIndex];
+          dbRuns[i].diceNumber = randomMapIndex+1;
         }
       }
       let posData = scoreSheetPDF.generateScoreSheet(res, dbRuns);
@@ -767,7 +769,95 @@ adminRouter.get('/scoresheet', function (req, res, next) {
       }
     }
   })
-})
+});
+
+adminRouter.get('/scoresheet2', function (req, res, next) {
+  const run = req.query.run || req.params.run;
+  const competition = req.query.competition || req.params.competition;
+  const field = req.query.field || req.params.field;
+  const round = req.query.round || req.params.round;
+  const startTime = req.query.startTime || req.params.startTime;
+  const endTime = req.query.endTime || req.params.endTime;
+
+  if (!competition && !run && !round) {
+    return next();
+  }
+
+  let queryObj = {};
+  let sortObj = {};
+  if (ObjectId.isValid(competition)) {
+    queryObj.competition = ObjectId(competition);
+  }
+  if (ObjectId.isValid(field)) {
+    queryObj.field = ObjectId(field);
+  }
+  if (ObjectId.isValid(round)) {
+    queryObj.round = ObjectId(round);
+  }
+  if (ObjectId.isValid(run)) {
+    queryObj._id = ObjectId(run);
+  }
+
+  sortObj.field = 1;
+  sortObj.startTime = 1; // sorting by field has the highest priority, followed by time
+
+  if (startTime && endTime) {
+    queryObj.startTime = {$gte: parseInt(startTime), $lte: parseInt(endTime)}
+  } else {
+    if (startTime) {
+      queryObj.startTime = {$gte: parseInt(startTime)}
+    } else if (endTime) {
+      queryObj.startTime = {$lte: parseInt(endTime)}
+    }
+  }
+
+  var query = mazeRun.find(queryObj).sort(sortObj);
+
+  query.select("competition round team field map startTime tiles")
+  query.populate([
+    {
+      path  : "competition",
+      select: "name rule"
+    },
+    {
+      path  : "round",
+      select: "name"
+    },
+    {
+      path  : "team",
+      select: "name"
+    },
+    {
+      path  : "field",
+      select: "name"
+    },
+    {
+      path  : "map",
+      select: "name height width length startTile cells dice",
+      populate: {
+        path: "dice"
+      }
+    }
+  ]);
+
+  query.lean().exec(function (err, dbRuns) {
+    if (err) {
+      logger.error(err)
+      res.status(400).send({
+        msg: "Could not get runs"
+      })
+    } else if (dbRuns) {
+      for (let i = 0; i < dbRuns.length; i++) {
+        if (dbRuns[i].tiles.length === 0) {
+          let randomMapIndex = Math.floor(Math.random() * dbRuns[i].map.dice.length);
+          dbRuns[i].map = dbRuns[i].map.dice[randomMapIndex];
+          dbRuns[i].diceNumber = randomMapIndex+1;
+        }
+      }
+      scoreSheetPDF2.generateScoreSheet(res, dbRuns);
+    }
+  })
+});
 
 /**
  * Upload scoring sheet (single (jpg/png) or bunch (pdf)
