@@ -329,6 +329,75 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         
     }
 
+    $scope.itemNumber = function(type,x,y,z){
+        let count = 0;
+        for(let i=1,l=$scope.length*2+1;i<l;i+=2){
+            for(let j=1,m=$scope.width*2+1;j<m;j+=2){
+                if($scope.cells[j + ',' + i + ',' + z].tile[type]) count++;
+                if(x == j && y == i) return count;
+            }
+        }
+        return count;
+    };
+
+    $scope.victimNumber = function(type,x,y,z){
+        let linear = $scope.cells[x + ',' + y + ',' + z].isLinear;
+        let count = 0;
+        for(let i=1,l=$scope.length*2+1;i<l;i+=2){
+            for(let j=1,m=$scope.width*2+1;j<m;j+=2){
+                if($scope.cells[j + ',' + i + ',' + z].isLinear == linear){
+                    if($scope.cells[j + ',' + i + ',' + z].tile.victims.bottom == type) count++;
+                    if($scope.cells[j + ',' + i + ',' + z].tile.victims.top == type) count++;
+                    if($scope.cells[j + ',' + i + ',' + z].tile.victims.right == type) count++;
+                    if($scope.cells[j + ',' + i + ',' + z].tile.victims.left == type) count++;
+                    if(x == j && y == i){
+                        if(linear) return big[count-1];
+                        else return small[count-1];
+                    }
+                }
+            }
+        }
+    };
+
+    function Range(first, last) {
+        var first = first.charCodeAt(0);
+        var last = last.charCodeAt(0);
+        var result = new Array();
+        for(var i = first; i <= last; i++) {
+            result.push(String.fromCodePoint(i));
+        }
+        return result;
+    }
+    var big = Range('A', 'Z');
+    var small = Range('a', 'z');
+
+    $scope.isVictim = function(type,x,y,z){
+        if($scope.cells[x + ',' + y + ',' + z] && $scope.cells[x + ',' + y + ',' + z].tile){
+            if($scope.cells[x + ',' + y + ',' + z].tile.victims.bottom == type) return true;
+            if($scope.cells[x + ',' + y + ',' + z].tile.victims.top == type) return true;
+            if($scope.cells[x + ',' + y + ',' + z].tile.victims.right == type) return true;
+            if($scope.cells[x + ',' + y + ',' + z].tile.victims.left == type) return true;
+        }
+        return false;
+    };
+
+    $scope.makeImage = function(){
+        window.scrollTo(0,0);
+        html2canvas(document.getElementById("outputImageArea"),{
+            scale: 2
+        }).then(function(canvas) {
+            let imgData = canvas.toDataURL();
+            console.log(imgData);
+            $http.post("/api/maps/line/image/" + mapId, {img: imgData}).then(function (response) {
+                alert("Created image!");
+            }, function (response) {
+                console.log(response);
+                console.log("Error: " + response.statusText);
+                alert(response.data.msg);
+            });
+        });
+    };
+
     $scope.saveMapAs = function (name) {
         if ($scope.startNotSet()) {
             alert("You must define a starting tile by clicking a tile");
