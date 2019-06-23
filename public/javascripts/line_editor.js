@@ -164,7 +164,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         return false;
     };
 
-    $scope.imgData = null;
     $scope.makeImage = function(){
       window.scrollTo(0,0);
       html2canvas(document.getElementById("outputImageArea"),{
