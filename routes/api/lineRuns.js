@@ -14,6 +14,7 @@ const pathFinder = require('../../helper/pathFinder')
 const scoreCalculator = require('../../helper/scoreCalculator')
 const auth = require('../../helper/authLevels')
 const scoreSheetLinePDF = require('../../helper/scoreSheetPDFLine')
+const scoreSheetLinePDF2 = require('../../helper/scoreSheetPDFLine2')
 const scoreSheetLineProcess = require('../../helper/scoreSheetProcessLine')
 const scoreSheetProcess = require('../../helper/scoreSheetProcessUtil')
 const ACCESSLEVELS = require('../../models/user').ACCESSLEVELS
@@ -680,6 +681,84 @@ adminRouter.get('/scoresheet', function (req, res, next) {
     }
   })
 })
+
+adminRouter.get('/scoresheet2', function (req, res, next) {
+  const run = req.query.run || req.params.run;
+  const competition = req.query.competition || req.params.competition;
+  const field = req.query.field || req.params.field;
+  const round = req.query.round || req.params.round;
+  const startTime = req.query.startTime || req.params.startTime;
+  const endTime = req.query.endTime || req.params.endTime;
+
+  if (!competition && !run && !round) {
+    return next();
+  }
+
+  let queryObj = {};
+  let sortObj = {};
+  if (ObjectId.isValid(competition)) {
+    queryObj.competition = ObjectId(competition);
+  }
+  if (ObjectId.isValid(field)) {
+    queryObj.field = ObjectId(field);
+  }
+  if (ObjectId.isValid(round)) {
+    queryObj.round = ObjectId(round);
+  }
+  if (ObjectId.isValid(run)) {
+    queryObj._id = ObjectId(run);
+  }
+
+  sortObj.field = 1;
+  sortObj.startTime = 1; // sorting by field has the highest priority, followed by time
+
+  if (startTime && endTime) {
+    queryObj.startTime = {$gte: parseInt(startTime), $lte: parseInt(endTime)}
+  } else {
+    if (startTime) {
+      queryObj.startTime = {$gte: parseInt(startTime)}
+    } else if (endTime) {
+      queryObj.startTime = {$lte: parseInt(endTime)}
+    }
+  }
+
+  let query = lineRun.find(queryObj).sort(sortObj);
+
+  query.select("competition round team field map startTime");
+  query.populate([
+    {
+      path: "competition",
+      select: "name rule"
+    },
+    {
+      path: "round",
+      select: "name"
+    },
+    {
+      path: "team",
+      select: "name"
+    },
+    {
+      path: "field",
+      select: "name"
+    },
+    {
+      path: "map",
+      select: "name height width length numberOfDropTiles finished startTile tiles indexCount victims"
+    }
+  ]);
+
+  query.lean().exec(function (err, dbRuns) {
+    if (err) {
+      logger.error(err)
+      res.status(400).send({
+        msg: "Could not get runs"
+      })
+    } else if (dbRuns) {
+      scoreSheetLinePDF2.generateScoreSheet(res, dbRuns);
+    }
+  })
+});
 
 privateRouter.get('/scoresheetimg/:run/:img', function (req, res, next) {
   function checkAndSend(image) {

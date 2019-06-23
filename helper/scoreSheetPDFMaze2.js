@@ -1,7 +1,7 @@
 "use strict"
 const logger = require('../config/logger').mainLogger
-const rule2018 = require('./scoreSheetPDFLine-2018')
-const rule2019 = require('./scoreSheetPDFLine-2019')
+const rule2018 = require('./scoreSheetPDFMaze-2018')
+const rule2019 = require('./scoreSheetPDFMaze-2019')
 
 module.exports.generateScoreSheet = function(res,runs){
   let rule = runs[0].competition.rule;
@@ -12,4 +12,4 @@ module.exports.generateScoreSheet = function(res,runs){
     default:
       return rule2018.generateScoreSheet(res,runs);
   }
-};
+}

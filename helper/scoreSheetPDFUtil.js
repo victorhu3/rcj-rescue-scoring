@@ -95,6 +95,7 @@ module.exports.drawMetadata = function (doc, pos_x, pos_y, config, run) {
   return {x: pos_x, y: Math.max(pos_y, posData.y + posData.h), posData: posData}
 };
 
+
 module.exports.tileAddCheckbox = function (doc, posDataTile, config, text, scoringID, color, index) {
   let checkbox_horizontal_amount = Math.floor((config.fields.tileSize - config.fields.checkbox.marginBorder * 2) / (config.checkboxSize * 2));
   let checkbox_vertical_amount = Math.floor((config.fields.tileSize - config.fields.checkbox.marginBorder * 2) / (config.checkboxSize + config.fields.checkbox.marginCheckbox));
@@ -187,6 +188,12 @@ module.exports.drawText = function(doc, pos_x, pos_y, text, size, color) {
   doc.fontSize(size)
     .fillColor(color)
     .text(text, pos_x, pos_y);
+};
+
+module.exports.drawTextWithAlign = function(doc, pos_x, pos_y, text, size, color, width, align) {
+  doc.fontSize(size)
+    .fillColor(color)
+    .text(text, pos_x, pos_y,{width: width, align: align});
 };
 
 module.exports.drawImage = function(doc, pos_x, pos_y, uri, width, height, align){
