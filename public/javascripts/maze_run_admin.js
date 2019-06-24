@@ -286,6 +286,10 @@ var app = angular.module("RunAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'ui
             window.location = "/api/runs/maze/scoresheet?run=" + runid
         }
 
+        $scope.go_scoreSheet2 = function (runid) {
+          window.location = "/api/runs/maze/scoresheet2?run=" + runid
+        }
+
         $scope.go_judge = function (runid) {
             swal({
                 title: "Go judge page?",
@@ -421,13 +425,16 @@ var app = angular.module("RunAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'ui
 
         $scope.scoreSheetEndDatePopup = {
             opened: false
-        }
+        };
         $scope.openScoreSheetEndDate = function () {
             $scope.scoreSheetEndDatePopup.opened = true
-        }
+        };
 
         $scope.go_scoreSheetInTimeRange = function () {
             window.open("/api/runs/maze/scoresheet?competition=" + $scope.competitionId + "&startTime=" + $scope.scoreSheetStartDateTime.getTime() + "&endTime=" + $scope.scoreSheetEndDateTime.getTime(), "_blank")
+        };
+        $scope.go_scoreSheetInTimeRange2 = function () {
+          window.open("/api/runs/maze/scoresheet2?competition=" + $scope.competitionId + "&startTime=" + $scope.scoreSheetStartDateTime.getTime() + "&endTime=" + $scope.scoreSheetEndDateTime.getTime(), "_blank")
         }
 
 }])

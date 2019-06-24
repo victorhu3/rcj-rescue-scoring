@@ -111,7 +111,8 @@ block content
               input.form-control(type="text" uib-datepicker-popup ng-model="scoreSheetEndDateTime" is-open="scoreSheetEndDatePopup.opened" datepicker-options="startDateOptions" close-text="Close")
             div(uib-timepicker ng-model="scoreSheetEndDateTime" hour-step="1" minute-step="5" show-meridian="false" show-spinners='true' style="border-bottom:0px;border-left:0px;")
         .col-md-3
-          button(ng-click="go_scoreSheetInTimeRange()" class='btn btn-primary' target="_blank" style="margin: 5px 5px 5px 5px;") {{"common.generateSheet" | translate}}
+          button(ng-click="go_scoreSheetInTimeRange2()" class='btn btn-primary' target="_blank" style="margin: 5px 5px 5px 5px;") {{"common.generateSheet" | translate}}
+          button(ng-click="go_scoreSheetInTimeRange()" class='btn btn-primary' target="_blank" style="margin: 5px 5px 5px 5px;") {{"common.generateMark" | translate}}
         .col-md-3
           form(style="")
           input(type='file', ngf-select='', ng-model='files', ngf-max-size='5MB', required='', ngf-accept="'image/*'", ngf-pattern="'image/*'",  ngf-multiple='true' capture="environment")
@@ -168,7 +169,8 @@ block content
               .dropdown
                   button#dropdownMenu.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') {{"common.action" | translate}}
                   .dropdown-menu(aria-labelledby='dropdownMenu')
-                    button.dropdown-item(type='button' ng-click="go_scoreSheet(run._id)") {{"common.generateSheet" | translate}}
+                    button.dropdown-item(type='button' ng-click="go_scoreSheet2(run._id)") {{"common.generateSheet" | translate}}
+                    button.dropdown-item(type='button' ng-click="go_scoreSheet(run._id)") {{"common.generateMark" | translate}}
                     button.dropdown-item(type='button' ng-click="go('/maze/view/' + run._id)") {{"common.view" | translate}}
                     button.dropdown-item(type='button' ng-click="go_judge(run._id)") {{"common.judge" | translate}}
                     button.dropdown-item(type='button' ng-click="go_sign(run._id)") {{"common.sign" | translate}}
