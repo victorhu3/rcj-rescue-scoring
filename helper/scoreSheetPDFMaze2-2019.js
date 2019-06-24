@@ -23,26 +23,27 @@ function drawRun(doc, config, scoringRun) {
   doc.image(qr.imageSync(scoringRun._id.toString(), {margin: 0}), 10, 10, {width: 65});
 
   //Draw team name
-  pdf.drawTextWithAlign(doc,120,42,scoringRun.team.name,15,"black",300,"center");
+  pdf.drawTextWithAlign(doc,120,44,scoringRun.team.name,15,"black",300,"center");
 
   //Draw start time
   let dateTime = new Date(scoringRun.startTime);
-  pdf.drawTextWithAlign(doc,120,62,("0" + dateTime.getHours()).slice(-2) + ":" + ("0" + dateTime.getMinutes()).slice(-2),15,"black",60,"center");
+  pdf.drawTextWithAlign(doc,120,61,("0" + dateTime.getHours()).slice(-2) + ":" + ("0" + dateTime.getMinutes()).slice(-2),15,"black",60,"center");
 
   //Draw round name
-  pdf.drawTextWithAlign(doc,225,62,scoringRun.round.name,15,"black",60,"center");
+  pdf.drawTextWithAlign(doc,225,61,scoringRun.round.name,15,"black",95,"center");
 
   //Draw field name
-  pdf.drawTextWithAlign(doc,330,62,scoringRun.field.name,15,"black",85,"center");
+  pdf.drawTextWithAlign(doc,355,61,scoringRun.field.name,15,"black",60,"center");
 
   //Draw map image
   pdf.drawImage(doc,15,87,"tmp/course/" + scoringRun.map._id + ".png",403,490,"center");
 
-
+  //Draw dice
+  pdf.drawImage(doc,423,450,"public/images/dice/" + scoringRun.diceNumber + ".png",25,25,"center");
 
   //Footer
-  pdf.drawText(doc,15,568,"Rule: " + scoringRun.competition.rule,10,"black");
-  pdf.drawText(doc,100,568,"Dice: " + scoringRun.diceNumber,10,"black");
+  pdf.drawText(doc,15,580,"Rule: " + scoringRun.competition.rule,6,"black");
+
   //System version
   pdf.drawText(doc,760,580,"RCJ Scoring System v19.7",6,"black");
   return;
