@@ -333,6 +333,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         let count = 0;
         for(let i=1,l=$scope.length*2+1;i<l;i+=2){
             for(let j=1,m=$scope.width*2+1;j<m;j+=2){
+                if(!$scope.cells[j + ',' + i + ',' + z]) continue;
                 if($scope.cells[j + ',' + i + ',' + z].tile[type]) count++;
                 if(x == j && y == i) return count;
             }
@@ -345,6 +346,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         let count = 0;
         for(let i=1,l=$scope.length*2+1;i<l;i+=2){
             for(let j=1,m=$scope.width*2+1;j<m;j+=2){
+                if(!$scope.cells[j + ',' + i + ',' + z]) continue;
                 if($scope.cells[j + ',' + i + ',' + z].isLinear == linear){
                     let victims = $scope.cells[j + ',' + i + ',' + z].tile.victims;
                     if(victims.top == type) count++;
@@ -397,10 +399,33 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
     $scope.makeImage = function(){
         window.scrollTo(0,0);
         html2canvas(document.getElementById("outputImageArea"),{
-            scale: 2
+            scale: 3
         }).then(function(canvas) {
-            let imgData = canvas.toDataURL();
-            console.log(imgData);
+            let ctx = canvas.getContext("2d");
+
+            //Detect image area
+            let topY = 0;
+            for(let y=0;y<canvas.height;y++){
+                let imagedata = ctx.getImageData(canvas.width/2, y, 1, 1);
+                if(imagedata.data[0] != 255){
+                    topY = y;
+                    break;
+                }
+            }
+            let bottomY = 0;
+            for(let y=canvas.height-1;y>=0;y--){
+                let imagedata = ctx.getImageData(canvas.width/2, y, 1, 1);
+                if(imagedata.data[0] != 255){
+                    bottomY = y;
+                    break;
+                }
+            }
+            mem_canvas = document.createElement("canvas");
+            mem_canvas.width = canvas.width;
+            mem_canvas.height = bottomY-topY;
+            ctx2 = mem_canvas.getContext("2d");
+            ctx2.drawImage(canvas, 0, topY, canvas.width, bottomY-topY, 0, 0, canvas.width, bottomY-topY);
+            let imgData = mem_canvas.toDataURL();
             $http.post("/api/maps/line/image/" + mapId, {img: imgData}).then(function (response) {
                 alert("Created image!");
             }, function (response) {
