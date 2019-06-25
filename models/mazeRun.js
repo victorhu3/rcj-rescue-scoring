@@ -32,6 +32,7 @@ const mazeRunSchema = new Schema({
   field      : {type: ObjectId, ref: 'Field', required: true, index: true},
   map        : {type: ObjectId, ref: 'MazeMap', required: true, index: true},
   group      : {type: Number, min: 0},
+  diceNumber : {type: Number, default: null},
 
   tiles    : [{
     x          : {type: Number, integer: true, required: true},

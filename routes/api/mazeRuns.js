@@ -705,7 +705,7 @@ adminRouter.get('/scoresheet', function (req, res, next) {
 
   var query = mazeRun.find(queryObj).sort(sortObj);
 
-  query.select("competition round team field map startTime tiles")
+  query.select("competition round team field map startTime tiles diceNumber")
   query.populate([
     {
       path  : "competition",
@@ -740,7 +740,7 @@ adminRouter.get('/scoresheet', function (req, res, next) {
       })
     } else if (dbRuns) {
       for (let i = 0; i < dbRuns.length; i++) {
-        if (dbRuns[i].tiles.length === 0) {
+        if (dbRuns[i].tiles.length === 0 && !dbRuns[i].diceNumber) {
           let randomMapIndex = Math.floor(Math.random() * dbRuns[i].map.dice.length);
           dbRuns[i].map = dbRuns[i].map.dice[randomMapIndex];
           dbRuns[i].diceNumber = randomMapIndex+1;
@@ -757,6 +757,8 @@ adminRouter.get('/scoresheet', function (req, res, next) {
             })
           } else {
             run.scoreSheet.positionData = posData[i];
+            run.map = dbRuns[i].map;
+            run.diceNumber = dbRuns[i].diceNumber;
             run.save((err) => {
               if (err) {
                 logger.error(err)
@@ -815,7 +817,7 @@ adminRouter.get('/scoresheet2', function (req, res, next) {
 
   var query = mazeRun.find(queryObj).sort(sortObj);
 
-  query.select("competition round team field map startTime tiles")
+  query.select("competition round team field map startTime tiles diceNumber")
   query.populate([
     {
       path  : "competition",
@@ -850,13 +852,36 @@ adminRouter.get('/scoresheet2', function (req, res, next) {
       })
     } else if (dbRuns) {
       for (let i = 0; i < dbRuns.length; i++) {
-        if (dbRuns[i].tiles.length === 0) {
+        if (dbRuns[i].tiles.length === 0 && !dbRuns[i].diceNumber) {
           let randomMapIndex = Math.floor(Math.random() * dbRuns[i].map.dice.length);
           dbRuns[i].map = dbRuns[i].map.dice[randomMapIndex];
           dbRuns[i].diceNumber = randomMapIndex+1;
         }
       }
       scoreSheetPDF2.generateScoreSheet(res, dbRuns);
+      for (let i = 0; i < dbRuns.length; i++) {
+        mazeRun.findById(dbRuns[i]._id, (err, run) => {
+          if (err) {
+            logger.error(err)
+            res.status(400).send({
+              msg: "Could not get run",
+              err: err.message
+            })
+          } else {
+            run.map = dbRuns[i].map;
+            run.diceNumber = dbRuns[i].diceNumber;
+            run.save((err) => {
+              if (err) {
+                logger.error(err)
+                res.status(400).send({
+                  msg: "Error saving positiondata of run in db",
+                  err: err.message
+                })
+              }
+            })
+          }
+        })
+      }
     }
   })
 });

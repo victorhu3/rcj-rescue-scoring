@@ -20,7 +20,7 @@ function drawRun(doc, config, scoringRun) {
   pdf.drawImage(doc,730,5,"public/images/2019logo.png",100,30,"right");
 
   //Draw run QR code
-  doc.image(qr.imageSync(scoringRun._id.toString(), {margin: 0}), 10, 10, {width: 65});
+  doc.image(qr.imageSync("M;" + scoringRun._id.toString(), {margin: 0}), 10, 10, {width: 65});
 
   //Draw team name
   pdf.drawTextWithAlign(doc,120,44,scoringRun.team.name,15,"black",300,"center");
