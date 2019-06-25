@@ -1,6 +1,6 @@
 html(ng-app="ddApp")
   head
-    title Rescue Maze Judge
+    title Rescue Maze Input
     script.
       var runId = "#{id}"
 
@@ -20,18 +20,21 @@ html(ng-app="ddApp")
   body(ng-controller="ddController")
     nav.navbar(style='background-color: #e84393; color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%')
       // Navbar content
-      .col-md-3.col-sm4.col-12
-        li.navbar-brand(href='#')
-          i.fas.fa-hashtag
-          |  {{round}}
-      .col-md-3.col-sm4.col-12
-        li.navbar-brand(href='#')
-          i.fas.fa-map-marker-alt
-          |  {{field}}
       .col-md-6.col-sm4.col-12
         li.navbar-brand(href='#')
           i.fas.fa-users
           |  {{team.name}}
+      .col-md-3.col-sm4.col-12
+        li.navbar-brand(href='#')
+          i.fas.fa-hashtag
+          |  {{round}}
+      .col-md-2.col-sm4.col-12
+        li.navbar-brand(href='#')
+          i.fas.fa-map-marker-alt
+          |  {{field}}
+      .col-md-1.col-sm4.col-12
+        li.navbar-brand(href='#')
+          img(ng-src="{{competition.logo}}" height="30px")
     .container.nav-cont
       div#inputcontent
         .row
@@ -115,7 +118,7 @@ html(ng-app="ddApp")
                 table(border="3")
                   tr
                     td Type
-                    td(style="width:20%;") Count
+                    td(style="width:20%;") Number
                   tr
                     td
                       img(src="/images/checkpoint.png" height="40px;")
@@ -150,7 +153,7 @@ html(ng-app="ddApp")
                 table(border="3")
                   tr
                     td Type
-                    td(style="width:20%;") Count
+                    td(style="width:20%;")
                   tr
                     td LoPs
                     td

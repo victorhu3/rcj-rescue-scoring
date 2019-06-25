@@ -135,7 +135,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         run.time = {};
         run.time.minutes = $scope.minutes;;
         run.time.seconds = $scope.seconds;
-        run.status = 3;
+        run.status = 4;
 
         // Set manual input value
         run.manual = {};
@@ -184,7 +184,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 confirmButtonText: 'Wrote!'
             }).then((result) => {
                 playSound(sClick);
-                $scope.go('/scanner/input');
+                $scope.go($scope.getParam('return'));
             })
         }, function (response) {
             console.log("Error: " + response.statusText);
@@ -300,61 +300,49 @@ window.onload = function() {
   document.getElementById("first").focus();
 };
 
-// input項目をEnter キー、Shift+Enterキーでtab移動 without(button, hidden)
 function fEnterChangeTab(){
-
-    // ② input要素の選択。但し、ボタンとhidden型は除く。
     var oObject = "#inputcontent :input:not(:button):not(:hidden)";
 
     $(oObject).keypress(function(e) {
-        var c = e.which ? e.which : e.keyCode; // クロスブラウザ対応
+        var c = e.which ? e.which : e.keyCode;
         if (c == 13) {
-            var index = $(oObject).index(this); // indexは0～
+            var index = $(oObject).index(this);
             var cNext = "";
             var nLength = $(oObject).length;
             for(i=index;i<nLength;i++){
                 cNext = e.shiftKey ? ":lt(" + index + "):last" : ":gt(" + index + "):first";
-                // ③ 止まってはいけいない属性 readonly
                 if ($(oObject + cNext).attr("readonly") == "readonly") {
-                    if (e.shiftKey) index--; // １つ前
-                    else index++;            // 次へ
+                    if (e.shiftKey) index--;
+                    else index++;
                 }
-                // ③ 止まってはいけいない属性 disabled
                 else if ($(oObject + cNext).prop("disabled") == true) {
-                    if (e.shiftKey) index--; // １つ前
-                    else index++;            // 次へ
+                    if (e.shiftKey) index--;
+                    else index++;
                 }
                 else break;
             }
             if (index == nLength - 1) {
                 if (! e.shiftKey){
-                    // 最後の項目なら、最初に移動。
                     cNext = ":eq(1)";
                 }
             }
             if (index == 0) {
                 if (e.shiftKey) {
-                    // 最初の項目なら、最後に移動。
                     cNext = ":eq(" + (nLength - 1) + ")";
                 }
             }
             $(oObject + cNext).focus();
-            //e.defaultPrevented; ⇒　2018.06.28 このプログラミングは間違い。
-            e.preventDefault()    //規定の動作をキャンセルするため、こちらのメソッドを呼ぶ。
+            e.preventDefault();
         }
     });
 }
 
-// ④onloadのタイミングでこの関数を実行
 if(window.attachEvent){
-    // IE用
     window.attachEvent('onload',fEnterChangeTab);
 }
 else if (window.opera){
-    // opera用
     window.addEventListener('load',fEnterChangeTab,false);
 }
 else {
-    // Mozilla用
     window.addEventListener('load',fEnterChangeTab,false);
 }
