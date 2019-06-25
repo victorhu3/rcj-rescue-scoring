@@ -89,7 +89,16 @@ const lineRunSchema = new Schema({
     acceptResultImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
     fullSheet: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}
   },
-})
+  manual  : {
+    gap: {type: Number, default: 0},
+    obstacle: {type: Number, default: 0},
+    speedbump: {type: Number, default: 0},
+    intersection: {type: Number, default: 0},
+    deadend: {type: Number, default: 0},
+    rampUP: {type: Number, default: 0},
+    rampDOWN: {type: Number, default: 0},
+  }
+});
 
 lineRunSchema.pre('save', function (next) {
   const self = this
