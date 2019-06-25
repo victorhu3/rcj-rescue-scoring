@@ -89,6 +89,50 @@ const mazeRunSchema = new Schema({
     acceptResultImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
     fullSheet: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}
   },
+  manual  : {
+    victims  : {
+      linear  : {
+        u : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        s : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        h : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        heated : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        }
+      },
+      floating  : {
+        u : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        s : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        h : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        heated : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        }
+      }
+    },
+    checkpoints: {type: Number, default: 0},
+    speedbumps: {type: Number, default: 0},
+    rampUP: {type: Number, default: 0},
+    rampDOWN: {type: Number, default: 0}
+  }
 })
 
 mazeRunSchema.pre('save', function (next) {

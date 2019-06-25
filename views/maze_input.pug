@@ -1,0 +1,182 @@
+html(ng-app="ddApp")
+  head
+    title Rescue Maze Judge
+    script.
+      var runId = "#{id}"
+
+    include ./includes/common_component
+    script(src="/javascripts/maze_input."+rule+".js")
+    script(src="/javascripts/translate_config.js")
+    script(src='/components/lightbox2/dist/js/lightbox.min.js')
+
+    link(rel='stylesheet',href='/components/lightbox2/dist/css/lightbox.min.css')
+    link(href="/stylesheets/fredrik.css" rel="stylesheet")
+
+    link(href="/stylesheets/maze.css" rel="stylesheet")
+
+    meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0")
+
+
+  body(ng-controller="ddController")
+    nav.navbar(style='background-color: #e84393; color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%')
+      // Navbar content
+      .col-md-3.col-sm4.col-12
+        li.navbar-brand(href='#')
+          i.fas.fa-hashtag
+          |  {{round}}
+      .col-md-3.col-sm4.col-12
+        li.navbar-brand(href='#')
+          i.fas.fa-map-marker-alt
+          |  {{field}}
+      .col-md-6.col-sm4.col-12
+        li.navbar-brand(href='#')
+          i.fas.fa-users
+          |  {{team.name}}
+    .container.nav-cont
+      div#inputcontent
+        .row
+          .col-md-6
+            .card
+              h4.card-header(style="background-color:#fd79a8;")
+                i.fas.fa-user-injured(aria-hidden='true' style="color:white;") &nbsp;Victims
+              .card-body
+                table(border="3")
+                  tr
+                    td Tile type
+                    td Victim type
+                    td(style="width:20%;") Identify
+                    td(style="width:20%;") Rescue kit
+                  tr
+                    td(colspan="1" rowspan="4" style="background-color:#fffdea;") Linear tile
+                    td
+                      img(src="/images/U.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control#first(type='number', placeholder='', min='0', ng-model='lui', ng-focus="focused('lui')", ng-blur="blured('lui')")
+                    td(style="width:20%;background-color:#cd84f1;")
+                      p ---
+                  tr
+                    td
+                      img(src="/images/S.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='lsi', ng-focus="focused('lsi')", ng-blur="blured('lsi')")
+                    td(style="width:20%;background-color:#cd84f1")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='lsk', ng-focus="focused('lsk')", ng-blur="blured('lsk')")
+                  tr
+                    td
+                      img(src="/images/H.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='lhi', ng-focus="focused('lhi')", ng-blur="blured('lhi')")
+                    td(style="width:20%;background-color:#cd84f1;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='lhk', ng-focus="focused('lhk')", ng-blur="blured('lhk')")
+                  tr
+                    td
+                      img(src="/images/thermometer.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='lhhi', ng-focus="focused('lhhi')", ng-blur="blured('lhhi')")
+                    td(style="width:20%;background-color:#cd84f1;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='lhhk', ng-focus="focused('lhhk')", ng-blur="blured('lhhk')")
+
+
+                  tr
+                    td(colspan="1" rowspan="4" style="background-color:#b4ffd5;") Floating tile
+                    td
+                      img(src="/images/U.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fui', ng-focus="focused('fui')", ng-blur="blured('fui')")
+                    td(style="width:20%;background-color:#cd84f1;")
+                      p ---
+                  tr
+                    td
+                      img(src="/images/S.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fsi', ng-focus="focused('fsi')", ng-blur="blured('fsi')")
+                    td(style="width:20%;background-color:#cd84f1")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fsk', ng-focus="focused('fsk')", ng-blur="blured('fsk')")
+                  tr
+                    td
+                      img(src="/images/H.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fhi', ng-focus="focused('fhi')", ng-blur="blured('fhi')")
+                    td(style="width:20%;background-color:#cd84f1;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fhk', ng-focus="focused('fhk')", ng-blur="blured('fhk')")
+                  tr
+                    td
+                      img(src="/images/thermometer.png" height="40px;")
+                    td(style="width:20%;background-color:#ffcccc;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fhhi', ng-focus="focused('fhhi')", ng-blur="blured('fhhi')")
+                    td(style="width:20%;background-color:#cd84f1;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='fhhk', ng-focus="focused('fhhk')", ng-blur="blured('fhhk')")
+
+          .col-md-6
+            .card
+              h4.card-header(style="background-color:#0984e3;")
+                i.fas.fa-clipboard(aria-hidden='true' style="color:white;") &nbsp;Score elements
+              .card-body
+                table(border="3")
+                  tr
+                    td Type
+                    td(style="width:20%;") Count
+                  tr
+                    td
+                      img(src="/images/checkpoint.png" height="40px;")
+                      span(style="font-size:30px;") Checkpoints
+                    td(style="background-color:#74b9ff;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='checkpoints', ng-focus="focused('checkpoints')", ng-blur="blured('checkpoints')")
+                  tr
+                    td
+                      img(src="/images/log.png" height="40px;")
+                      span(style="font-size:30px;") Speedbumps
+                    td(style="background-color:#74b9ff;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='speedbumps', ng-focus="focused('speedbumps')", ng-blur="blured('speedbumps')")
+                  tr
+                    td
+                      img(src="/images/ramp_top.png" height="40px;")
+                      span(style="font-size:30px;") Ramps(UP)
+                    td(style="background-color:#74b9ff;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='rampUP', ng-focus="focused('rampUP')", ng-blur="blured('rampUP')")
+                  tr
+                    td
+                      img(src="/images/ramp_bottom.png" height="40px;")
+                      span(style="font-size:30px;") Ramps(DOWN)
+                    td(style="background-color:#74b9ff;")
+                      input.form-control(type='number', placeholder='', min='0', ng-model='rampDOWN', ng-focus="focused('rampDOWN')", ng-blur="blured('rampDOWN')")
+        hr
+        .row
+          .col-md-12
+            .card
+              h4.card-header
+                i.fas.fa-ellipsis-h(aria-hidden='true') &nbsp;Others
+              .card-body
+                table(border="3")
+                  tr
+                    td Type
+                    td(style="width:20%;") Count
+                  tr
+                    td LoPs
+                    td
+                      input.form-control(type='number', placeholder='', min='0', ng-model='LoPs', ng-focus="focused('LoPs')", ng-blur="blured('LoPs')")
+                  tr
+                    td Misidentifications
+                    td
+                      input.form-control(type='number', placeholder='', min='0', ng-model='MisIdent', ng-focus="focused('MisIdent')", ng-blur="blured('MisIdent')")
+                  tr
+                    td Time
+                    td
+                      .input-group.input-group-lg
+                        input.form-control(type='tel', placeholder='', aria-label='min', aria-describedby='sizing-addon1', min='0', max='8', ng-model='minutes', ng-disabled='startedTime', ng-focus="focused('minutes')", ng-blur="blured('minutes')")
+                        span#sizing-addon1.input-group-addon {{'common.min' | translate}}
+                        input.form-control(type='tel', placeholder='', aria-label='sec', aria-describedby='sizing-addon1', min='0', max='60', ng-model='seconds', ng-disabled='startedTime', ng-focus="focused('seconds')", ng-blur="blured('seconds')")
+                        span#sizing-addon1.input-group-addon {{'common.sec' | translate}}
+                  tr
+                    td Exit bonus
+                    td
+                      div(style='position: relative;', ng-click='changeExitBonus()')
+                        img.img-thumbnail(src='/images/maze_bonus.png', width='100px', height='100px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}")
+                        div(style='position:absolute; top:10px; left:0px;')
+                          i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
+                          i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
+      .row
+        .col-md-12(style="text-align:center;")
+          br
+          button.btn.btn-danger(type='button', ng-click='send()', ng-disabled='startedTime', ng-hide='networkError || fromApproval')
+            i.fas.fa-arrow-right.fa-2x(aria-hidden='true')  Send

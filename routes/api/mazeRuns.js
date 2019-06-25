@@ -611,8 +611,10 @@ privateRouter.put('/:runid', function (req, res, next) {
                 }
                 
                 if(prevStatus != dbRun.status) statusUpdate = 1;
-                
-                var retScoreCals = scoreCalculator.calculateMazeScore(dbRun).split(",")
+
+                let retScoreCals;
+                if(dbRun.manualFlag) retScoreCals = scoreCalculator.calculateMazeScoreManual(dbRun).split(",");
+                else retScoreCals = scoreCalculator.calculateMazeScore(dbRun).split(",");
 
                 dbRun.score = retScoreCals[0]
                 dbRun.foundVictims = retScoreCals[1]

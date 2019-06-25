@@ -24,3 +24,12 @@ module.exports.calculateMazeScore = function (run) {
       return rule2018.calculateMazeScore(run);
   }
 }
+
+module.exports.calculateMazeScoreManual = function (run) {
+  let rule = run.competition.rule;
+  switch(rule){
+    case '2019':
+    default:
+      return rule2019.calculateMazeScoreManual(run);
+  }
+}

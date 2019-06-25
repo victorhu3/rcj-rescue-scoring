@@ -206,3 +206,49 @@ module.exports.calculateMazeScore = function (run) {
 
   return score+","+victims+","+Math.min(rescueKits, 12)
 }
+
+module.exports.calculateMazeScoreManual = function (run) {
+  var score = 0
+
+  var victims = 0
+  var rescueKits = 0
+
+  score += run.manual.speedbumps * 5;
+  score += run.manual.checkpoints * 10;
+  score += run.manual.rampDOWN * 10;
+  score += run.manual.rampUP * 20;
+
+  let victimsL = 0;
+  victimsL += run.manual.victims.linear.u.identify;
+  victimsL += run.manual.victims.linear.s.identify;
+  victimsL += run.manual.victims.linear.h.identify;
+  victimsL += run.manual.victims.linear.heated.identify;
+  rescueKits += run.manual.victims.linear.s.kit;
+  rescueKits += run.manual.victims.linear.h.kit;
+  rescueKits += run.manual.victims.linear.heated.kit;
+  score += victimsL * 10;
+
+  let victimsF = 0;
+  victimsF += run.manual.victims.floating.u.identify;
+  victimsF += run.manual.victims.floating.s.identify;
+  victimsF += run.manual.victims.floating.h.identify;
+  victimsF += run.manual.victims.floating.heated.identify;
+  rescueKits += run.manual.victims.floating.s.kit;
+  rescueKits += run.manual.victims.floating.h.kit;
+  rescueKits += run.manual.victims.floating.heated.kit;
+  score += victimsF * 25;
+
+  victims = victimsL + victimsF;
+
+  score += Math.min(rescueKits, 12) * 10;
+
+  score += Math.max((victims + Math.min(rescueKits, 12) - run.LoPs) * 10, 0)
+
+  if (run.exitBonus) {
+    score += victims * 10;
+  }
+
+  score -= Math.min(run.misidentification*5,score);
+
+  return score+","+victims+","+Math.min(rescueKits, 12)
+};
