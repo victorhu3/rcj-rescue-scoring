@@ -1,0 +1,117 @@
+//- -*- tab-width: 2 -*-
+html(ng-app="RunAdmin")
+  head
+    title Rescue Line Runs Print
+    script.
+      var runId = "#{id}"
+
+    include ./includes/common_component
+    script.
+      var competitionId = "#{id}"
+    script(src = '/components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js')
+    script(src = '/components/angular-bootstrap-datetimepicker/src/js/datetimepicker.templates.js')
+    script(src='/javascripts/maze_run_admin.js')
+    script(src='/components/ng-file-upload/ng-file-upload-all.min.js')
+    script(src="/javascripts/translate_config.js")
+    style(type='text/css').
+      .uib-time input {
+        padding-left: 0;
+        padding-right: 0;
+        width: 2.5em;
+        margin-right: 0;
+      }
+
+      .uib-timepicker .btn {
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+
+      @media print {
+        .no_print {
+          display: none;
+        }
+
+        @page {
+          margin: 0;
+        }
+
+        body {
+          margin: 1.6cm;
+        }
+      }
+
+  body(ng-controller="RunAdminController")
+    .row
+      .col-md-10(style="text-align:center;")
+        h1 {{competition.name}}
+      .col-md-2
+        img(ng-src="{{competition.logo}}" style="width:100%;")
+    .row
+      .col-md-12
+        .refine.no_print
+          .card.border-dark.mb-3(style='width:100%;')
+            .card-header.bg-transparent.border-dark.fa-2x
+              i.fas.fa-search(aria-hidden='true') {{'line.competition.refine.filter' | translate}}
+            .card-body.text-dark
+              h6.card-title {{'line.competition.refine.round' | translate}}
+              span(ng-repeat='(key, value) in Rrounds track by key')
+                input(type='checkbox' ng-model='Rrounds[key]' id="checkR_{{key}}")
+                label.checkbox(for="checkR_{{key}}") {{key}}
+              hr
+              h6.card-title {{'line.competition.refine.field' | translate}}
+              span(ng-repeat='(key, value) in Rfields track by key')
+                input(type='checkbox' ng-model='Rfields[key]' id="checkF_{{key}}")
+                label.checkbox(for="checkF_{{key}}") {{key}}
+              hr
+              h6.card-title {{'line.competition.refine.team' | translate}}
+              .input-group
+                span#basic-addon1.input-group-addon
+                  i.fas.fa-users(aria-hidden='true')
+                input.form-control(type='text', placeholder='Team name', aria-label='Username', aria-describedby='basic-addon1' ng-model='teamName')
+              hr
+              h6.card-title Display items
+                br
+                br
+                input(type='checkbox' ng-model='showField' id="showField")
+                label.checkbox(for="showField") Field
+                input(type='checkbox' ng-model='showScore' id="showScore")
+                label.checkbox(for="showScore") Score
+                input(type='checkbox' ng-model='showTime' id="showTime")
+                label.checkbox(for="showTime") Time
+                input(type='checkbox' ng-model='showLoPs' id="showLoPs")
+                label.checkbox(for="showLoPs") LoPs
+                input(type='checkbox' ng-model='showVictim' id="showVictim")
+                label.checkbox(for="showVictim") Victim
+                input(type='checkbox' ng-model='showExit' id="showExit")
+                label.checkbox(for="showExit") Exit
+
+        center
+          .loader
+            img(src="/images/loader2.gif")
+            p Now Loading...
+        table(class="custom" style="margin-bottom:100px;")
+          thead
+            tr
+              th {{"common.starttime" | translate}}
+              th {{"common.round" | translate}}
+              th {{"common.team" | translate}}
+              th(ng-if="showField") {{"common.field" | translate}}
+              th(ng-if="showScore") {{"common.score" | translate}}
+              th(ng-if="showTime") {{"common.time" | translate}}
+              th(ng-if="showLoPs") {{"common.lops" | translate}}
+              th(ng-if="showVictim") {{'maze.score.found' | translate}}
+              th(ng-if="showExit") {{'maze.score.exit' | translate}}
+          tbody
+            tr(ng-repeat='run in runs | filter:list_filter | orderBy:"[startTime,round.name,field.name,team.name]"' runs-read-finished='')
+              td(ng-bind='run.startTime | date:"dd / HH:mm"')
+              td(ng-bind='run.round.name' )
+              td(ng-bind='run.team.name')
+              td(ng-bind='run.field.name' ng-if="showField")
+              td(ng-bind='run.score' ng-if="showScore")
+              td(ng-bind="run.time.minutes*60*1000+run.time.seconds*1000 | date:'mm:ss'"  ng-if="showTime")
+              td(ng-bind='run.LoPs' ng-if="showLoPs")
+              td(ng-bind='run.foundVictims' ng-if="showVictim")
+              td.text-center(ng-if="showExit")
+                i(class="fas fa-check" aria-hidden="true" style="color:#2ecc71;" ng-if="run.exitBonus")
+                i(class="fas fa-times" aria-hidden="true" style="color:#e74c3c;" ng-if="!run.exitBonus")
+

@@ -97,6 +97,16 @@ router.get('/:competitionid/line/runs', function (req, res, next) {
   else res.render('access_denied', {user: req.user})
 })
 
+router.get('/:competitionid/line/runs/print', function (req, res, next) {
+  const id = req.params.competitionid
+
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('line_run_admin_print', {id: id, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
 
 
 router.get('/:competitionid/line/runs/bulk', function (req, res, next) {
@@ -140,6 +150,17 @@ router.get('/:competitionid/maze/runs', function (req, res, next) {
   }
   
   if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('maze_run_admin', {id: id, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
+
+router.get('/:competitionid/maze/runs/print', function (req, res, next) {
+  const id = req.params.competitionid
+
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('maze_run_admin_print', {id: id, user: req.user})
   else res.render('access_denied', {user: req.user})
 })
 

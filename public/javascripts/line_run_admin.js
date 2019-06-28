@@ -477,6 +477,14 @@ var app = angular.module(
         $scope.go_scoreSheetInTimeRange2 = function () {
           window.open("/api/runs/line/scoresheet2?competition=" + $scope.competitionId + "&startTime=" + $scope.scoreSheetStartDateTime.getTime()+ "&endTime=" + $scope.scoreSheetEndDateTime.getTime(), "_blank")
         };
+        
+        $scope.total = function (lops) {
+          let count = 0;
+          for(let i=0,l=lops.length;i<l;i++){
+            count += lops[i];
+          }
+          return count;
+        }
 
 }])
     .directive("runsReadFinished", function ($timeout) {
