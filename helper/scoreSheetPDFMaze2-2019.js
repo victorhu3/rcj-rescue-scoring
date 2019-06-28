@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit');
 const pdf = require('./scoreSheetPDFUtil');
 const qr = require('qr-image');
+const fs = require('fs');
 const logger = require('../config/logger').mainLogger;
 
 /**
@@ -9,6 +10,15 @@ const logger = require('../config/logger').mainLogger;
 const globalConfig = {
   paperSize: {x:841.89 ,y:595.28},
 };
+
+function isExistFile(file) {
+  try {
+    fs.statSync(file);
+    return true
+  } catch(err) {
+    if(err.code === 'ENOENT') return false
+  }
+}
 
 
 function drawRun(doc, config, scoringRun) {
@@ -20,7 +30,7 @@ function drawRun(doc, config, scoringRun) {
   pdf.drawImage(doc,730,5,"public/images/2019logo.png",100,30,"right");
 
   //Draw run QR code
-  doc.image(qr.imageSync("M;" + scoringRun._id.toString(), {margin: 0}), 10, 10, {width: 65});
+  doc.image(qr.imageSync("M;" + scoringRun._id.toString(), {margin: 2}), 10, 10, {width: 65});
 
   //Draw team name
   pdf.drawTextWithAlign(doc,120,44,scoringRun.team.name,15,"black",300,"center");
@@ -36,7 +46,9 @@ function drawRun(doc, config, scoringRun) {
   pdf.drawTextWithAlign(doc,355,61,scoringRun.field.name,15,"black",60,"center");
 
   //Draw map image
-  pdf.drawImage(doc,15,87,"tmp/course/" + scoringRun.map._id + ".png",403,490,"center");
+  if(isExistFile(__dirname + "/../tmp/course/" + scoringRun.map._id + ".png")) {
+    pdf.drawImage(doc, 15, 87, "tmp/course/" + scoringRun.map._id + ".png", 403, 490, "center");
+  }
 
   //Draw dice
   pdf.drawImage(doc,423,450,"public/images/dice/" + scoringRun.diceNumber + ".png",25,25,"center");

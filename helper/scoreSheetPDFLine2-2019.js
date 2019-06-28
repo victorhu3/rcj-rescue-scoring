@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit');
 const pdf = require('./scoreSheetPDFUtil');
 const qr = require('qr-image');
+const fs = require('fs');
 const logger = require('../config/logger').mainLogger;
 
 /**
@@ -10,6 +11,14 @@ const globalConfig = {
   paperSize: {x:841.89 ,y:595.28},
 };
 
+function isExistFile(file) {
+  try {
+    fs.statSync(file);
+    return true
+  } catch(err) {
+    if(err.code === 'ENOENT') return false
+  }
+}
 
 function drawRun(doc, config, scoringRun) {
   //Set template image as a background
@@ -20,7 +29,7 @@ function drawRun(doc, config, scoringRun) {
   pdf.drawImage(doc,730,5,"public/images/2019logo.png",100,30,"right");
 
   //Draw run QR code
-  doc.image(qr.imageSync("L;" + scoringRun._id.toString(), {margin: 0}), 10, 10, {width: 65});
+  doc.image(qr.imageSync("L;" + scoringRun._id.toString(), {margin: 2}), 10, 10, {width: 65});
 
   //Draw team name
   pdf.drawTextWithAlign(doc,120,41,scoringRun.team.name,15,"black",315,"center");
@@ -30,13 +39,15 @@ function drawRun(doc, config, scoringRun) {
   pdf.drawTextWithAlign(doc,120,60,("0" + dateTime.getHours()).slice(-2) + ":" + ("0" + dateTime.getMinutes()).slice(-2),15,"black",65,"center");
 
   //Draw round name
-  pdf.drawTextWithAlign(doc,225,60,scoringRun.round.name,15,"black",70,"center");
+  pdf.drawTextWithAlign(doc,225,60,scoringRun.round.name,15,"black",100,"center");
 
   //Draw field name
-  pdf.drawTextWithAlign(doc,330,60,scoringRun.field.name,15,"black",100,"center");
+  pdf.drawTextWithAlign(doc,360,60,scoringRun.field.name,15,"black",70,"center");
 
   //Draw map image
-  pdf.drawImage(doc,13,85,"tmp/course/" + scoringRun.map._id + ".png",420,496,"center");
+  if(isExistFile(__dirname + "/../tmp/course/" + scoringRun.map._id + ".png")){
+    pdf.drawImage(doc,13,85,"tmp/course/" + scoringRun.map._id + ".png",420,496,"center");
+  }
 
   //Draw max victim number
   pdf.drawText(doc,740,347,scoringRun.map.victims.live,15,"black");
@@ -44,7 +55,7 @@ function drawRun(doc, config, scoringRun) {
 
   //Footer
   pdf.drawText(doc,15,583,"Rule: " + scoringRun.competition.rule,5,"black");
-  pdf.drawText(doc,100,583,"Number of checkpoint markers: " + scoringRun.map.numberOfDropTiles,4,"black");
+  pdf.drawText(doc,450,470,"Number of checkpoint markers: " + scoringRun.map.numberOfDropTiles,10,"black");
   //System version
   pdf.drawText(doc,780,583,"RCJ Scoring System v19.7",4,"black");
   return;
