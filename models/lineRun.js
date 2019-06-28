@@ -25,6 +25,7 @@ const lineRunSchema = new Schema({
   field      : {type: ObjectId, ref: 'Field', required: true, index: true},
   map        : {type: ObjectId, ref: 'LineMap', required: true, index: true},
   group     : {type: Number, min: 0},
+  manualFlag: {type: Boolean, default: false},
 
   judges: [{type: ObjectId, ref: 'User'}],
 

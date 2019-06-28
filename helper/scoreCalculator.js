@@ -14,6 +14,15 @@ module.exports.calculateLineScore = function (run) {
   }
 }
 
+module.exports.calculateLineScoreManual = function (run) {
+  let rule = run.competition.rule;
+  switch(rule){
+    case '2019':
+    default:
+      return rule2019.calculateLineScoreManual(run);
+  }
+}
+
 module.exports.calculateMazeScore = function (run) {
   let rule = run.competition.rule;
   switch(rule){

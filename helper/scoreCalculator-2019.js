@@ -105,6 +105,98 @@ module.exports.calculateLineScore = function (run) {
     }
 }
 
+module.exports.calculateLineScoreManual = function (run) {
+  try {
+    //console.log(run);
+    var score = 0
+
+    var mapTiles = []
+    for (let i = 0; i < run.map.tiles.length; i++) {
+      let tile = run.map.tiles[i]
+
+      for (let j = 0; j < tile.index.length; j++) {
+        let index = tile.index[j]
+
+        mapTiles[index] = tile
+      }
+    }
+
+    let lastDropTile = 0
+    let dropTileCount = 0
+
+    //console.log(mapTiles);
+    for (let i = 0; i < run.tiles.length; i++) {
+      let tile = run.tiles[i]
+      //console.log(tile.scoredItems)
+      for (let j=0; j<tile.scoredItems.length;j++){
+        switch (tile.scoredItems[j].item){
+          case "checkpoint":
+            let tileCount = i - lastDropTile;
+            score += Math.max(tileCount * (5 - 2 * run.LoPs[dropTileCount]), 0) * tile.scoredItems[j].scored;
+            //console.log(Math.max(tileCount * (5 - 2 * run.LoPs[dropTileCount]), 0) * tile.scoredItems[j].scored)
+            break;
+          default:
+            break;
+        }
+
+      }
+
+      if (tile.isDropTile) {
+        lastDropTile = i
+        dropTileCount++
+      }
+    }
+
+    if (run.rescueOrder) {
+      if (run.evacuationLevel == 1) {
+        for (let victim of run.rescueOrder) {
+          if (victim.effective) {
+            if (victim.type == "L") {
+              score += Math.max(30 - run.LoPs[dropTileCount] * 5, 0)
+            } else {
+              score += Math.max(20 - run.LoPs[dropTileCount] * 5, 0)
+            }
+          }else{
+            score += Math.max(5 - run.LoPs[dropTileCount] * 5, 0)
+          }
+        }
+      } else if (run.evacuationLevel == 2) {
+        for (let victim of run.rescueOrder) {
+          if (victim.effective) {
+            if (victim.type == "L") {
+              score += Math.max(40 - run.LoPs[dropTileCount] * 5, 0)
+            } else {
+              score += Math.max(30 - run.LoPs[dropTileCount] * 5, 0)
+            }
+          }else{
+            score += Math.max(5 - run.LoPs[dropTileCount] * 5, 0)
+          }
+        }
+      }
+    }
+
+    score += run.manual.gap * 10;
+    score += run.manual.obstacle * 10;
+    score += run.manual.speedbump * 5;
+    score += (run.manual.intersection + run.manual.deadend) * 15;
+    score += (run.manual.rampUP + run.manual.rampDOWN) * 5;
+
+    if (run.exitBonus) {
+      score += 20
+    }
+
+    // 5 points for placing robot on first droptile (start)
+    // Implicit showedUp if anything else is scored
+    if (run.showedUp || score > 0) {
+      score += 5
+    }
+    if(isNaN(score)) return 0
+    return score
+  } catch (e) {
+
+  }
+}
+
 /**
  *
  * @param run Must be populated with map!

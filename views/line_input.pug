@@ -36,16 +36,12 @@ html(ng-app="ddApp")
           img(ng-src="{{competition.logo}}" height="30px")
 
     .container.nav-cont
-      .row(style='margin:20 0 0 0;')
-        .col-md12
-          button.btn.btn-secondary(style='margin:0 10px 10px 0;', type='button', ng-click="getParam('return')? go(getParam('return')):go('/line/' + competition._id)")
-            i.fas.fa-undo(aria-hidden='true')  {{'common.back' | translate}}
       div#inputcontent
         .row
           .col-md-3
             .card
               h4.card-header(style="background-color:#e67e22;")
-                i.fas.fa-user-injured(aria-hidden='true' style="color:white;") &nbsp;Checkpoints
+                i.far.fa-share-square(aria-hidden='true' style="color:white;") &nbsp;Checkpoints
               .card-body
                 table(border="3")
                   tr
@@ -58,14 +54,14 @@ html(ng-app="ddApp")
                     td(ng-if="!$last")
                       .row
                         .col-3
-                          i.fas.fa-check.fa-fw.fa-2x(ng-if='arrive[i]', style='color:#27ae60; opacity:0.9;')
-                          i.fas.fa-times.fa-fw.fa-2x(ng-if='!arrive[i]', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
+                          i.fas.fa-check.fa-fw.fa-2x(ng-if='arriveMark(i)', style='color:#27ae60; opacity:0.9;')
+                          i.fas.fa-times.fa-fw.fa-2x(ng-if='!arriveMark(i)', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
                         .col-9
                           input.form-control(ng-attr-id="{{$first ? 'first':''}}",type='number', placeholder='', min='0', ng-model='arrive[i]', ng-focus="focused('arrive',i)", ng-blur="blured('arrive',i,false)")
           .col-md-3
             .card
               h4.card-header(style="background-color:#e67e22;")
-                i.fas.fa-user-injured(aria-hidden='true' style="color:white;") &nbsp;LoPs
+                i.fas.fa-step-forward(aria-hidden='true' style="color:white;") &nbsp;LoPs
               .card-body
                 table(border="3")
                   tr
@@ -200,5 +196,5 @@ html(ng-app="ddApp")
         .row
           .col-md-12(style="text-align:center;")
             br
-            button.btn.btn-danger(type='button', ng-click='send()')
+            button.btn.btn-danger.btn-lg(type='button', ng-click='send()', style="margin-bottom:20px;")
               i.fas.fa-arrow-right.fa-2x(aria-hidden='true')  Send
