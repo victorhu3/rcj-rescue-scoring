@@ -15,6 +15,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     $scope.cells = {};
     $scope.tiles = {};
 
+    $scope.score = 0;
+
     var db_cells;
 
     $http.get("/api/runs/maze/" + runId +
@@ -33,6 +35,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         // Verified time by timekeeper
         $scope.minutes = response.data.time.minutes;
         $scope.seconds = response.data.time.seconds;
+
+        $scope.score = response.data.score;
 
         // Scoring elements of the tiles
         for (let i = 0; i < response.data.tiles.length; i++) {
@@ -92,7 +96,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.rampUP = 0;
             $scope.rampDOWN = 0;
         }
-        $scope.focused('lui');
     }, function (response) {
         console.log("Error: " + response.statusText);
         if (response.status == 401) {
@@ -112,82 +115,12 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     $scope.send = function () {
         playSound(sClick);
         let run = {};
+        run.status = 6;
 
-        run.manualFlag = true;
-
-        run.exitBonus = $scope.exitBonus;
-        run.LoPs = $scope.LoPs;
-        run.misidentification = $scope.MisIdent;
-
-        // Scoring elements of the tiles
-        //run.tiles = $scope.tiles;
-
-        // Verified time by timekeeper
-        if($scope.minutes > 8 || $scope.seconds >= 60){
-            playSound(sError);
-            Swal.fire(
-              'Error',
-              'Please check time is correct!',
-              'error'
-            );
-            return;
-        }
-        run.time = {};
-        run.time.minutes = $scope.minutes;;
-        run.time.seconds = $scope.seconds;
-        run.status = 4;
-
-        // Set manual input value
-        run.manual = {};
-        run.manual.victims = {};
-        run.manual.victims.linear = {};
-        run.manual.victims.linear.u = {};
-        run.manual.victims.linear.u.identify = checkNull($scope.lui);
-        run.manual.victims.linear.u.kit = checkNull($scope.luk);
-        run.manual.victims.linear.s = {};
-        run.manual.victims.linear.s.identify = checkNull($scope.lsi);
-        run.manual.victims.linear.s.kit = checkNull($scope.lsk);
-        run.manual.victims.linear.h = {};
-        run.manual.victims.linear.h.identify = checkNull($scope.lhi);
-        run.manual.victims.linear.h.kit = checkNull($scope.lhk);
-        run.manual.victims.linear.heated = {};
-        run.manual.victims.linear.heated.identify = checkNull($scope.lhhi);
-        run.manual.victims.linear.heated.kit = checkNull($scope.lhhk);
-
-        run.manual.victims.floating = {};
-        run.manual.victims.floating.u = {};
-        run.manual.victims.floating.u.identify = checkNull($scope.fui);
-        run.manual.victims.floating.u.kit = checkNull($scope.fuk);
-        run.manual.victims.floating.s = {};
-        run.manual.victims.floating.s.identify = checkNull($scope.fsi);
-        run.manual.victims.floating.s.kit = checkNull($scope.fsk);
-        run.manual.victims.floating.h = {};
-        run.manual.victims.floating.h.identify = checkNull($scope.fhi);
-        run.manual.victims.floating.h.kit = checkNull($scope.fhk);
-        run.manual.victims.floating.heated = {};
-        run.manual.victims.floating.heated.identify = checkNull($scope.fhhi);
-        run.manual.victims.floating.heated.kit = checkNull($scope.fhhk);
-
-        run.manual.checkpoints = checkNull($scope.checkpoints);
-        run.manual.speedbumps = checkNull($scope.speedbumps);
-        run.manual.rampUP = checkNull($scope.rampUP);
-        run.manual.rampDOWN = checkNull($scope.rampDOWN);
 
         $http.put("/api/runs/maze/" + runId, run).then(function (response) {
             playSound(sInfo);
             $scope.go($scope.getParam('return'));
-            return;
-            Swal.fire({
-                title: response.data.score + "  points",
-                text: "Please write it down on the scoresheet.",
-                type: 'success',
-                showCancelButton: false,
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Wrote!'
-            }).then((result) => {
-                playSound(sClick);
-                $scope.go($scope.getParam('return'));
-            })
         }, function (response) {
             console.log("Error: " + response.statusText);
             playSound(sError);
@@ -220,26 +153,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         playSound(sClick);
         window.location = path
     };
-
-    var saveContent = [];
-    $scope.focused = function (name) {
-        saveContent[name] = $scope[name];
-        $scope[name] = "";
-    };
-
-    $scope.blured = function (name) {
-        if($scope[name] == ""){
-            $scope[name] = saveContent[name];
-        }
-    };
-
-    $scope.changeExitBonus = function () {
-        playSound(sClick);
-        $scope.exitBonus = ! $scope.exitBonus
-        upload_run({
-            exitBonus: $scope.exitBonus
-        });
-    }
 
     function  checkNull(val) {
         if(val) return val;
@@ -299,52 +212,4 @@ window.onload = function() {
   getAudioBuffer('/sounds/timeup.mp3', function(buffer) {
       sTimeup = buffer;
   });
-  document.getElementById("first").focus();
 };
-
-function fEnterChangeTab(){
-    var oObject = "#inputcontent :input:not(:button):not(:hidden)";
-
-    $(oObject).keypress(function(e) {
-        var c = e.which ? e.which : e.keyCode;
-        if (c == 13) {
-            var index = $(oObject).index(this);
-            var cNext = "";
-            var nLength = $(oObject).length;
-            for(i=index;i<nLength;i++){
-                cNext = e.shiftKey ? ":lt(" + index + "):last" : ":gt(" + index + "):first";
-                if ($(oObject + cNext).attr("readonly") == "readonly") {
-                    if (e.shiftKey) index--;
-                    else index++;
-                }
-                else if ($(oObject + cNext).prop("disabled") == true) {
-                    if (e.shiftKey) index--;
-                    else index++;
-                }
-                else break;
-            }
-            if (index == nLength - 1) {
-                if (! e.shiftKey){
-                    cNext = ":eq(1)";
-                }
-            }
-            if (index == 0) {
-                if (e.shiftKey) {
-                    cNext = ":eq(" + (nLength - 1) + ")";
-                }
-            }
-            $(oObject + cNext).focus();
-            e.preventDefault();
-        }
-    });
-}
-
-if(window.attachEvent){
-    window.attachEvent('onload',fEnterChangeTab);
-}
-else if (window.opera){
-    window.addEventListener('load',fEnterChangeTab,false);
-}
-else {
-    window.addEventListener('load',fEnterChangeTab,false);
-}

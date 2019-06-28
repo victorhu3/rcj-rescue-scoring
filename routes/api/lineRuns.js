@@ -82,7 +82,7 @@ function getLineRuns(req, res) {
   if (req.query['minimum']) {
     query.select("competition round team field status started startTime sign")
   } else {
-    query.select("competition round team field map score time status started LoPs comment startTime sign rescueOrder group")
+    query.select("competition round team field map score time status started LoPs comment startTime sign rescueOrder group exitBonus")
   }
 
 
@@ -526,7 +526,8 @@ privateRouter.put('/:runid', function (req, res, next) {
           
         if(prevStatus != dbRun.status) statusUpdate = 1;
 
-        dbRun.score = scoreCalculator.calculateLineScore(dbRun)
+        if(dbRun.manualFlag) dbRun.score = scoreCalculator.calculateLineScoreManual(dbRun);
+        else dbRun.score = scoreCalculator.calculateLineScore(dbRun)
 
         if (dbRun.score > 0 || dbRun.time.minutes != 0 ||
           dbRun.time.seconds != 0 || dbRun.status >= 2) {

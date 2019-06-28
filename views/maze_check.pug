@@ -1,11 +1,11 @@
 html(ng-app="ddApp")
   head
-    title Rescue Maze Input
+    title Rescue Maze Approval
     script.
       var runId = "#{id}"
 
     include ./includes/common_component
-    script(src="/javascripts/maze_input."+rule+".js")
+    script(src="/javascripts/maze_check."+rule+".js")
     script(src="/javascripts/translate_config.js")
     script(src='/components/lightbox2/dist/js/lightbox.min.js')
 
@@ -18,7 +18,7 @@ html(ng-app="ddApp")
 
 
   body(ng-controller="ddController")
-    nav.navbar(style='background-color: #e84393; color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%')
+    nav.navbar(style='background-color: #8e44ad; color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%')
       // Navbar content
       .col-md-6.col-sm4.col-12
         li.navbar-brand(href='#')
@@ -54,30 +54,30 @@ html(ng-app="ddApp")
                     td
                       img(src="/images/U.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control#first(type='number', placeholder='', min='0', ng-model='lui', ng-focus="focused('lui')", ng-blur="blured('lui')")
+                      h2(style="text-align:center;") {{lui}}
                     td(style="width:20%;background-color:#cd84f1;")
                       p ---
                   tr
                     td
                       img(src="/images/S.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='lsi', ng-focus="focused('lsi')", ng-blur="blured('lsi')")
+                      h2(style="text-align:center;") {{lsi}}
                     td(style="width:20%;background-color:#cd84f1")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='lsk', ng-focus="focused('lsk')", ng-blur="blured('lsk')")
+                      h2(style="text-align:center;") {{lsk}}
                   tr
                     td
                       img(src="/images/H.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='lhi', ng-focus="focused('lhi')", ng-blur="blured('lhi')")
+                      h2(style="text-align:center;") {{lhi}}
                     td(style="width:20%;background-color:#cd84f1;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='lhk', ng-focus="focused('lhk')", ng-blur="blured('lhk')")
+                      h2(style="text-align:center;") {{lhk}}
                   tr
                     td
                       img(src="/images/thermometer.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='lhhi', ng-focus="focused('lhhi')", ng-blur="blured('lhhi')")
+                      h2(style="text-align:center;") {{lhhi}}
                     td(style="width:20%;background-color:#cd84f1;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='lhhk', ng-focus="focused('lhhk')", ng-blur="blured('lhhk')")
+                      h2(style="text-align:center;") {{lhhk}}
 
 
                   tr
@@ -85,30 +85,30 @@ html(ng-app="ddApp")
                     td
                       img(src="/images/U.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fui', ng-focus="focused('fui')", ng-blur="blured('fui')")
+                      h2(style="text-align:center;") {{fui}}
                     td(style="width:20%;background-color:#cd84f1;")
                       p ---
                   tr
                     td
                       img(src="/images/S.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fsi', ng-focus="focused('fsi')", ng-blur="blured('fsi')")
+                      h2(style="text-align:center;") {{fsi}}
                     td(style="width:20%;background-color:#cd84f1")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fsk', ng-focus="focused('fsk')", ng-blur="blured('fsk')")
+                      h2(style="text-align:center;") {{fsk}}
                   tr
                     td
                       img(src="/images/H.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fhi', ng-focus="focused('fhi')", ng-blur="blured('fhi')")
+                      h2(style="text-align:center;") {{fhi}}
                     td(style="width:20%;background-color:#cd84f1;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fhk', ng-focus="focused('fhk')", ng-blur="blured('fhk')")
+                      h2(style="text-align:center;") {{fhk}}
                   tr
                     td
                       img(src="/images/thermometer.png" height="40px;")
                     td(style="width:20%;background-color:#ffcccc;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fhhi', ng-focus="focused('fhhi')", ng-blur="blured('fhhi')")
+                      h2(style="text-align:center;") {{fhhi}}
                     td(style="width:20%;background-color:#cd84f1;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='fhhk', ng-focus="focused('fhhk')", ng-blur="blured('fhhk')")
+                      h2(style="text-align:center;") {{fhhk}}
 
           .col-md-6
             .card
@@ -124,25 +124,25 @@ html(ng-app="ddApp")
                       img(src="/images/checkpoint.png" height="40px;")
                       span(style="font-size:30px;") Checkpoints
                     td(style="background-color:#74b9ff;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='checkpoints', ng-focus="focused('checkpoints')", ng-blur="blured('checkpoints')")
+                      h2(style="text-align:center;") {{checkpoints}}
                   tr
                     td
                       img(src="/images/log.png" height="40px;")
                       span(style="font-size:30px;") Speedbumps
                     td(style="background-color:#74b9ff;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='speedbumps', ng-focus="focused('speedbumps')", ng-blur="blured('speedbumps')")
+                      h2(style="text-align:center;") {{speedbumps}}
                   tr
                     td
                       img(src="/images/ramp_top.png" height="40px;")
                       span(style="font-size:30px;") Ramps(UP)
                     td(style="background-color:#74b9ff;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='rampUP', ng-focus="focused('rampUP')", ng-blur="blured('rampUP')")
+                      h2(style="text-align:center;") {{rampUP}}
                   tr
                     td
                       img(src="/images/ramp_bottom.png" height="40px;")
                       span(style="font-size:30px;") Ramps(DOWN)
                     td(style="background-color:#74b9ff;")
-                      input.form-control(type='number', placeholder='', min='0', ng-model='rampDOWN', ng-focus="focused('rampDOWN')", ng-blur="blured('rampDOWN')")
+                      h2(style="text-align:center;") {{rampDOWN}}
         hr
         .row
           .col-md-12
@@ -157,29 +157,29 @@ html(ng-app="ddApp")
                   tr
                     td LoPs
                     td
-                      input.form-control(type='number', placeholder='', min='0', ng-model='LoPs', ng-focus="focused('LoPs')", ng-blur="blured('LoPs')")
+                      h2(style="text-align:center;") {{LoPs}}
                   tr
                     td Misidentifications
                     td
-                      input.form-control(type='number', placeholder='', min='0', ng-model='MisIdent', ng-focus="focused('MisIdent')", ng-blur="blured('MisIdent')")
+                      h2(style="text-align:center;") {{MisIdent}}
                   tr
                     td Time
                     td
                       .input-group.input-group-lg
-                        input.form-control(type='tel', placeholder='', aria-label='min', aria-describedby='sizing-addon1', min='0', max='8', ng-model='minutes', ng-disabled='startedTime', ng-focus="focused('minutes')", ng-blur="blured('minutes')")
-                        span#sizing-addon1.input-group-addon {{'common.min' | translate}}
-                        input.form-control(type='tel', placeholder='', aria-label='sec', aria-describedby='sizing-addon1', min='0', max='60', ng-model='seconds', ng-disabled='startedTime', ng-focus="focused('seconds')", ng-blur="blured('seconds')")
-                        span#sizing-addon1.input-group-addon {{'common.sec' | translate}}
+                        h2(style="text-align:center;") {{minutes}}&nbsp;{{'common.min' | translate}}&nbsp;{{seconds}}&nbsp;{{'common.sec' | translate}}
+
                   tr
                     td Exit bonus
                     td
-                      div(style='position: relative;', ng-click='changeExitBonus()')
+                      div(style='position: relative;')
                         img.img-thumbnail(src='/images/maze_bonus.png', width='100px', height='100px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}")
                         div(style='position:absolute; top:10px; left:0px;')
                           i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
                           i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
       .row
         .col-md-12(style="text-align:center;")
-          br
-          button.btn.btn-danger.btn-lg(type='button', ng-click='send()', ng-disabled='startedTime', ng-hide='networkError || fromApproval', style="margin-bottom:20px;")
-            i.fas.fa-arrow-right.fa-2x(aria-hidden='true')  Send
+          hr
+          h1(style="text-align:center") {{score}} points
+          hr
+          button.btn.btn-warning.btn-lg(type='button', ng-click='send()', style="margin-bottom:20px;")
+            i.fas.fa-check.fa-2x(aria-hidden='true')  Approval

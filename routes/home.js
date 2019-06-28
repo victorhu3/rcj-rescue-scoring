@@ -9,6 +9,12 @@ router.get('/', function (req, res) {
   res.render('home', {user: req.user});
 })
 
+router.get('/scanner/:mode', function (req, res, next) {
+  const mode = req.params.mode
+
+  res.render('scanner', {mode: mode, user: req.user})
+})
+
 router.get('/:competitionid', function (req, res, next) {
   const id = req.params.competitionid
   

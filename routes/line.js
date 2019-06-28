@@ -111,6 +111,16 @@ privateRouter.get('/input/:runid', async function (req, res, next) {
   res.render('line_input', {id: id, rule: rule})
 })
 
+privateRouter.get('/check/:runid', async function (req, res, next) {
+  const id = req.params.runid
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+
+  let rule = await ruleDetector.getRuleFromLineRunId(id);
+  res.render('line_check', {id: id, rule: rule})
+})
+
 privateRouter.get('/sign/:runid', async function (req, res) {
   const id = req.params.runid
   if (!ObjectId.isValid(id)) {

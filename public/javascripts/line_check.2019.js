@@ -43,6 +43,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     $scope.victim_tmp = [];
     $scope.LoPs = [];
 
+    $scope.score = 0;
+
 
     const http_config = {
         timeout: 10000
@@ -119,6 +121,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.started = response.data.started;
             $scope.status = response.data.status;
             var started = response.data.started;
+
+            $scope.score = response.data.score;
 
 
 
@@ -303,189 +307,16 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
 
 
-    $scope.calc_victim_points = function (type, effective) {
-        let tmp_point = 0;
-        if (!effective) tmp_point = 5;
-        else if ($scope.evacuationLevel == 1) { // Low Level
-            if (type == "L") tmp_point = 30;
-            else tmp_point = 20;
-        } else { // High Level
-            if (type == "L") tmp_point = 40;
-            else tmp_point = 30;
-        }
-        return Math.max(tmp_point - $scope.LoPs[$scope.actualUsedDropTiles] * 5, 0);
-    }
-
-    $scope.count_victim_list = function (type) {
-        let count = 0
-        for (victiml of $scope.victim_list) {
-            if (!victiml.type.indexOf(type)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    $scope.count_victim_tmp = function (type) {
-        let count = 0
-        for (victiml of $scope.victim_tmp) {
-            if (!victiml.indexOf(type)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    $scope.addVictimTmp = function (type) {
-        playSound(sClick);
-        if (type == "L") {
-            if ($scope.count_victim_list("L") + $scope.count_victim_tmp("L") >= $scope.maxLiveVictims) return;
-        } else {
-            if ($scope.count_victim_list("D") + $scope.count_victim_tmp("D") >= $scope.maxDeadVictims) return;
-        }
-        $scope.victim_tmp.push(type);
-        $scope.victimRegist();
-    }
-
-    $scope.addVictim = function (type) {
-        let tmp = {};
-        tmp.effective = true;
-        if (type == "L") {
-            tmp.type = "L";
-            if ($scope.count_victim_list("L") >= $scope.maxLiveVictims) return;
-        } else {
-            tmp.type = "D";
-            if ($scope.count_victim_list("D") >= $scope.maxDeadVictims) return;
-            if ($scope.count_victim_list("L") >= $scope.maxLiveVictims) { // All live victims rescued
-
-            } else {
-                tmp.effective = false;
-            }
-        }
-
-
-        $scope.victim_list.push(tmp);
-    }
-
-    function reStateVictim() {
-        let count = 0;
-        for (victiml of $scope.victim_list) {
-            if (!victiml.type.indexOf("L")) {
-                count++;
-            }
-            if (!victiml.type.indexOf("D")) {
-                if (count >= $scope.maxLiveVictims) {
-                    victiml.effective = true;
-                } else {
-                    victiml.effective = false;
-                }
-            }
-
-        }
-    }
-
-    $scope.delete_victim = function (index) {
-        playSound(sClick);
-        $scope.victim_list.splice(index, 1);
-        reStateVictim();
-
-
-    }
-    $scope.delete_victim_tmp = function (index) {
-        playSound(sClick);
-        $scope.victim_tmp.splice(index, 1);
-    }
-
-    $scope.victimRegist = function () {
-        playSound(sClick);
-        let live = 0;
-        let dead = 0;
-        for (victiml of $scope.victim_tmp) {
-            if (!victiml.indexOf("L")) {
-                live++;
-            } else {
-                dead++;
-            }
-        }
-        for (let i = 0; i < live; i++) {
-            $scope.addVictim("L");
-        }
-        for (let i = 0; i < dead; i++) {
-            $scope.addVictim("D");
-        }
-        $scope.victim_tmp_clear();
-
-    }
-
-    $scope.victim_tmp_clear = function () {
-        playSound(sClick);
-        $scope.victim_tmp = [];
-    }
-
-    $scope.changeLevel = function (n) {
-        playSound(sClick);
-        $scope.evacuationLevel = n;
-
-    }
-
 
     $scope.send = function () {
             playSound(sClick);
             var run = {}
-            run.LoPs = $scope.mlop.slice(0,$scope.mcp.length);
-            run.evacuationLevel = $scope.evacuationLevel;
-            run.exitBonus = $scope.exitBonus;
-            run.rescueOrder = $scope.victim_list;
-            run.showedUp = true;
-            run.started = true;
 
-            for(let i=0;i<$scope.mcp.length;i++){
-                if(i==0){
-                    run.showedUp = $scope.arrive[i];
-                }else {
-                    $scope.stiles[$scope.mcp[i] - 1].isDropTile = true;
-                    if ($scope.arrive[i]) {
-                        $scope.stiles[$scope.mcp[i] - 1].scoredItems[0].scored = true;
-                    }else{
-                        $scope.stiles[$scope.mcp[i] - 1].scoredItems[0].scored = false;
-                    }
-                }
-            }
-
-            run.tiles = $scope.stiles;
-            run.retired = false;
-            run.time = {
-                minutes: $scope.minutes,
-                seconds: $scope.seconds
-            };
-            run.status = 4;
-
-            run.manualFlag = true;
-            run.manual = {};
-            run.manual.gap = $scope.mgap;
-            run.manual.obstacle = $scope.mobstacle;
-            run.manual.speedbump = $scope.mspeedbump;
-            run.manual.intersection = $scope.mintersection;
-            run.manual.deadend = $scope.mdeadend;
-            run.manual.rampUP = $scope.rampUP;
-            run.manual.rampDOWN = $scope.rampDOWN;
-
+            run.status = 6;
 
             $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
                 playSound(sInfo);
                 $scope.go($scope.getParam('return'));
-                return;
-                Swal.fire({
-                    title: response.data.score + "  points",
-                    text: "Please write it down on the scoresheet.",
-                    type: 'success',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Wrote!'
-                }).then((result) => {
-                    playSound(sClick);
-                    $scope.go($scope.getParam('return'));
-                })
             }, function (response) {
                 console.log("Error: " + response.statusText);
                 playSound(sError);
@@ -497,10 +328,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             });
     };
 
-    $scope.changeExitBonus = function () {
-        playSound(sClick);
-        $scope.exitBonus = !$scope.exitBonus
-    }
 
     $scope.getParam = function (key) {
         var str = location.search.split("?");
@@ -529,99 +356,14 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         return false;
     }
 
-    var saveContent = [];
-    $scope.focused = function (name,i) {
-        if(i || i == 0){
-            if(!saveContent[name]) saveContent[name] = [];
-            saveContent[name][i] = $scope[name][i];
-            $scope[name][i] = null;
-        }else {
-            if($scope[name] >= 0) {
-                saveContent[name] = $scope[name];
-                $scope[name] = "";
-            }
-        }
-       fEnterChangeTab();
-    };
-
-    $scope.blured = function (name,i,flag) {
-        if(i || i == 0){
-            if($scope[name][i] == null){
-                $scope[name][i] = saveContent[name][i];
-                if($scope[name][i] == null && flag) {
-                    $scope[name].splice(i, 1);
-                    moveFocusNumber((i-1)*2+4);
-                }
-            }else if($scope[name][i] == 0 && flag){
-                $scope[name].splice(i, 1);
-            }
-        }else{
-            if($scope[name] == ""){
-                $scope[name] = saveContent[name];
-            }
-        }
-        fEnterChangeTab();
-    };
-
     $scope.arriveMark = function (i) {
         if($scope.arrive[i] == null) return saveContent['arrive'][i];
         return $scope.arrive[i];
     }
 
+
 }]);
 
-function moveFocusNumber(num){
-    var oObject = "#inputcontent :input:not(:button):not(:hidden)";
-    cNext = ":eq(" + num + ")";
-    $(oObject + cNext).focus();
-}
-
-function fEnterChangeTab(){
-    var oObject = "#inputcontent :input:not(:button):not(:hidden)";
-    $(oObject).off("keypress");
-    $(oObject).keypress(function(e) {
-        var c = e.which ? e.which : e.keyCode;
-        if (c == 13) {
-            var index = $(oObject).index(this);
-            var cNext = "";
-            var nLength = $(oObject).length;
-            for(i=index;i<nLength;i++){
-                cNext = e.shiftKey ? ":lt(" + index + "):last" : ":gt(" + index + "):first";
-                if ($(oObject + cNext).attr("readonly") == "readonly") {
-                    if (e.shiftKey) index--;
-                    else index++;
-                }
-                else if ($(oObject + cNext).prop("disabled") == true) {
-                    if (e.shiftKey) index--;
-                    else index++;
-                }
-                else break;
-            }
-            if (index == nLength - 1) {
-                if (! e.shiftKey){
-                    cNext = ":eq(1)";
-                }
-            }
-            if (index == 0) {
-                if (e.shiftKey) {
-                    cNext = ":eq(" + (nLength - 1) + ")";
-                }
-            }
-            $(oObject + cNext).focus();
-            e.preventDefault();
-        }
-    });
-}
-
-if(window.attachEvent){
-    window.attachEvent('onload',fEnterChangeTab);
-}
-else if (window.opera){
-    window.addEventListener('load',fEnterChangeTab,false);
-}
-else {
-    window.addEventListener('load',fEnterChangeTab,false);
-}
 
 let lastTouch = 0;
 document.addEventListener('touchend', event => {

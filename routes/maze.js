@@ -119,6 +119,20 @@ privateRouter.get('/input/:runid', async function (req, res, next) {
     })
 })
 
+privateRouter.get('/check/:runid', async function (req, res, next) {
+    const id = req.params.runid
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+    let rule = await ruleDetector.getRuleFromMazeRunId(id);
+    res.render('maze_check', {
+        id: id,
+        user: req.user,
+        rule: rule
+    })
+})
+
 privateRouter.get('/sign/:runid', async function (req, res) {
     const id = req.params.runid
 

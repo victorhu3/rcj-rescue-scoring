@@ -1,0 +1,23 @@
+//- -*- tab-width: 2 -*-
+extends includes/layout
+
+block vars
+  - var ngAppDef = 'Scanner'
+
+append scripts
+  script.
+    var mode = "#{mode}"
+  script(src='/javascripts/scanner.js')
+
+block location
+    a.breadcrumb-item(ng-click="go('/home')") Home
+    span.breadcrumb-item.active Scanner
+
+block content
+  .row
+    .col-md-1
+    .col-md-10(style="text-align:center;")
+        h1 Please scan the barcode
+        input.form-control#first(type='text', placeholder='', ng-model='data',ng-keydown="handleKeydown($event)")
+        img(src="/images/barcode.png" style="")
+        h2 [Mode] #{mode}
