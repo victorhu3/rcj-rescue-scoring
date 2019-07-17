@@ -14,8 +14,7 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
 
     var runListTimer = null;
     var runListChanged = false;
-    $scope.nowR = 4;
-    $scope.top3 = true;
+    $scope.nowR = 1;
     $scope.time = 10;
     var inter;
     launchSocketIo()
@@ -45,26 +44,21 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
     function updateTime(){
         $scope.time--;
         if($scope.time == 0){
-            if($scope.top3){
-                $scope.top3 = !$scope.top3;
-                $scope.time = 10;
-            }else{
-                if(league === "NL"){
-                    if($scope.nowR + 5 < $scope.RunsTop.length){
-                        $scope.nowR += 6;
-                        $scope.time = 10;
-                    }else{
-                        window.parent.iframeEnd();
-                        clearInterval(inter);
-                    }
+            if(league === "NL"){
+                if($scope.nowR + 5 < $scope.RunsTop.length){
+                    $scope.nowR += 6;
+                    $scope.time = 10;
                 }else{
-                    if($scope.nowR + 5 < $scope.RunsTop.length){
-                        $scope.nowR += 6;
-                        $scope.time = 10;
-                    }else{
-                        window.parent.iframeEnd();
-                        clearInterval(inter);
-                    }
+                    window.parent.iframeEnd();
+                    clearInterval(inter);
+                }
+            }else{
+                if($scope.nowR + 5 < $scope.RunsTop.length){
+                    $scope.nowR += 6;
+                    $scope.time = 10;
+                }else{
+                    $scope.nowR = 0;
+                    $scope.time = 10;
                 }
             }
         }
@@ -75,6 +69,8 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
     $scope.startSig = function(){
         inter = setInterval(updateTime, 1000);
     }
+
+    $scope.startSig();
 
 
     

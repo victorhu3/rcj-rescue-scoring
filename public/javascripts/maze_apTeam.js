@@ -177,7 +177,7 @@ app.controller("MazeTimetableController", ['$scope', '$http', '$translate','$win
                 console.log(mes);
 
 
-                swal({
+                /*swal({
                     title: "競技枠の選択を完了しました",
                     html: "<h5>競技開始時間をよく覚えてください．</h5>"+ mes +"<p>競技開始 ５分前には競技フィールド周辺にてお待ちください．競技開始時刻になったら，たとえチームメンバーがやって来ていなくても計時を開始します．</p>",
                     type: "success",
@@ -189,6 +189,25 @@ app.controller("MazeTimetableController", ['$scope', '$http', '$translate','$win
                         parentScope.reset();
                         parentScope.$apply();
                     }
+                })*/
+
+                swal({
+                    title: "Registration Completed!",
+                    html: "Please attach the wristband so that it does not be off. <br> Do not remove it until the tournament is over.",
+                    type: "success",
+                    showCancelButton: false,
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#ec6c62"
+                }).then((result) => {
+                    if (result.value) {
+                        $http.put("/api/teams/" + competitionId +
+                          "/" + teamId, {
+                            checkin: true
+                        }).then(function (response) {
+                            parentScope.reset();
+                            parentScope.$apply();
+                        });
+                    }
                 })
             }, function (response) {
                 console.log("Error: " + response.statusText);
@@ -197,12 +216,23 @@ app.controller("MazeTimetableController", ['$scope', '$http', '$translate','$win
         }
     }
 
-    swal({
+    /*swal({
         title: "競技枠の設定",
         html: "<p>スタッフの指示にしたがって入力してください</p>",
         type: "success",
         showCancelButton: false,
         confirmButtonText: "確認",
+        confirmButtonColor: "#ec6c62"
+    }).then((result) => {
+        playSound(sClick);
+    })*/
+
+    swal({
+        title: "Team check",
+        html: "<p>Document submitted?  Team members are correct?</p>",
+        type: "success",
+        showCancelButton: false,
+        confirmButtonText: "OK",
         confirmButtonColor: "#ec6c62"
     }).then((result) => {
         playSound(sClick);

@@ -2,6 +2,9 @@ var app = angular.module("MazeScore", ['ngTouch','datatables', 'pascalprecht.tra
 app.controller("MazeScoreController", function ($scope, $http) {
     console.log(UseRunsNumber);
     $scope.competitionId = competitionId;
+
+    $scope.showTeam = true;
+
     $scope.sortOrder = ['-score','time.minutes*60+time.seconds','-foundVictims','LoPs'];
     $scope.go = function (path) {
         window.location = path
@@ -24,6 +27,10 @@ app.controller("MazeScoreController", function ($scope, $http) {
     /*if (get['autoscroll'] != undefined) {
         scrollpage()
     }*/
+
+    $scope.comment = [];
+    $scope.comment.top = "";
+    $scope.comment.bottom = "The scores are based on the sum of all the run (the minimum score is not subtracted yet).";
 
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
@@ -91,7 +98,8 @@ app.controller("MazeScoreController", function ($scope, $http) {
                                 team: {
                                     name: run.team.name,
                                     code: run.teamCode,
-                                    name_only: run.teamName
+                                    name_only: run.teamName,
+                                    teamCode: run.team.teamCode
                                 },
                                 runs: [run]
                             }
@@ -119,7 +127,8 @@ app.controller("MazeScoreController", function ($scope, $http) {
                     time: teamRun.sumTime,
                     lops: teamRun.sumLoPs,
                     exit: teamRun.sumExit,
-                    found: teamRun.sumFound
+                    found: teamRun.sumFound,
+                    teamCode: teamRun.team.teamCode
                 })
             }
             $scope.mazeRunsTop.sort(sortRuns)

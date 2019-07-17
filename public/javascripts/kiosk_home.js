@@ -65,6 +65,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
         }
         $scope.code = "";
+
+        $scope.setMode("Order");
     }
 
     $scope.codeAst = function(){

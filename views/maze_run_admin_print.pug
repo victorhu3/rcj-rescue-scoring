@@ -1,7 +1,7 @@
 //- -*- tab-width: 2 -*-
 html(ng-app="RunAdmin")
   head
-    title Rescue Line Runs Print
+    title Rescue Maze Runs Print
     script.
       var runId = "#{id}"
 
@@ -42,16 +42,16 @@ html(ng-app="RunAdmin")
 
   body(ng-controller="RunAdminController")
     .row
-      .col-md-10(style="text-align:center;")
-        h1 {{competition.name}}
-      .col-md-2
+      .col-10(style="text-align:center;")
+        h1 {{topComment}}
+      .col-2
         img(ng-src="{{competition.logo}}" style="width:100%;")
     .row
-      .col-md-12
+      .col-12
         .refine.no_print
           .card.border-dark.mb-3(style='width:100%;')
             .card-header.bg-transparent.border-dark.fa-2x
-              i.fas.fa-search(aria-hidden='true') {{'line.competition.refine.filter' | translate}}
+              i.fas.fa-cog(aria-hidden='true') Config
             .card-body.text-dark
               h6.card-title {{'line.competition.refine.round' | translate}}
               span(ng-repeat='(key, value) in Rrounds track by key')
@@ -72,6 +72,10 @@ html(ng-app="RunAdmin")
               h6.card-title Display items
                 br
                 br
+                input(type='checkbox' ng-model='showTeam' id="showTeam")
+                label.checkbox(for="showTeam") Team
+                input(type='checkbox' ng-model='showCode' id="showCode")
+                label.checkbox(for="showCode") Code
                 input(type='checkbox' ng-model='showField' id="showField")
                 label.checkbox(for="showField") Field
                 input(type='checkbox' ng-model='showScore' id="showScore")
@@ -84,6 +88,12 @@ html(ng-app="RunAdmin")
                 label.checkbox(for="showVictim") Victim
                 input(type='checkbox' ng-model='showExit' id="showExit")
                 label.checkbox(for="showExit") Exit
+              hr
+              h6.card-title Comment
+                .input-group
+                  span#basic-addon1.input-group-addon
+                    i.fas.fa-pen(aria-hidden='true')
+                  input.form-control(type='text', placeholder='', aria-label='Username', aria-describedby='basic-addon1' ng-model='topComment')
 
         center
           .loader
@@ -94,7 +104,8 @@ html(ng-app="RunAdmin")
             tr
               th {{"common.starttime" | translate}}
               th {{"common.round" | translate}}
-              th {{"common.team" | translate}}
+              th(ng-if="showCode") Team code
+              th(ng-if="showTeam") {{"common.team" | translate}}
               th(ng-if="showField") {{"common.field" | translate}}
               th(ng-if="showScore") {{"common.score" | translate}}
               th(ng-if="showTime") {{"common.time" | translate}}
@@ -102,10 +113,11 @@ html(ng-app="RunAdmin")
               th(ng-if="showVictim") {{'maze.score.found' | translate}}
               th(ng-if="showExit") {{'maze.score.exit' | translate}}
           tbody
-            tr(ng-repeat='run in runs | filter:list_filter | orderBy:"[startTime,round.name,field.name,team.name]"' runs-read-finished='')
+            tr(ng-repeat='run in runs | filter:list_filter | orderBy:"[startTime,round.name,team.name]"' runs-read-finished='')
               td(ng-bind='run.startTime | date:"dd / HH:mm"')
               td(ng-bind='run.round.name' )
-              td(ng-bind='run.team.name')
+              td(ng-bind='run.team.teamCode' ng-if="showCode")
+              td(ng-bind='run.team.name' ng-if="showTeam")
               td(ng-bind='run.field.name' ng-if="showField")
               td(ng-bind='run.score' ng-if="showScore")
               td(ng-bind="run.time.minutes*60*1000+run.time.seconds*1000 | date:'mm:ss'"  ng-if="showTime")

@@ -545,6 +545,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     };
 
     $scope.blured = function (name,i,flag) {
+
         if(i || i == 0){
             if($scope[name][i] == null){
                 $scope[name][i] = saveContent[name][i];
@@ -557,7 +558,11 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
         }else{
             if($scope[name] == ""){
-                $scope[name] = saveContent[name];
+                if(typeof($scope[name]) == 'number'){
+                    console.log("NUMBER");
+                }else{
+                    $scope[name] = saveContent[name];
+                }
             }
         }
         fEnterChangeTab();

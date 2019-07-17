@@ -27,6 +27,7 @@ block content
                 th {{"common.team" | translate}}
                 th {{"common.league" | translate}}
                 th {{"common.passcode" | translate}}
+                th Country
                 th {{"common.operation" | translate}}
         tbody
             tr
@@ -36,6 +37,8 @@ block content
                     select(ng-model='teamLeague' ng-options='league for league in leagues' style="width:100%;")
                 td
                     input(ng-model='passcode' style="width:100px;")
+                td
+                    input(ng-model='country' style="width:100px;")
                 td
                     button(ng-click='addTeam()' style="width:100%;") {{"admin.teams.add" | translate}}
       a(ng-href='/admin/{{competitionId}}/teams/bulk') {{"admin.teams.bulk" | translate}}
@@ -51,15 +54,19 @@ block content
               th
               th {{"common.team" | translate}}
               th {{"common.league" | translate}}
+              th Team Code
               th {{"common.operation" | translate}}
         tbody
-            tr(ng-repeat='team in teams')
+            tr(ng-repeat='team in teams | orderBy:"[name]"')
               td
                 input(type='checkbox' ng-model='team.checked' style="display:initial;")
               td(ng-bind='team.name')
               td(ng-bind='team.league')
+              td(ng-bind='team.teamCode')
               td
-                .dropdown
+                  input(ng-model='teamCode[team._id]' style="width:100px;")
+                  button(ng-click='teamCodeSubmit(team._id)' style="width:100%;") Submit
+                  .dropdown
                   button#dropdownMenu.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') {{"common.action" | translate}}
                   .dropdown-menu(aria-labelledby='dropdownMenu')
                     button.dropdown-item(type='button' ng-click="set_kiosk(team)") Kioskに競技枠設定画面を表示

@@ -47,6 +47,17 @@ router.get('/:competitionid/teams', function (req, res, next) {
   else res.render('access_denied', {user: req.user})
 })
 
+router.get('/:competitionid/checkin', function (req, res, next) {
+  const id = req.params.competitionid
+
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('team_checkin', {id: id, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
+
 router.get('/:competitionid/teams/bulk', function (req, res, next) {
   const id = req.params.competitionid
   

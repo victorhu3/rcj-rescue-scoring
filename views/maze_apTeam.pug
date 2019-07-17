@@ -33,7 +33,9 @@ html(ng-app="MazeTimetable")
     include ./includes/common_component
     script(src='/javascripts/maze_apTeam.js')
     script(src="/javascripts/translate_config.js")
+    script(src='/components/lightbox2/dist/js/lightbox.min.js')
     link(href="/stylesheets/fredrik.css" rel="stylesheet")
+    link(rel='stylesheet',href='/components/lightbox2/dist/css/lightbox.min.css')
 
 
     meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0")
@@ -42,9 +44,30 @@ html(ng-app="MazeTimetable")
     nav.navbar(style='background-color: #460e44; color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%')
         .col-6(style="font-size:25px;") {{competition.name}}
         .col-6(style="text-align:right;")
-            button(ng-show= "selected" ng-click="decision()" class='btn btn-danger') 競技枠を決定
-            button(ng-show= "!selected" ng-click="reset()" class='btn btn-danger') 中止
+            button(ng-show= "selected" ng-click="decision()" class='btn btn-danger') Complete [{{selected}}]
+            button(ng-show= "!selected" ng-click="reset()" class='btn btn-danger') Exit
     .container.nav-cont
+        h1 Team:    {{team.name}}
+            h2 Country: {{team.country}}
+            .row
+                .col-md-6
+                    .card
+                        h3.card-header
+                            i.far.fa-images(aria-hidden='true') {{'interview.me_pic' | translate}}
+                        .card-body
+                            div
+                                a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/teams/pic/{{competitionId}}/{{teamId}}/member" data-lightbox="image")
+                                    img.img-thumbnail(style="max-width: 100%;height: auto;margin-bottom:20px;" ng-src="/api/teams/pic/{{competitionId}}/{{teamId}}/member")
+                .col-md-6
+                    .card
+                        h3.card-header
+                            i.far.fa-images(aria-hidden='true') {{'interview.ma_pic' | translate}}
+                        .card-body
+                            div
+                                a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/teams/pic/{{competitionId}}/{{teamId}}/machine" data-lightbox="image")
+                                    img.img-thumbnail(style="max-width: 100%;height: auto;margin-bottom:20px;" ng-src="/api/teams/pic/{{competitionId}}/{{teamId}}/machine")
+            br
+            h1 Selected: {{selected}}
         //div(style='text-align: center;' ng-if='!checked')
           
           br
@@ -89,7 +112,7 @@ html(ng-app="MazeTimetable")
           p(ng-show='!(checkTeam && checkMember && checkMachine)') {{'line.judge.tap_red' | translate}}
           button.btn.btn-success(type='button', ng-click='infochecked()', ng-disabled='!(checkTeam  && checkMember && checkMachine)')
             i.fas.fa-check-circle.fa-2x(aria-hidden='true')  {{'line.judge.confirm' | translate}}
-        div()
+        //div()
             h1 競技枠選択 - - {{team.name}}
             p リーグ：{{team.league}}
             br

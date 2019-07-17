@@ -104,6 +104,46 @@ privateRouter.get('/code/:teamId/:code', function (req, res, next) {
       })
 })
 
+adminRouter.get('/set/:teamId/:teamCode', function (req, res, next) {
+    const team = req.params.teamId;
+    const code = req.params.teamCode;
+
+    if (!ObjectId.isValid(team)) {
+        return next()
+    }
+
+    competitiondb.team.findById(team)
+      .exec(function (err, dbTeam) {
+            if (err) {
+                logger.error(err)
+                res.status(400).send({
+                    msg: "Could not get user",
+                    err: err.message
+                })
+            } else if (dbTeam) {
+                dbTeam.teamCode = code;
+
+                dbTeam.save(function (err) {
+                    if (err) {
+                        logger.error(err)
+                        return res.status(400).send({
+                            err: err.message,
+                            msg: "Could not save changes"
+                        })
+                    } else {
+                        res.status(200).send({
+                            msg: "Saved changes"
+                        })
+                    }
+                })
+
+            }
+        }
+
+      )
+
+})
+
 publicRouter.get('/:teamid', function (req, res, next) {
     var id = req.params.teamid
 
@@ -112,7 +152,7 @@ publicRouter.get('/:teamid', function (req, res, next) {
     }
     competitiondb.team.findOne({
             _id: id
-        },'_id inspected name league competition')
+        },'_id inspected name league competition checkin country')
         .exec(function (err, dbTeam) {
             if (err) {
                 logger.error(err)
@@ -158,6 +198,7 @@ privateRouter.put('/:competitionid/:teamid', function (req, res, next) {
                     if (team.comment != null) dbTeam.comment = team.comment
                     if (team.inspected != null) dbTeam.inspected = team.inspected
                     if (team.docPublic != null) dbTeam.docPublic = team.docPublic
+                    if (team.checkin != null) dbTeam.checkin = team.checkin;
 
                     dbTeam.save(function (err) {
                         if (err) {
@@ -252,45 +293,71 @@ adminRouter.post('/', function (req, res) {
     if(team.code){
         code = team.code;
     }
-    var newTeam = new competitiondb.team({
-        name: team.name,
-        league: team.league,
-        competition: team.competition,
-        code: code
-    })
 
-    newTeam.save(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Error saving team",
-                err: err.message
-            })
-        } else {
-            res.location("/api/teams/" + data._id)
-            res.status(201).send({
-                msg: "New team has been saved",
-                id: data._id
-            })
-        }
-    })
+    let country = ""
+    if(team.country){
+        country = team.country;
+    }
+
+
 
     competitiondb.competition.findOne({
-            _id: team.competition
-        })
-        .exec(function (err, dbComp) {
-                if (err) {
-                    logger.error(err)
-                } else if (dbComp) {
-                    var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name);
-                    mkdirp(path, function (err) {
-                        if (err) logger.error(err);
-                        else logger.info(path);
-                    });
-                }
-            }
+        _id: team.competition
+    })
+      .exec(function (err, dbComp) {
+            if (err) {
+                logger.error(err)
+            } else if (dbComp) {
+                var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name);
+                mkdirp(path, function (err) {
+                    if (err) logger.error(err);
+                    else logger.info(path);
+                });
 
-        )
+                let inspected = false;
+                if(isExistFile(__dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name) + "/picmachine.jpg")){
+                    inspected = true;
+                }
+                if(isExistFile(__dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name) + "/picmachine.png")){
+                    inspected = true;
+                }
+                if(isExistFile(__dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name) + "/picmachine.jpeg")){
+                    inspected = true;
+                }
+
+                let newTeam = new competitiondb.team({
+                    name: team.name,
+                    league: team.league,
+                    competition: team.competition,
+                    code: code,
+                    country: country,
+                    inspected: inspected
+                });
+
+                newTeam.save(function (err, data) {
+                    if (err) {
+                        logger.error(err)
+                        res.status(400).send({
+                            msg: "Error saving team",
+                            err: err.message
+                        })
+                    } else {
+                        res.location("/api/teams/" + data._id)
+                        res.status(201).send({
+                            msg: "New team has been saved",
+                            id: data._id
+                        })
+                    }
+                })
+
+            }
+        }
+
+      )
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamAdminController", function ($scope, $http) {
+var app = angular.module("TeamCheckin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamCheckinController", function ($scope, $http) {
     $scope.competitionId = competitionId
 
     updateTeamList()
@@ -11,8 +11,6 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
         $scope.leagues = response.data
         console.log($scope.leagues)
     })
-
-    $scope.teamCode = [];
 
     $scope.addTeam = function () {
         var team = {
@@ -30,15 +28,6 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             console.log(error)
         })
     };
-
-    $scope.teamCodeSubmit = function(id) {
-        $http.get("/api/teams/set/" + id + "/" + Number($scope.teamCode[id])).then(function (response) {
-            console.log(response)
-            updateTeamList()
-        }, function (error) {
-            console.log(error)
-        })
-    }
 
     $scope.selectAll = function () {
         angular.forEach($scope.teams, function (team) {
@@ -117,5 +106,10 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
     }
     $scope.go = function (path) {
         window.location = path
+    }
+
+    $scope.list_filter = function (value, index, array) {
+        return (showAllRounds || $scope.Rrounds[value.round.name]) &&
+          (showAllFields || $scope.Rfields[value.field.name]) && (showAllTeams || ~value.team.name.indexOf($scope.teamName))
     }
 })

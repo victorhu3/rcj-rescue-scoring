@@ -59,6 +59,8 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 $scope.tiles[response.data.tiles[i].x + ',' +
                 response.data.tiles[i].y + ',' +
                 response.data.tiles[i].z] = response.data.tiles[i];
+
+                console.log(response.data.tiles[i].index)
             }
             $scope.competitionId = response.data.competition;
             $http.get("/api/competitions/" +
@@ -75,6 +77,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             $scope.finished = response.data.finished;
             $scope.liveV = response.data.victims.live;
             $scope.deadV = response.data.victims.dead;
+
 
         }, function (response) {
             console.log("Error: " + response.statusText);
@@ -202,6 +205,13 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         var victims = {};
         victims.live = $scope.liveV;
         victims.dead = $scope.deadV;
+
+        let saveTile = [];
+
+        console.log("SAVE MAP");
+        for(let i=0;i<$scope.tiles.length;i++){
+            console.log($scope.tiles[i]);
+        }
 
         var map = {
             competition: $scope.competitionId,
@@ -444,6 +454,8 @@ app.directive('tile4image', function () {
             };
 
             scope.tileNumber = function (tile) {
+                if(tile.last2) console.log(tile);
+                //console.log(tile.last2);
                 let txt = "";
                 if(!tile.items.noCheckPoint && tile.items.obstacles==0 && !tile.items.rampPoints && tile.items.speedbumps==0 && tile.tileType.gaps==0 && tile.tileType.intersections==0){
                     for(let i=0,l=tile.index.length;i<l;i++){

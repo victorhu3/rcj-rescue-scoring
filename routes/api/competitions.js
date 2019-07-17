@@ -83,6 +83,7 @@ publicRouter.get('/leagues/:league', async function (req, res, next) {
     }
 })
 
+
 publicRouter.get('/:competition', function (req, res, next) {
     const id = req.params.competition;
 
@@ -175,7 +176,7 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id
-    },'_id name competition league inspected interviewer').lean().exec(function (err, data) {
+    },'_id name competition league inspected interviewer country checkin teamCode').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({
@@ -195,6 +196,8 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
         }
     })
 })
+
+
 
 publicRouter.get('/:competition/teams/:teamid', function (req, res, next) {
     const id = req.params.competition
@@ -245,7 +248,7 @@ publicRouter.get('/:competition/:league/teams', function (req, res, next) {
     competitiondb.team.find({
         competition: id,
         league: new RegExp(".*" + league + ".*" , "i")
-    },'_id name competition league inspected').lean().exec(function (err, data) {
+    },'_id name competition league inspected country checkin').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({

@@ -4,6 +4,9 @@ var app = angular.module(
 ).controller('RunAdminController', ['$scope', '$http', '$log', '$location', 'Upload',
   function ($scope, $http, $log, $location, Upload) {
         $scope.competitionId = competitionId
+        $scope.showTeam = true;
+
+
 
         updateRunList();
         launchSocketIo();
@@ -41,6 +44,7 @@ var app = angular.module(
         }
         $http.get("/api/competitions/" + competitionId).then(function (response) {
             $scope.competition = response.data
+            $scope.topComment = $scope.competition.name;
         })
 
         $http.get("/api/competitions/" + competitionId +

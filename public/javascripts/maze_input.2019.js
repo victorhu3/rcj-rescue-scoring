@@ -228,8 +228,14 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     };
 
     $scope.blured = function (name) {
+        console.log($scope[name]);
         if($scope[name] == ""){
-            $scope[name] = saveContent[name];
+            if(typeof($scope[name]) == 'number'){
+                console.log("NUMBER");
+            }else{
+                $scope[name] = saveContent[name];
+            }
+
         }
     };
 

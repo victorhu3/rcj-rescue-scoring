@@ -12,12 +12,12 @@ html(ng-app="ddApp")
 
 
 
-    body(ng-controller="ddController" style="width: 100%;height: 100%;background-color:#eee;overflow:scroll;")
+    body(ng-controller="ddController" style="width: 100%;height: 100%;background-color:#eee;overflow:scroll;" ng-style="{transform: !flag_frame? 'rotate(180deg)' : ''}")
         nav.navbar(style='background-color: #2980b9; color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%' ng-if='!flag_frame')
             .col-6
                 li.navbar-brand {{competition.name}}
             .col-6(style="text-align:right;")
-                button(ng-click="reset()" class='btn btn-danger' style="") 終了
+                button(ng-click="reset()" class='btn btn-danger' style="") Exit
         div(style="position:fixed;left:0;top:0;width:100%;height:100%;overflow: auto;scrool:yes;-webkit-overflow-scrolling:touch;" ng-if='flag_frame')
             iframe( ng-src='{{frameSrc}}', style='width:100%; height:100%;border:none;')
         div(ng-if='!flag_frame')
@@ -37,15 +37,15 @@ html(ng-app="ddApp")
                         br
                         i.fas.fa-spinner.fa-spin.fa-4x
                     div(style="text-align:center;" ng-if="!teamLeague")
-                        h1 あなたのチームが所属するリーグを選択してください．
-                        h3 Please select the league to which your team belongs.
+                        //h1 あなたのチームが所属するリーグを選択してください．
+                        h1 Please select the league which your team belongs.
                         hr
                         .row
                             div(ng-repeat="league in leagues" class="col-md-{{12/leagues.length}}")
-                                button(ng-click="setLeague(league.id)" class='btn btn-outline-success btn-lg btn-block' style="height:60%;font-size:30px;") {{league.name}}
+                                button(ng-click="setLeague(league.id)" class='btn btn-outline-success btn-lg btn-block' style="height:600px;font-size:30px;") {{league.name}}
                     div(style="text-align:center;" ng-if="teamLeague && !selectTeamId")
-                        h1 あなたのチームを選択してください．
-                        h3 Please select your team.
+                        //h1 あなたのチームを選択してください．
+                        h1 Please select your team.
                         hr
                         .row
                             div(ng-repeat="team in teams | orderBy:'name'" class="col-md-4")
