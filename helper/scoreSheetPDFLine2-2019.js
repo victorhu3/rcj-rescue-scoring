@@ -26,7 +26,7 @@ function drawRun(doc, config, scoringRun) {
 
   //Draw competition name & logo
   pdf.drawTextWithAlign(doc,90,15,scoringRun.competition.name + "  Scoresheet",20,"black",660,"center");
-  pdf.drawImage(doc,730,5,"public/images/2019logo.png",100,30,"right");
+  pdf.drawImage(doc,730,5,"public/images/logo.png",100,30,"right");
 
   //Draw run QR code
   doc.image(qr.imageSync("L;" + scoringRun._id.toString(), {margin: 2}), 10, 10, {width: 65});

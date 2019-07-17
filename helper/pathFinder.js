@@ -3,11 +3,13 @@ var logger = require('../config/logger').mainLogger
 module.exports.findPath = function (map) {
   var tiles = []
   for (var i = 0; i < map.tiles.length; i++) {
-    var tile = map.tiles[i]
-    tile.index = []
-    tile.next = []
+    var tile = map.tiles[i];
+    tile.index = [];
+    tile.next = [];
+    tile.last2 = false;
     tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile
   }
+  console.log(tiles);
   
   var startTile = tiles[map.startTile.x + ',' + map.startTile.y + ',' +
                         map.startTile.z]
