@@ -79,8 +79,11 @@ function drawRun(doc, config, scoringRun) {
 }
 
 module.exports.generateScoreSheet = async function (res, rounds) {
-  let tmp = await guessLanguagePromise(rounds[0].competition.name);
-  let font = getFontPath(tmp);
+  let font = null;
+  if(rounds.length > 0){
+    let tmp = await guessLanguagePromise(rounds[0].competition.name);
+    font = getFontPath(tmp);
+  }
 
   let doc = new PDFDocument({autoFirstPage: false});
 
