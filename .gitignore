@@ -4,6 +4,7 @@ logs/*
 !.gitkeep
 public/components/*
 node_modules/*
+fonts/*
 
 .idea/
 

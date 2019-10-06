@@ -3,7 +3,8 @@ const pdf = require('./scoreSheetPDFUtil');
 const qr = require('qr-image');
 const fs = require('fs');
 const logger = require('../config/logger').mainLogger;
-
+const guessLanguage = require('guessLanguage').guessLanguage;
+const glob = require("glob");
 /**
  * Defines some important numbers for the placement of different objects in the scoresheet.
  */
@@ -18,6 +19,22 @@ function isExistFile(file) {
   } catch(err) {
     if(err.code === 'ENOENT') return false
   }
+}
+
+function guessLanguagePromise(text){
+  return new Promise((resolve) => {
+    guessLanguage.name(text,(name) => {
+      return resolve(name);
+    });
+  });
+}
+
+function getFontPath(lang){
+  let list = glob.sync(__dirname + '/../fonts/' + lang + '*');
+  if(list.length > 0 ) {
+    return list[0];
+  }
+  return null;
 }
 
 function drawRun(doc, config, scoringRun) {
@@ -61,13 +78,15 @@ function drawRun(doc, config, scoringRun) {
   return;
 }
 
-module.exports.generateScoreSheet = function (res, rounds) {
+module.exports.generateScoreSheet = async function (res, rounds) {
+  let tmp = await guessLanguagePromise(rounds[0].competition.name);
+  let font = getFontPath(tmp);
+
   let doc = new PDFDocument({autoFirstPage: false});
 
   doc.pipe(res);
 
-  //doc.registerFont('Cardo', 'helper/NotoSans-Regular.ttf');
-  //doc.font('Cardo');
+  if(font) doc.font(font);
 
   for (let i = 0; i < rounds.length; i++) {
     doc.addPage({

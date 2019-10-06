@@ -9,11 +9,10 @@ module.exports.findPath = function (map) {
     tile.last2 = false;
     tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile
   }
-  console.log(tiles);
-  
+
   var startTile = tiles[map.startTile.x + ',' + map.startTile.y + ',' +
                         map.startTile.z]
-  
+
   var startDir = ""
   var startPaths = startTile.tileType.paths
   Object.keys(startPaths).forEach(function (dir, index) {
