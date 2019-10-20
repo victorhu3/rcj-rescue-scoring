@@ -104,6 +104,11 @@ adminRouter.post('/', function (req, res) {
       y: map.startTile.y,
       z: map.startTile.z
     },
+    startTile2       : {
+      x: map.startTile2.x,
+      y: map.startTile2.y,
+      z: map.startTile2.z
+    },
     numberOfDropTiles: map.numberOfDropTiles,
     finished         : map.finished,
     victims          : map.victims

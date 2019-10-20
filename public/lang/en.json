@@ -199,6 +199,7 @@
             "reSend": "ReSend",
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "To delete a rescued victim, double click or swipe left (Mobile Device)",
+            "noShow": "Start timer when team no show",
             "js": {
                 "score_element": "Place checkpoint markers on tiles without scoring elements (rule 3.3.5)",
                 "cantvisit": "Cannot place checkpoint markers on tile that robot can't visit.",
@@ -332,6 +333,7 @@
             "handover": "@:line.judge.handover",
             "reSend": "@:line.judge.reSend",
             "misidentification": "@:maze.view.misidentification",
+            "noShow": "@:line.judge.noShow",
             "js": {
                 "timeup": {
                     "title": "@:line.judge.js.timeup.title",
@@ -495,9 +497,14 @@
             "bottom": "Bottom",
             "nothing": "Nothing",
             "noStart": "No start tile is defined!",
-            "start": "Is start",
+            "start": "Is the start tile?",
+            "start2": "Is the re-start tile after evacuation zone?",
             "export": "Export this map to file",
-            "import": "Import map from file"
+            "import": "Import map from file",
+            "liveVictim": "Number of the live victims",
+            "deadVictim" : "Number of the dead victims",
+            "rampPoint": "Ramp points",
+            "setCheckpoint": "Set this tile as a checkpoint"
         },
         "teamBulk": {
             "title": "Teams Bulk Registration",

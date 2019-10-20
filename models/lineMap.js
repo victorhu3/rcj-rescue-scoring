@@ -65,26 +65,29 @@ const lineMapSchema = new Schema({
         default: false,
         required: true,
         set: v => v === '' ? false : v
-      },
-      noCheckPoint: {
-        type: Boolean,
-        default: false,
-        required: true,
-        set: v => v === '' ? false : v
       }
     },
     index    : {type: [Number], min: 0},
     next     : {type: [String]},
     levelUp  : {type: String, enum: ["top", "right", "bottom", "left"]},
     levelDown: {type: String, enum: ["top", "right", "bottom", "left"]},
-    last2    : {type: Boolean, default: false}
+    checkPoint: {
+      type: Boolean,
+      default: false,
+      required: true,
+      set: v => v === '' ? false : v
+    }
   }],
   startTile        : {
-    x: {type: Number, integer: true, required: true, min: 0},
-    y: {type: Number, integer: true, required: true, min: 0},
-    z: {type: Number, integer: true, required: true, min: 0}
+    x: {type: Number, integer: true, required: true, min: -1},
+    y: {type: Number, integer: true, required: true, min: -1},
+    z: {type: Number, integer: true, required: true, min: -1}
   },
-  numberOfDropTiles: {type: Number, required: true, min: 0},
+  startTile2       : {
+    x: {type: Number, integer: true, required: true, min: -1},
+    y: {type: Number, integer: true, required: true, min: -1},
+    z: {type: Number, integer: true, required: true, min: -1}
+  },
   finished         : {type: Boolean, default: false, set: v => v === '' ? false : v},
   victims: {
       live:{
@@ -92,7 +95,7 @@ const lineMapSchema = new Schema({
           integer: true,
           min: 0,
           max: 100,
-          default: 0,
+          default: 2,
           set: v => v === '' ? 0 : v
       },
       dead:{
@@ -100,27 +103,27 @@ const lineMapSchema = new Schema({
           integer: true,
           min: 0,
           max: 100,
-          default: 0,
+          default: 1,
           set: v => v === '' ? 0 : v
       }
   }
 });
 
 lineMapSchema.pre('save', function (next) {
-  var self = this
+  let self = this;
   
   self.populate('tiles.tileType', function (err, populatedMap) {
     if (err) {
       return next(err)
     } else {
-      self = populatedMap
+      self = populatedMap;
       //logger.debug(self)
       
       if (self.finished) {
         try {
           pathFinder.findPath(self)
         } catch (err) {
-          logger.error(err)
+          logger.error(err);
           self.finished = false
         }
       }
@@ -135,7 +138,7 @@ lineMapSchema.pre('save', function (next) {
           } else if (dbMap) {
             err = new Error('Map "' + dbMap.name +
                             '" already exists in competition "' +
-                            dbMap.competition.name + '"!')
+                            dbMap.competition.name + '"!');
             return next(err)
           } else {
             return next()
@@ -150,7 +153,7 @@ lineMapSchema.pre('save', function (next) {
             return next(err)
           } else if (dbRun) {
             err = new Error('Map "' + self.name +
-                            '" used in started runs, cannot modify!')
+                            '" used in started runs, cannot modify!');
             return next(err)
           } else {
             return next()
@@ -159,7 +162,7 @@ lineMapSchema.pre('save', function (next) {
       }
     }
   })
-})
+});
 
 const tileSetSchema = new Schema({
   name : {type: String, required: true, unique: true},
@@ -167,7 +170,7 @@ const tileSetSchema = new Schema({
     tileType: {type: ObjectId, ref: 'TileType', required: true},
     count   : {type: Number, integer: true, default: 1}
   }]
-})
+});
 
 const tileTypeSchema = new Schema({
   image        : {type: String, required: true, unique: true},
@@ -191,20 +194,20 @@ const tileTypeSchema = new Schema({
     "bottom": {type: String, enum: ["top", "right", "bottom", "left"]},
     "left"  : {type: String, enum: ["top", "right", "bottom", "left"]}
   }
-})
+});
 
-lineMapSchema.plugin(mongooseInteger)
-tileSetSchema.plugin(mongooseInteger)
-tileTypeSchema.plugin(mongooseInteger)
+lineMapSchema.plugin(mongooseInteger);
+tileSetSchema.plugin(mongooseInteger);
+tileTypeSchema.plugin(mongooseInteger);
 
-const LineMap = mongoose.model('LineMap', lineMapSchema)
-const TileSet = mongoose.model('TileSet', tileSetSchema)
-const TileType = mongoose.model('TileType', tileTypeSchema)
+const LineMap = mongoose.model('LineMap', lineMapSchema);
+const TileSet = mongoose.model('TileSet', tileSetSchema);
+const TileType = mongoose.model('TileType', tileTypeSchema);
 
 /** Mongoose model {@link http://mongoosejs.com/docs/models.html} */
-module.exports.lineMap = LineMap
-module.exports.tileSet = TileSet
-module.exports.tileType = TileType
+module.exports.lineMap = LineMap;
+module.exports.tileSet = TileSet;
+module.exports.tileType = TileType;
 
 const tileTypes = [
   {
@@ -918,8 +921,51 @@ const tileTypes = [
       "left" : "right"
     },
     "_id"          : "58cfd6549792e9313b1610de"
+  },
+  {
+    "image"        : "seesaw.png",
+    "gaps"         : 0,
+    "intersections": 1,
+    "paths"        : {
+      "right": "left",
+      "left" : "right"
+    },
+    "_id"          : "58cfd6549792e9313b1610df"
+  },
+  {
+    "image"        : "exit.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "paths"        : {
+      "bottom": "top"
+    },
+    "_id"          : "58cfd6549792e9313b1610e0"
+  },
+  {
+    "image"        : "ev1.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "paths"        : {
+    },
+    "_id"          : "58cfd6549792e9313b1610e1"
+  },
+  {
+    "image"        : "ev2.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "paths"        : {
+    },
+    "_id"          : "58cfd6549792e9313b1610e2"
+  },
+  {
+    "image"        : "ev3.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "paths"        : {
+    },
+    "_id"          : "58cfd6549792e9313b1610e3"
   }
-]
+];
 
 for (var i in tileTypes) {
   const tileType = new TileType(tileTypes[i])
@@ -953,9 +999,9 @@ for (var i in tileTypes) {
 }
 
 
-let defaultTileSet = []
+let defaultTileSet = [];
 for (var i in tileTypes) {
-  const tileType = new TileType(tileTypes[i])
+  const tileType = new TileType(tileTypes[i]);
   defaultTileSet.push(
     {
       'tileType': tileType._id,
@@ -964,7 +1010,7 @@ for (var i in tileTypes) {
   )
 }
 
-TileSet.findById('5c19d2439590f2d68b15b2ff', function (err, dbTileSet) {
+TileSet.findById('5c19d2439590f2d68b15b300', function (err, dbTileSet) {
   if(dbTileSet){
     dbTileSet.tiles = defaultTileSet;
     dbTileSet.save(function (err) {
@@ -974,170 +1020,15 @@ TileSet.findById('5c19d2439590f2d68b15b2ff', function (err, dbTileSet) {
     })
   }else{
     let newTileSet = new TileSet({
-      '_id': '5c19d2439590f2d68b15b2ff',
-      'name': 'FULL',
+      '_id': '5c19d2439590f2d68b15b300',
+      'name': 'FULL(2020)',
       'tiles': defaultTileSet
-    })
+    });
     newTileSet.save(function (err) {
       if (err) {
         logger.error(err)
       }
     })
   }
-})
+});
 
-pathFinder.findPath({
-    name     : "Test2",
-    height   : 1,
-    width    : 2,
-    length   : 3,
-    tiles    : [{
-      x       : 1,
-      y       : 1,
-      z       : 1,
-      rot     : 0,
-      items   : {
-        obstacles : 2,
-        speedbumps: 3
-      },
-      tileType: {
-        gaps         : 0,
-        intersections: 0,
-        paths        : {
-          "right": "left",
-          "left" : "right"
-        }
-      }
-    },
-      {
-        x       : 2,
-        y       : 1,
-        z       : 1,
-        rot     : 0,
-        items   : {
-          obstacles : 2,
-          speedbumps: 3
-        },
-        tileType: {
-          gaps         : 0,
-          intersections: 0,
-          paths        : {
-            "right": "bottom",
-            "left" : "right"
-          }
-        }
-      },
-      {
-        x       : 3,
-        y       : 1,
-        z       : 1,
-        rot     : 0,
-        items   : {
-          obstacles : 1,
-          speedbumps: 1
-        },
-        tileType: {
-          gaps         : 0,
-          intersections: 0,
-          paths        : {
-            "bottom": "left",
-            "left"  : "bottom"
-          }
-        }
-      },
-      {
-        x       : 3,
-        y       : 2,
-        z       : 1,
-        rot     : 90,
-        items   : {
-          obstacles : 2,
-          speedbumps: 3
-        },
-        tileType: {
-          gaps         : 0,
-          intersections: 0,
-          paths        : {
-            "right": "left",
-            "left" : "right"
-          }
-        }
-      },
-      {
-        x       : 3,
-        y       : 3,
-        z       : 1,
-        rot     : 270,
-        items   : {
-          obstacles : 2,
-          speedbumps: 3
-        },
-        tileType: {
-          gaps         : 0,
-          intersections: 0,
-          paths        : {
-            "right": "left",
-            "left" : "right"
-          }
-        }
-      },
-      {
-        x       : 3,
-        y       : 4,
-        z       : 1,
-        rot     : 0,
-        items   : {
-          obstacles : 2,
-          speedbumps: 3
-        },
-        tileType: {
-          gaps         : 0,
-          intersections: 0,
-          paths        : {
-            "top": "top"
-          }
-        }
-      },
-      {
-        x       : 2,
-        y       : 2,
-        z       : 1,
-        rot     : 0,
-        items   : {
-          obstacles : 2,
-          speedbumps: 3
-        },
-        tileType: {
-          gaps         : 1,
-          intersections: 0,
-          paths        : {
-            "top"   : "bottom",
-            "bottom": "top"
-          }
-        },
-        levelUp : "bottom"
-      }
-      ,
-      {
-        x        : 2,
-        y        : 3,
-        z        : 2,
-        rot      : 0,
-        items    : {
-          obstacles : 2,
-          speedbumps: 3
-        },
-        tileType : {
-          gaps         : 1,
-          intersections: 0,
-          paths        : {
-            "top"   : "bottom",
-            "bottom": "top"
-          }
-        },
-        levelDown: "top"
-      }
-    ],
-    startTile: {x: 1, y: 1, z: 1}
-  }
-)

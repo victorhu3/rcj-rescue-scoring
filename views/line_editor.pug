@@ -32,7 +32,7 @@ block location
     span.breadcrumb-item.active Line editor
 
 block content
-    h1 {{"admin.lineMapEditor.title" | translate}}
+    h1 {{"admin.lineMapEditor.title" | translate}} 2020
     p {{"admin.lineMapEditor.desc" | translate}}
     div(style='margin-top:50px;')
         .row
@@ -71,16 +71,12 @@ block content
                     input(type='number', ng-model='length', min='1')
                 br
                 .input-group
-                    span.input-group-addon Number of the live victim
+                    span.input-group-addon {{"admin.lineMapEditor.liveVictim" | translate}}
                     input(type='number', ng-model='liveV', min='0')
                 br
                 .input-group
-                    span.input-group-addon Number of the dead victim
+                    span.input-group-addon {{"admin.lineMapEditor.deadVictim" | translate}}
                     input(type='number', ng-model='deadV', min='0')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.check" | translate}}
-                    input(type='number', ng-model='numberOfDropTiles', min='0')
                 br
                 br
                 input#isFinished(type='checkbox', ng-model='finished')
@@ -108,9 +104,9 @@ block content
         hr
         .row
             .col-6
-                h3 Export course map to image
+                h3 Generate course map image
             .col-6
-                button.btn.btn-dark(type='button', ng-click='makeImage()') Make image
+                button.btn.btn-dark(type='button', ng-click='makeImage()') Generate image
         #outputImageArea(style="background-color: #ddd;float:left;padding-left:18px;padding-right:15px;padding-bottom:2px;")
             div(ng-repeat='z in range(height)')
                 .row(ng-repeat='r in range(length)')

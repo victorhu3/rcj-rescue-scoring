@@ -43,12 +43,16 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         y: -1,
         z: -1
     };
-    $scope.numberOfDropTiles = 0;
+    $scope.startTile2 = {
+        x: -1,
+        y: -1,
+        z: -1
+    };
     $scope.height = 1;
     $scope.width = 1;
     $scope.length = 1;
-    $scope.liveV = 0;
-    $scope.deadV = 0;
+    $scope.liveV = 2;
+    $scope.deadV = 1;
     $scope.name = "Awesome Testbana";
 
     if (mapId) {
@@ -69,6 +73,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             })
 
             $scope.startTile = response.data.startTile;
+            $scope.startTile2 = response.data.startTile2;
             $scope.numberOfDropTiles = response.data.numberOfDropTiles;
             $scope.height = response.data.height;
             $scope.width = response.data.width;
@@ -116,14 +121,18 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
 
     $scope.startNotSet = function () {
-        return $scope.startTile.x == -1 && $scope.startTile.y == -1 &&
-            $scope.startTile.z == -1;
-    }
+        if($scope.finished){
+            return ($scope.startTile.x == -1 && $scope.startTile.y == -1 &&
+              $scope.startTile.z == -1) || ($scope.startTile2.x == -1 && $scope.startTile2.y == -1 &&
+              $scope.startTile2.z == -1);
+        }
+        return false;
+    };
 
 
     $scope.saveMapAs = function () {
         if ($scope.startNotSet()) {
-            alert("You must define a starting tile by right-clicking a tile");
+            alert("You must define a starting && re-starting (after evacuation zone) tile by right-clicking a tile");
             return;
         }
 
@@ -143,6 +152,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             finished: $scope.finished,
             numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
+            startTile2: $scope.startTile2,
             tiles: $scope.tiles,
             victims: victims
         };
@@ -222,6 +232,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             finished: $scope.finished,
             numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
+            startTile2: $scope.startTile2,
             tiles: $scope.tiles,
             victims: victims,
             image: $scope.imgData
@@ -266,6 +277,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             finished: $scope.finished,
             numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
+            startTile2: $scope.startTile2,
             tiles: $scope.tiles,
             victims: victims
         };
@@ -299,6 +311,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 $scope.competitionId = competitionId;
 
                 $scope.startTile = data.startTile;
+                $scope.startTile2 = data.startTile2;
                 $scope.numberOfDropTiles = data.numberOfDropTiles;
                 $scope.height = data.height;
                 $scope.width = data.width;
@@ -341,15 +354,25 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 start: function () {
                     return $scope.startTile.x == x && $scope.startTile.y == y &&
                         $scope.startTile.z == $scope.z;
+                },
+                start2: function () {
+                    return $scope.startTile2.x == x && $scope.startTile2.y == y &&
+                      $scope.startTile2.z == $scope.z;
                 }
             }
         });
 
         modalInstance.result.then(function (response) {
-            if (response) {
+            console.log(response);
+            if (response[0]) {
                 $scope.startTile.x = x;
                 $scope.startTile.y = y;
                 $scope.startTile.z = $scope.z;
+            }
+            if (response[1]) {
+                $scope.startTile2.x = x;
+                $scope.startTile2.y = y;
+                $scope.startTile2.z = $scope.z;
             }
 
         }, function () {
@@ -362,11 +385,12 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 // Please note that $uibModalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
 
-app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, tile, start) {
+app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, tile, start, start2) {
     $scope.tile = tile;
     $scope.start = start;
+    $scope.start2 = start2;
     $scope.ok = function () {
-        $uibModalInstance.close($scope.start);
+        $uibModalInstance.close([$scope.start, $scope.start2]);
     };
 
     $scope.cancel = function () {
@@ -412,13 +436,23 @@ app.directive('tile', function () {
                     case "right":
                         return "rot270";
                 }
-            }
+            };
             scope.isStart = function (tile) {
                 //console.log(tile);
                 return attrs.x == scope.$parent.startTile.x &&
                     attrs.y == scope.$parent.startTile.y &&
                     attrs.z == scope.$parent.startTile.z;
-            }
+            };
+
+            scope.isDropTile = function(tile){
+              return tile.checkPoint;
+            };
+
+            scope.isStart2 = function (tile) {
+                return attrs.x == scope.$parent.startTile2.x &&
+                  attrs.y == scope.$parent.startTile2.y &&
+                  attrs.z == scope.$parent.startTile2.z;
+            };
 
         }
     };
@@ -453,16 +487,22 @@ app.directive('tile4image', function () {
                   attrs.z == scope.$parent.startTile.z;
             };
 
+            scope.isDropTile = function(tile){
+                return tile.checkPoint;
+            };
+
+            /*scope.isStart2 = function (tile) {
+                return attrs.x == scope.$parent.startTile2.x &&
+                  attrs.y == scope.$parent.startTile2.y &&
+                  attrs.z == scope.$parent.startTile2.z;
+            };*/
+
             scope.tileNumber = function (tile) {
-                if(tile.last2) console.log(tile);
-                //console.log(tile.last2);
                 let txt = "";
                 if(!tile.items.noCheckPoint && tile.items.obstacles==0 && !tile.items.rampPoints && tile.items.speedbumps==0 && tile.tileType.gaps==0 && tile.tileType.intersections==0){
                     for(let i=0,l=tile.index.length;i<l;i++){
-                        if(!tile.last2 || i!=l-1){
                             if(txt != "") txt += " , ";
                             txt += (tile.index[i]+1);
-                        }
                     }
                 }
                 return txt;

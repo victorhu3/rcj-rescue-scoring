@@ -1,28 +1,32 @@
-var logger = require('../config/logger').mainLogger
+const logger = require('../config/logger').mainLogger;
 
 module.exports.findPath = function (map) {
-  var tiles = []
-  for (var i = 0; i < map.tiles.length; i++) {
-    var tile = map.tiles[i];
-    tile.index = [];
-    tile.next = [];
-    tile.last2 = false;
-    tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile
-  }
-
-  var startTile = tiles[map.startTile.x + ',' + map.startTile.y + ',' +
-                        map.startTile.z]
-
-  var startDir = ""
-  var startPaths = startTile.tileType.paths
-  Object.keys(startPaths).forEach(function (dir, index) {
-    var nextTile = tiles[nextCoord(startTile, dir)]
-    if (nextTile !== undefined) {
-      startDir = dir
+  if(map.finished){
+    let tiles = []
+    for (var i = 0; i < map.tiles.length; i++) {
+      let tile = map.tiles[i];
+      tile.index = [];
+      tile.next = [];
+      tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile;
     }
-  })
-  
-  traverse(startTile, startDir, tiles, map, 0)
+
+    let startTile = tiles[map.startTile.x + ',' + map.startTile.y + ',' + map.startTile.z];
+
+    let startDir = "";
+    let startPaths = startTile.tileType.paths;
+    Object.keys(startPaths).forEach(function (dir, index) {
+      let nextTile = tiles[nextCoord(startTile, dir)];
+      if (nextTile !== undefined) {
+        startDir = dir
+      }
+    });
+
+    traverse(startTile, startDir, tiles, map, 0);
+  }
+};
+
+function evacTile(tile){
+  return tile.tileType._id == "58cfd6549792e9313b1610e1" || tile.tileType._id == "58cfd6549792e9313b1610e2" || tile.tileType._id == "58cfd6549792e9313b1610e3";
 }
 
 /**
@@ -34,104 +38,104 @@ module.exports.findPath = function (map) {
  * @param index {Number}
  */
 function traverse(curTile, entryDir, tiles, map, index) {
-  curTile.index.push(index)
-  var next_Coord = nextCoord(curTile, entryDir)
-  curTile.next.push(next_Coord)
-  var nextTile = tiles[next_Coord]
-  
-  if (nextTile === undefined) {
-    index++
-    curTile.index.push(index)
-    entryDir = exitDir(curTile,entryDir)
-    next_Coord = nextCoord(curTile,entryDir)
-    curTile.next.push(next_Coord)
-    entryDir = exitDir(curTile,entryDir)
-    curTile.last2 = true;
-    
-    curTile = tiles[next_Coord]
-    index++
-    entryDir = flipDir(entryDir)
-    curTile.index.push(index)
-    next_Coord = nextCoord(curTile,entryDir)
-    curTile.next.push(next_Coord)
-    curTile.last2 = true;
-    
-    
-    map.indexCount = index + 1
+
+  let next_Coord = nextCoord(curTile, entryDir);
+  curTile.index.push(index);
+  let nextTile = tiles[next_Coord];
+
+  if (curTile.tileType._id == '58cfd6549792e9313b1610e0') {
+    map.indexCount = index + 1;
     return
   }
   
-  traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1)
+  if (nextTile === undefined || evacTile(nextTile)) {
+    let startTile2 = tiles[map.startTile2.x + ',' + map.startTile2.y + ',' +
+    map.startTile2.z];
+
+    let startDir2 = "";
+    let startPaths2 = startTile2.tileType.paths;
+    Object.keys(startPaths2).forEach(function (dir, index) {
+      let nextTile2 = tiles[nextCoord(startTile2, dir)];
+      if (nextTile2 !== undefined && !evacTile(nextTile2)) {
+        startDir2 = dir;
+      }
+    });
+    curTile.next.push(startTile2);
+    traverse(startTile2, startDir2, tiles, map, index + 1);
+    return;
+  }
+  curTile.next.push(next_Coord);
+
+  traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1);
 }
 
 function exitDir(curTile, entryDir) {
-  var dir = rotateDir(entryDir, -curTile.rot)
-  var exit = rotateDir(curTile.tileType.paths[dir], curTile.rot)
-  return exit
+  let dir = rotateDir(entryDir, -curTile.rot);
+  return rotateDir(curTile.tileType.paths[dir], curTile.rot);
 }
 
 function nextCoord(curTile, entryDir) {
-  var exit = exitDir(curTile, entryDir)
-  var coord
+  let exit = exitDir(curTile, entryDir);
+  let coord;
   switch (exit) {
     case "top":
-      coord = curTile.x + ',' + (curTile.y - 1)
-      break
+      coord = curTile.x + ',' + (curTile.y - 1);
+      break;
     case "right":
-      coord = (curTile.x + 1) + ',' + curTile.y
-      break
+      coord = (curTile.x + 1) + ',' + curTile.y;
+      break;
     case "bottom":
-      coord = curTile.x + ',' + (curTile.y + 1)
-      break
+      coord = curTile.x + ',' + (curTile.y + 1);
+      break;
     case "left":
-      coord = (curTile.x - 1) + ',' + curTile.y
-      break
+      coord = (curTile.x - 1) + ',' + curTile.y;
+      break;
   }
   
   if (curTile.levelUp !== undefined && exit == curTile.levelUp) {
-    coord += ',' + (curTile.z + 1)
+    coord += ',' + (curTile.z + 1);
   } else if (curTile.levelDown !== undefined && exit == curTile.levelDown) {
-    coord += ',' + (curTile.z - 1)
+    coord += ',' + (curTile.z - 1);
   } else {
-    coord += ',' + curTile.z
+    coord += ',' + curTile.z;
   }
   
-  return coord
+  return coord;
 }
 
 function rotateDir(dir, rot) {
   switch (rot) {
     case 0:
-      return dir
+      return dir;
     
     case -270:
     case 90:
       switch (dir) {
         case "top":
-          return "right"
+          return "right";
         case "right":
-          return "bottom"
+          return "bottom";
         case "bottom":
-          return "left"
+          return "left";
         case "left":
-          return "top"
+          return "top";
       }
     
     case -180:
     case 180:
-      return flipDir(dir)
+      return flipDir(dir);
     
     case -90:
     case 270:
       switch (dir) {
         case "top":
-          return "left"
+          return "left";
         case "right":
-          return "top"
+          return "top";
         case "bottom":
-          return "right"
+          return "right";
         case "left":
-          return "bottom"
+          return "bottom";
       }
   }
 }
@@ -139,12 +143,12 @@ function rotateDir(dir, rot) {
 function flipDir(dir) {
   switch (dir) {
     case "top":
-      return "bottom"
+      return "bottom";
     case "right":
-      return "left"
+      return "left";
     case "bottom":
-      return "top"
+      return "top";
     case "left":
-      return "right"
+      return "right";
   }
 }

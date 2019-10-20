@@ -203,6 +203,7 @@
             "reSend": "再送信",
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "救助済みの被災者を削除するには，ダブルクリック（PC）か左にスワイプ（モバイル）します．",
+            "noShow": "チームが来なかった場合に時間計測を開始する",
             "js": {
                 "score_element": "チェックポイントマーカーは，得点項目のあるタイルには設置できません． (ルール 3.3.5)",
                 "cantvisit": "ロボットの通ることのできないタイルをチェックポイントに指定することはできません．",
@@ -336,6 +337,7 @@
             "handover": "@:line.judge.handover",
             "reSend": "@:line.judge.reSend",
             "misidentification": "@:maze.view.misidentification",
+            "noShow": "@:line.judge.noShow",
             "js": {
                 "timeup": {
                     "title": "@:line.judge.js.timeup.title",
@@ -500,8 +502,13 @@
             "nothing": "なし",
             "noStart": "スタートタイルが設定されていません",
             "start": "ここは，スタートタイル？",
+            "start2": "ここは，避難ゾーンの後の再スタートタイル？",
             "export": "このマップをファイルにエクスポート",
-            "import": "マップをファイルからインポート"
+            "import": "マップをファイルからインポート",
+            "liveVictim": "生きている被災者の数",
+            "deadVictim" : "死んでいる被災者の数",
+            "rampPoint": "坂得点",
+            "setCheckpoint": "このタイルをチェックポイントに指定する"
         },
         "teamBulk": {
             "title": "チーム一括登録",
