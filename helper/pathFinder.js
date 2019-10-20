@@ -21,7 +21,7 @@ module.exports.findPath = function (map) {
       }
     });
 
-    traverse(startTile, startDir, tiles, map, 0);
+    traverse(startTile, startDir, tiles, map, 0, 0);
   }
 };
 
@@ -37,8 +37,8 @@ function evacTile(tile){
  * @param map
  * @param index {Number}
  */
-function traverse(curTile, entryDir, tiles, map, index) {
-
+function traverse(curTile, entryDir, tiles, map, index, chpCount) {
+  if(curTile.checkPoint) chpCount++;
   let next_Coord = nextCoord(curTile, entryDir);
   curTile.index.push(index);
   let nextTile = tiles[next_Coord];
@@ -61,12 +61,14 @@ function traverse(curTile, entryDir, tiles, map, index) {
       }
     });
     curTile.next.push(startTile2);
-    traverse(startTile2, startDir2, tiles, map, index + 1);
+    map.EvacuationAreaLoPIndex = chpCount;
+    traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
     return;
   }
   curTile.next.push(next_Coord);
 
-  traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1);
+
+  traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1, chpCount);
 }
 
 function exitDir(curTile, entryDir) {
