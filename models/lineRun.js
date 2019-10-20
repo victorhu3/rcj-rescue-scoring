@@ -59,6 +59,8 @@ const lineRunSchema = new Schema({
       effective: {type: Boolean}
   }],
   score             : {type: Number, min: 0, default: 0},
+  raw_score         : {type: Number, min: 0, default: 0},
+  multiplier        : {type: Number, min: 1.0, default: 1.0},
   showedUp          : {type: Boolean, default: false},
   time              : {
     minutes: {type: Number, min: 0, max: 8, default: 0},
@@ -76,7 +78,7 @@ const lineRunSchema = new Schema({
   comment           : {type: String, default: ""},
   startTime         : {type: Number, default: 0},
   test: {type: Boolean, default: false},
-  scoreSheet: { // all data connected to the scoring sheet should it be used
+  /*scoreSheet: { // all data connected to the scoring sheet should it be used
     positionData: {type: Object, default: null},
     specialAttention : {type: Boolean, default: true}, // If the referee was not sure if he made a mistake, the "enter manually" flag is marked. During approval pecial attention should be taken.
 
@@ -89,7 +91,7 @@ const lineRunSchema = new Schema({
     commentFieldImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
     acceptResultImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
     fullSheet: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}
-  },
+  },*/
   manual  : {
     gap: {type: Number, default: 0},
     obstacle: {type: Number, default: 0},

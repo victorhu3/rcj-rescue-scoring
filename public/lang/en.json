@@ -73,7 +73,8 @@
         "stotal": "Sub Total",
         "rule": "Rule",
         "message": "Message for participants",
-        "passcode": "Passcode"
+        "passcode": "Passcode",
+        "multipliers": "Multipliers"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -142,11 +143,11 @@
             "evacuation": "Evacuation Zone",
             "Lexit": "Exit",
             "rescue": "Rescue",
-            "high": "High Evacuation Level",
-            "low": "Low Evacuation Level",
+            "high": "Level 2",
+            "low": "Level 1",
             "live": "【LIVE】Victims",
             "dead": "【DEAD】Victims",
-            "exit": "Robot exited the evacuation zone after touching at least one victim then passed 3 tiles:",
+            "exit": "Exit bonus",
             "comment": "@:common.comment",
             "comment_e": "If you have any comments about the run, please write in the box below. ",
             "sign": "Sign",
@@ -219,7 +220,8 @@
                 "obstacle": "Obstacle",
                 "bump": "Speed bump",
                 "ramp": "Ramp",
-                "intersection": "Intersection"
+                "intersection": "Intersection",
+                "checkpoint": "Checkpoint"
             }
         },
         "sign": {

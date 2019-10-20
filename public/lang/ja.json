@@ -79,7 +79,8 @@
         "stotal": "小計",
         "rule": "ルール",
         "message": "参加した皆さんへのメッセージ",
-        "passcode": "パスコード"
+        "passcode": "パスコード",
+        "multipliers": "乗数"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -147,11 +148,11 @@
             "evacuation": "避難ゾーン",
             "Lexit": "脱出",
             "rescue": "被災者救助",
-            "high": "救助レベル2",
-            "low": "救助レベル1",
+            "high": "レベル2",
+            "low": "レベル1",
             "live": "生きている被災者：",
             "dead": "死んでいる被災者：",
-            "exit": "少なくとも１つの被災者に触れたのち，避難ゾーンを脱出し，３タイル進んだ：",
+            "exit": "脱出ボーナス",
             "comment": "@:common.comment",
             "comment_e": "この競技についてコメントがある場合，以下に記入してください",
             "sign": "署名",
@@ -223,7 +224,8 @@
                 "obstacle": "障害物",
                 "bump": "バンプ",
                 "ramp": "坂",
-                "intersection": "交差点"
+                "intersection": "交差点",
+                "checkpoint": "チェックポイント"
             }
         },
         "sign": {

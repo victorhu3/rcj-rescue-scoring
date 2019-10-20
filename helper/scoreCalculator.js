@@ -1,44 +1,40 @@
 "use strict"
 const logger = require('../config/logger').mainLogger
-const rule2018 = require('./scoreCalculator-2018')
-const rule2019 = require('./scoreCalculator-2019')
+const rule2020 = require('./scoreCalculator-2020');
+
 
 module.exports.calculateLineScore = function (run) {
   let rule = run.competition.rule;
   switch(rule){
-    case '2019':
-      return rule2019.calculateLineScore(run);
-    case '2018':
+    case '2020':
     default:
-      return rule2018.calculateLineScore(run);
+      return rule2020.calculateLineScore(run);
   }
 }
 
 module.exports.calculateLineScoreManual = function (run) {
   let rule = run.competition.rule;
   switch(rule){
-    case '2019':
+    case '2020':
     default:
-      return rule2019.calculateLineScoreManual(run);
+      return rule2020.calculateLineScoreManual(run);
   }
 }
 
 module.exports.calculateMazeScore = function (run) {
   let rule = run.competition.rule;
   switch(rule){
-    case '2019':
-      return rule2019.calculateMazeScore(run);
-    case '2018':
+    case '2020':
     default:
-      return rule2018.calculateMazeScore(run);
+      return rule2020.calculateMazeScore(run);
   }
 }
 
 module.exports.calculateMazeScoreManual = function (run) {
   let rule = run.competition.rule;
   switch(rule){
-    case '2019':
+    case '2020':
     default:
-      return rule2019.calculateMazeScoreManual(run);
+      return rule2020.calculateMazeScoreManual(run);
   }
 }

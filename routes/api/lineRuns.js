@@ -487,6 +487,7 @@ privateRouter.put('/:runid', function (req, res, next) {
         if (run.status){
             if(dbRun.status > run.status) delete run.status;
         }
+
           
         let prevStatus = dbRun.status;
 
@@ -514,7 +515,7 @@ privateRouter.put('/:runid', function (req, res, next) {
           }
         }
 
-        err = copyProperties(run, dbRun)
+        err = copyProperties(run, dbRun);
 
         if (err) {
           logger.error(err)
@@ -527,7 +528,12 @@ privateRouter.put('/:runid', function (req, res, next) {
         if(prevStatus != dbRun.status) statusUpdate = 1;
 
         if(dbRun.manualFlag) dbRun.score = scoreCalculator.calculateLineScoreManual(dbRun);
-        else dbRun.score = scoreCalculator.calculateLineScore(dbRun)
+        else {
+          let cal = scoreCalculator.calculateLineScore(dbRun);
+          dbRun.score = cal.score;
+          dbRun.raw_score = cal.raw_score;
+          dbRun.multiplier = cal.multiplier;
+        }
 
         if (dbRun.score > 0 || dbRun.time.minutes != 0 ||
           dbRun.time.seconds != 0 || dbRun.status >= 2) {
@@ -556,7 +562,9 @@ privateRouter.put('/:runid', function (req, res, next) {
             }
             return res.status(200).send({
               msg: "Saved run",
-              score: dbRun.score
+              score: dbRun.score,
+              raw_score: dbRun.raw_score,
+              multiplier: dbRun.multiplier
             })
           }
         })
