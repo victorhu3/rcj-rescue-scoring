@@ -33,6 +33,7 @@ const lineMapSchema = new Schema({
   width            : {type: Number, integer: true, required: true, min: 1},
   length           : {type: Number, integer: true, required: true, min: 1},
   indexCount       : {type: Number, integer: true, min: 1},
+  EvacuationAreaLoPIndex : {type: Number, default:0},
   tiles            : [{
     x        : {type: Number, integer: true, required: true},
     y        : {type: Number, integer: true, required: true},
@@ -188,6 +189,13 @@ const tileTypeSchema = new Schema({
     default : 0,
     min     : 0
   },
+  seesaw: {
+    type    : Number,
+    integer : true,
+    required: true,
+    default : 0,
+    min     : 0
+  },
   paths        : {
     "top"   : {type: String, enum: ["top", "right", "bottom", "left"]},
     "right" : {type: String, enum: ["top", "right", "bottom", "left"]},
@@ -214,6 +222,7 @@ const tileTypes = [
     "image"        : "tile-0.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -224,6 +233,7 @@ const tileTypes = [
     "image"        : "tile-1.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -234,6 +244,7 @@ const tileTypes = [
     "image"        : "tile-2.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -244,6 +255,7 @@ const tileTypes = [
     "image"        : "tile-3.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "bottom",
       "bottom": "left"
@@ -254,6 +266,7 @@ const tileTypes = [
     "image"        : "tile-4.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "top",
       "top"   : "left",
@@ -266,6 +279,7 @@ const tileTypes = [
     "image"        : "tile-5.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "bottom",
       "bottom": "left"
@@ -276,6 +290,7 @@ const tileTypes = [
     "image"        : "tile-6.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "bottom",
       "bottom": "left"
@@ -286,6 +301,7 @@ const tileTypes = [
     "image"        : "tile-7.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "top"   : "bottom",
       "bottom": "top"
@@ -296,6 +312,7 @@ const tileTypes = [
     "image"        : "tile-8.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -306,6 +323,7 @@ const tileTypes = [
     "image"        : "tile-9.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -316,6 +334,7 @@ const tileTypes = [
     "image"        : "tile-10.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "bottom",
       "bottom": "left"
@@ -326,6 +345,7 @@ const tileTypes = [
     "image"        : "tile-11.png",
     "gaps"         : 2,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -336,6 +356,7 @@ const tileTypes = [
     "image"        : "tile-11_2.png",
     "gaps"         : 1,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -346,6 +367,7 @@ const tileTypes = [
     "image"        : "tile-12.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right" : "bottom",
       "bottom": "right"
@@ -356,6 +378,7 @@ const tileTypes = [
     "image"        : "tile-13.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -366,6 +389,7 @@ const tileTypes = [
     "image"        : "tile-14.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -376,6 +400,7 @@ const tileTypes = [
     "image"        : "tile-15.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "top",
       "top"  : "left",
@@ -387,6 +412,7 @@ const tileTypes = [
     "image"        : "tile-16.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "top",
@@ -398,6 +424,7 @@ const tileTypes = [
     "image"        : "tile-16_2.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "top",
       "right": "top",
@@ -409,6 +436,7 @@ const tileTypes = [
     "image"        : "tile-17.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -419,6 +447,7 @@ const tileTypes = [
     "image"        : "tile-18.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -429,6 +458,7 @@ const tileTypes = [
     "image"        : "tile-19.png",
     "gaps"         : 1,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "right",
       "right" : "left",
@@ -441,6 +471,7 @@ const tileTypes = [
     "image"        : "tile-20.png",
     "gaps"         : 1,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -451,6 +482,7 @@ const tileTypes = [
     "image"        : "tile-21.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -461,6 +493,7 @@ const tileTypes = [
     "image"        : "tile-22.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -471,6 +504,7 @@ const tileTypes = [
     "image"        : "tile-23.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -481,6 +515,7 @@ const tileTypes = [
     "image"        : "tile-24.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -491,6 +526,7 @@ const tileTypes = [
     "image"        : "tile-25.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "top",
       "top"   : "left",
@@ -503,6 +539,7 @@ const tileTypes = [
     "image"        : "tile-26.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -513,6 +550,7 @@ const tileTypes = [
     "image"        : "tile-27.png",
     "gaps"         : 0,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -523,6 +561,7 @@ const tileTypes = [
     "image"        : "tile-28.png",
     "gaps"         : 1,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -533,6 +572,7 @@ const tileTypes = [
     "image"        : "tile-29.png",
     "gaps"         : 0,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "bottom",
       "bottom": "left"
@@ -543,6 +583,7 @@ const tileTypes = [
     "image"        : "tile-30.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "right",
       "bottom": "top",
@@ -555,6 +596,7 @@ const tileTypes = [
     "image"        : "tile-31.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "top",
       "bottom": "top",
@@ -567,6 +609,7 @@ const tileTypes = [
     "image"        : "tile-32.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "top",
       "top"   : "left",
@@ -579,6 +622,7 @@ const tileTypes = [
     "image"        : "tile-33.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "left",
       "bottom": "bottom",
@@ -591,6 +635,7 @@ const tileTypes = [
     "image"        : "tile-34.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "left",
       "bottom": "bottom",
@@ -603,6 +648,7 @@ const tileTypes = [
     "image"        : "tile-35.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "right",
       "top"   : "bottom",
@@ -615,6 +661,7 @@ const tileTypes = [
     "image"        : "tile-41.png",
     "gaps"         : 0,
     "intersections": 1,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -625,6 +672,7 @@ const tileTypes = [
     "image"        : "tile-55.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "bottom"
     },
@@ -634,6 +682,7 @@ const tileTypes = [
     "image"        : "tile-56.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -644,6 +693,7 @@ const tileTypes = [
     "image"        : "tile-57.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -654,6 +704,7 @@ const tileTypes = [
     "image"        : "tile-58.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -664,6 +715,7 @@ const tileTypes = [
     "image"        : "tile-59.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -674,6 +726,7 @@ const tileTypes = [
     "image"        : "tile-60.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -684,6 +737,7 @@ const tileTypes = [
     "image"        : "tile-61.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -694,6 +748,7 @@ const tileTypes = [
     "image"        : "tile-62.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "top"   : "bottom",
       "bottom": "top"
@@ -704,6 +759,7 @@ const tileTypes = [
     "image"        : "tile-63.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom",
@@ -716,6 +772,7 @@ const tileTypes = [
     "image"        : "tile-64.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "top"   : "bottom",
       "bottom": "top"
@@ -726,6 +783,7 @@ const tileTypes = [
     "image"        : "tile-65.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -736,6 +794,7 @@ const tileTypes = [
     "image"        : "tile-66.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -746,6 +805,7 @@ const tileTypes = [
     "image"        : "tile-67.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -756,6 +816,7 @@ const tileTypes = [
     "image"        : "tile-68.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -766,6 +827,7 @@ const tileTypes = [
     "image"        : "tile-69.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -776,6 +838,7 @@ const tileTypes = [
     "image"        : "tile-70.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left" : "right",
       "right": "left"
@@ -786,6 +849,7 @@ const tileTypes = [
     "image"        : "tile-71.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "left"  : "bottom",
       "bottom": "left"
@@ -796,6 +860,7 @@ const tileTypes = [
     "image"        : "007.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right" : "bottom",
       "bottom": "right"
@@ -806,6 +871,7 @@ const tileTypes = [
     "image"        : "009.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right" : "bottom",
       "bottom": "right"
@@ -816,6 +882,7 @@ const tileTypes = [
     "image"        : "010.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -826,6 +893,7 @@ const tileTypes = [
     "image"        : "011.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -836,6 +904,7 @@ const tileTypes = [
     "image"        : "021.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -846,6 +915,7 @@ const tileTypes = [
     "image"        : "022.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -856,6 +926,7 @@ const tileTypes = [
     "image"        : "025.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -866,6 +937,7 @@ const tileTypes = [
     "image"        : "tile-72.png",
     "gaps"         : 0,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -876,6 +948,7 @@ const tileTypes = [
     "image"        : "tile-73.png",
     "gaps"         : 0,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "right",
       "right" : "bottom"
@@ -886,6 +959,7 @@ const tileTypes = [
     "image"        : "tile-74.png",
     "gaps"         : 0,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "top",
       "top" : "bottom"
@@ -896,6 +970,7 @@ const tileTypes = [
     "image"        : "tile-75.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "top",
       "top" : "bottom"
@@ -906,6 +981,7 @@ const tileTypes = [
     "image"        : "tile-76.png",
     "gaps"         : 1,
     "intersections": 2,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "top",
       "top" : "bottom"
@@ -916,6 +992,7 @@ const tileTypes = [
     "image"        : "tile-77.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -925,7 +1002,8 @@ const tileTypes = [
   {
     "image"        : "seesaw.png",
     "gaps"         : 0,
-    "intersections": 1,
+    "intersections": 0,
+    "seesaw"       : 1,
     "paths"        : {
       "right": "left",
       "left" : "right"
@@ -936,6 +1014,7 @@ const tileTypes = [
     "image"        : "exit.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
       "bottom": "top"
     },
@@ -945,6 +1024,7 @@ const tileTypes = [
     "image"        : "ev1.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
     },
     "_id"          : "58cfd6549792e9313b1610e1"
@@ -953,6 +1033,7 @@ const tileTypes = [
     "image"        : "ev2.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
     },
     "_id"          : "58cfd6549792e9313b1610e2"
@@ -961,6 +1042,7 @@ const tileTypes = [
     "image"        : "ev3.png",
     "gaps"         : 0,
     "intersections": 0,
+    "seesaw"       : 0,
     "paths"        : {
     },
     "_id"          : "58cfd6549792e9313b1610e3"
@@ -1010,7 +1092,7 @@ for (var i in tileTypes) {
   )
 }
 
-TileSet.findById('5c19d2439590f2d68b15b300', function (err, dbTileSet) {
+TileSet.findById('5c19d2439590f2d68b15b301', function (err, dbTileSet) {
   if(dbTileSet){
     dbTileSet.tiles = defaultTileSet;
     dbTileSet.save(function (err) {
@@ -1020,7 +1102,7 @@ TileSet.findById('5c19d2439590f2d68b15b300', function (err, dbTileSet) {
     })
   }else{
     let newTileSet = new TileSet({
-      '_id': '5c19d2439590f2d68b15b300',
+      '_id': '5c19d2439590f2d68b15b301',
       'name': 'FULL(2020)',
       'tiles': defaultTileSet
     });
