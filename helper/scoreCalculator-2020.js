@@ -65,29 +65,25 @@ module.exports.calculateLineScore = function (run) {
       if (run.evacuationLevel == 1) {
         for (let victim of run.rescueOrder) {
           if(victim.type == "K"){
-            multiplier *= 14;
-            error *= 10;
+            multiplier *= Math.max(140-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);
+            error *= 100;
           } else if (victim.effective){
-            multiplier *= 12;
-            error *= 10;
+            multiplier *= Math.max(120-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);;
+            error *= 100;
           }
         }
       } else if (run.evacuationLevel == 2) {
         for (let victim of run.rescueOrder) {
           if(victim.type == "K"){
-            multiplier *= 14;
-            error *= 10;
+            multiplier *= Math.max(140-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);;
+            error *= 100;
           } else if (victim.effective){
-            multiplier *= 14;
-            error *= 10;
+            multiplier *= Math.max(140-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);;
+            error *= 100;
           }
         }
       }
-      while(error<100){
-        multiplier *= 10;
-        error *=10;
-      }
-      multiplier = Math.max((multiplier - (0.05*error*run.LoPs[run.map.EvacuationAreaLoPIndex])) / error,1.0);
+      multiplier /= error;
     }
 
 

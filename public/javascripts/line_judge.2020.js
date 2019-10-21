@@ -539,13 +539,16 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
 
   $scope.calc_victim_multipliers = function (type, effective){
-    if(type == "K") return "x1.4";
-    if (!effective) return "----";
+    let multiplier;
+    if(type == "K") multiplier = 140;
+    else if (!effective) return "----";
     else if ($scope.evacuationLevel == 1) { // Low Level
-      return "x1.2";
+      multiplier = 120;
     } else { // High Level
-      return "x1.4";
+      multiplier = 140;
     }
+    multiplier = Math.max(multiplier - 5*$scope.LoPs[$scope.EvacuationAreaLoPIndex],100);
+    return "x" + String(multiplier/100);
   };
 
   $scope.count_victim_list = function (type) {

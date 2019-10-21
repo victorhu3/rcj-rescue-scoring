@@ -53,33 +53,32 @@ function line_calc_score(run) {
 
         let error = 1;
         if (run.rescueOrder) {
-            if(typeof run.LoPs[dropTileCount] === "undefined")run.LoPs.push(0);
+            if (typeof run.LoPs[dropTileCount] === "undefined") run.LoPs.push(0);
             if (run.evacuationLevel == 1) {
                 for (let victim of run.rescueOrder) {
-                    if(victim.type == "K"){
-                        multiplier *= 14;
-                        error *= 10;
-                    } else if (victim.effective){
-                        multiplier *= 12;
-                        error *= 10;
+                    if (victim.type == "K") {
+                        multiplier *= Math.max(140 - (5 * run.LoPs[run.EvacuationAreaLoPIndex]), 100);
+                        error *= 100;
+                    } else if (victim.effective) {
+                        multiplier *= Math.max(120 - (5 * run.LoPs[run.EvacuationAreaLoPIndex]), 100);
+                        ;
+                        error *= 100;
                     }
                 }
             } else if (run.evacuationLevel == 2) {
                 for (let victim of run.rescueOrder) {
-                    if(victim.type == "K"){
-                        multiplier *= 14;
-                        error *= 10;
-                    } else if (victim.effective){
-                        multiplier *= 14;
-                        error *= 10;
+                    if (victim.type == "K") {
+                        multiplier *= Math.max(140 - (5 * run.LoPs[run.EvacuationAreaLoPIndex]), 100);
+                        ;
+                        error *= 100;
+                    } else if (victim.effective) {
+                        multiplier *= Math.max(140 - (5 * run.LoPs[run.EvacuationAreaLoPIndex]), 100);
+                        ;
+                        error *= 100;
                     }
                 }
             }
-            while(error<100){
-                multiplier *= 10;
-                error *=10;
-            }
-            multiplier = Math.max((multiplier - (0.05*error*run.LoPs[run.EvacuationAreaLoPIndex])) / error,1.0);
+            multiplier /= error;
         }
 
 
