@@ -3,7 +3,7 @@ const pdf = require('./scoreSheetPDFUtil');
 const qr = require('qr-image');
 const fs = require('fs');
 const logger = require('../config/logger').mainLogger;
-const guessLanguage = require('guessLanguage').guessLanguage;
+const guessLanguage = require('guesslanguage/lib/guessLanguage').guessLanguage;
 const glob = require("glob");
 
 /**
