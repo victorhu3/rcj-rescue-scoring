@@ -307,38 +307,7 @@ var app = angular.module(
                 }
             })
         }
-
-        $scope.go_approval = function (runid) {
-            if(runid){
-              swal({
-                title: "Go approval page?",
-                text: "Are you sure you want to go approval page?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "GO!",
-                confirmButtonColor: "#ec6c62"
-              }).then((result) => {
-                if (result.value) {
-                  $scope.go('/line/approval/' + runid + '/');
-                }
-              })
-            }else{
-              $http.get("/api/runs/line/nextApproval/" + $scope.competitionId).then(function (response) {
-                console.log(response);
-                $scope.go("/line/approval/"+response.data);
-              }, function () {
-                swal({
-                  text: "There are no runs that requires approval anymore.",
-                  type: 'info',
-                  showCancelButton: false,
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'OK'
-                }).then(() => {
-                })
-              });
-            }
-
-        }
+        
 
         $scope.approval = function () {
           $http.put("/api/runs/line/" + runId, {status:6}).then(function (response) {
