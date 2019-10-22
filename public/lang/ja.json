@@ -80,7 +80,9 @@
         "rule": "ルール",
         "message": "参加した皆さんへのメッセージ",
         "passcode": "パスコード",
-        "multipliers": "乗数"
+        "multipliers": "乗数",
+        "region": "国・地域",
+        "teamCode": "チームコード"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -432,7 +434,8 @@
         "teams": {
             "title": "チーム管理",
             "add": "チームを追加",
-            "bulk": "一括登録(CSVインポート)"
+            "bulk": "一括登録(CSVインポート)",
+            "updateCode": "チームコードの更新"
         },
         "rounds": {
             "title": "ラウンド管理",
