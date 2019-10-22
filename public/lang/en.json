@@ -73,7 +73,9 @@
         "stotal": "Sub Total",
         "rule": "Rule",
         "message": "Message for participants",
-        "passcode": "Passcode"
+        "passcode": "Passcode",
+        "region": "Region",
+        "teamCode": "Team code"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -424,7 +426,8 @@
         "teams": {
             "title": "Teams",
             "add": "Add team",
-            "bulk": "Bulk registration"
+            "bulk": "Bulk registration",
+            "updateCode": "Update team code"
         },
         "rounds": {
             "title": "Rounds",

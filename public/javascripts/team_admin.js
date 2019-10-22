@@ -1,7 +1,7 @@
 var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamAdminController", function ($scope, $http) {
-    $scope.competitionId = competitionId
-
-    updateTeamList()
+    $scope.competitionId = competitionId;
+    $scope.showCode = false;
+    updateTeamList();
 
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
@@ -31,13 +31,30 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
         })
     };
 
-    $scope.teamCodeSubmit = function(id) {
-        $http.get("/api/teams/set/" + id + "/" + Number($scope.teamCode[id])).then(function (response) {
-            console.log(response)
-            updateTeamList()
-        }, function (error) {
-            console.log(error)
-        })
+
+    $scope.updateCode = async function (team) {
+        const {
+            value: operation
+        } = await swal({
+            title: "Update team code",
+            text: "Update team code from '" + $scope.teams.teamCode + "'",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonText: "Update",
+            confirmButtonColor: "#3bacec",
+            input: 'text',
+            inputPlaceholder: 'Enter NEW team code here'
+        });
+
+        if (operation) {
+            $http.get("/api/teams/set/" + team._id + "/" + operation).then(function (response) {
+                updateTeamList()
+            }, function (error) {
+                console.log(error)
+            })
+        }
+
+
     }
 
     $scope.selectAll = function () {
@@ -45,7 +62,7 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             team.checked = true;
         });
     }
-    
+
 
     $scope.removeSelectedTeam = function () {
         var chk = [];
@@ -87,7 +104,15 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
     function updateTeamList() {
         $http.get("/api/competitions/" + competitionId +
             "/teams").then(function (response) {
-            $scope.teams = response.data
+            $scope.teams = response.data;
+
+            $scope.showCode = false;
+            for(let t of $scope.teams){
+                if(t.teamCode != ""){
+                    $scope.showCode = true;
+                    break;
+                }
+            }
             console.log($scope.teams)
         })
     }
