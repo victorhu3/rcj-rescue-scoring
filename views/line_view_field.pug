@@ -14,5 +14,37 @@ html(ng-app="ddApp")
     meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0")
 
   body(ng-controller="ddController")
-    include line_view_field.html
+    nav.navbar(style='color: #ecf0f1; position: fixed; top: 0; z-index:10 ;  width: 100%', ng-style='{backgroundColor: navColor(status)}')
+      // Navbar content
+      .col-md-6.col-sm4.col-12
+        li.navbar-brand(href='#')
+          i.fa.fa-spinner.fa-spin.fa-fw
+          |  {{team}}
+      .col-md-3.col-sm4.col-7
+        i.fas.fa-calculator.fa-2x(aria-hidden='true')
+        li.navbar-brand(href='#')  {{score}} points
+      .col-md-3.col-sm4.col-5
+        i.fas.fa-stopwatch.fa-2x(aria-hidden='true')
+        li.navbar-brand(href='#')  {{time*1000 | date:'mm:ss'}}
+    .nav-cont
+      .tilearea(ng-show='exist')
+        div(style='clear:both;')
+        #wrapTile.mx-auto(style='margin-top:5px;')
+          .row(ng-repeat='r in range(length)', tile-load-finished='', style='margin-right:0px;margin-left:0px')
+            .slot(ng-repeat='c in range(width)')
+              tile(tile="mtiles[c+','+r+','+z]", ng-repeat='z in range(height)', ng-style="{'opacity': getOpacity(c,r)}", ng-click='showElements(c,r,z)')
+      .col-md-12(ng-show='!exist')
+        .alert.alert-dark(role='alert')
+          h1 現在，このフィールドでは競技が行われていません
+    br
+    .alert.alert-info(role='alert', ng-show='exist')
+      .row
+        .col-4
+          i.fas.fa-step-forward(aria-hidden='true')  : {{LoPs_total}} times
+        .col-4
+          i.fas.fa-ambulance(aria-hidden='true')  : L: {{count_victim_list("L")}} 　D: {{count_victim_list("D")}}
+        .col-4
+          span(ng-show='evacuationLevel==1') Level: 1
+          span(ng-show='evacuationLevel==2') Level: 2
+
 
