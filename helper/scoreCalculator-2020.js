@@ -21,6 +21,8 @@ module.exports.calculateLineScore = function (run) {
       total_lops += run.LoPs[i];
     }
 
+
+
     for (let i = 0; i < run.tiles.length; i++) {
       let tile = run.tiles[i];
 
@@ -47,17 +49,19 @@ module.exports.calculateLineScore = function (run) {
             score += 10 * tile.scoredItems[j].scored;
             break;
           case "seesaw":
-            score += 15 * tile.scoredItems[j].scored * tile.scoredItems[j].count;
+            score += 15 * tile.scoredItems[j].scored;
             break;
         }
 
       }
 
       if (tile.isDropTile) {
-        lastDropTile = i
-        dropTileCount++
+        lastDropTile = i;
+        dropTileCount++;
       }
     }
+
+
 
     let error = 1;
     if (run.rescueOrder) {

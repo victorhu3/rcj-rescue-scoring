@@ -39,7 +39,7 @@ function line_calc_score(run) {
                         score += 10 * tile.scoredItems[j].scored;
                         break;
                     case "seesaw":
-                        score += 15 * tile.scoredItems[j].scored * tile.scoredItems[j].count;
+                        score += 15 * tile.scoredItems[j].scored;
                         break;
                 }
 

@@ -396,8 +396,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         if (flag) {
           $scope.sync++;
           $http.put("/api/runs/line/" + runId, {
-            tiles: $scope.stiles,
-            EvacuationAreaLoPIndex: $scope.EvacuationAreaLoPIndex
+            tiles: $scope.stiles
           }, http_config).then(function (response) {
             console.log("Run Score Tileset Updated");
             loadNewRun();
