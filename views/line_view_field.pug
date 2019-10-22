@@ -42,9 +42,12 @@ html(ng-app="ddApp")
         .col-4
           i.fas.fa-step-forward(aria-hidden='true')  : {{LoPs_total}} times
         .col-4
-          i.fas.fa-ambulance(aria-hidden='true')  : L: {{count_victim_list("L")}} 　D: {{count_victim_list("D")}}
-        .col-4
+          i.fas.fa-ambulance(aria-hidden='true' style="color:#e74c3c;") &nbsp;
           span(ng-show='evacuationLevel==1') Level: 1
           span(ng-show='evacuationLevel==2') Level: 2
+          span &nbsp;&nbsp; L: {{count_victim_list("L")}} 　D: {{count_victim_list("D")}} 　K: {{count_victim_list("K")}}
+        .col-4
+          span Multiplier: {{multiplier}}
+
 
 

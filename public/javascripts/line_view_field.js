@@ -88,6 +88,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
           $scope.LoPs_total = 0;
           $scope.time = 0;
           $scope.score = 0;
+          $scope.multiplier = 1.0;
           $scope.rescuedLiveVictims = 0;
           $scope.rescuedDeadVictims = 0;
           marker = [];
@@ -113,6 +114,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 $scope.exitBonus = data.exitBonus;
                 $scope.stiles = data.tiles;
                 $scope.score = data.score;
+                $scope.multiplier = data.multiplier;
                 $scope.showedUp = data.showedUp;
                 $scope.LoPs = data.LoPs;
                 $scope.minutes = data.time.minutes;
@@ -146,6 +148,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.exitBonus = response.data.exitBonus;
             $scope.field = response.data.field.name;
             $scope.score = response.data.score;
+            $scope.multiplier = response.data.multiplier;
             $scope.showedUp = response.data.showedUp;
             $scope.started = response.data.started;
             $scope.round = response.data.round.name;
@@ -245,75 +248,55 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     }
 
     $scope.showElements = function (x, y, z) {
-        var mtile = $scope.mtiles[x + ',' + y + ',' + z];
-        var isDropTile = false;
-        var stile = [];
-        var stileIndex = [];
+      var mtile = $scope.mtiles[x + ',' + y + ',' + z];
+      var isDropTile = false;
+      var stile = [];
+      var stileIndex = [];
 
-
-        // If this is not a created tile
-        if (!mtile || mtile.index.length == 0)
-            return;
-        for (var i = 0; i < mtile.index.length; i++) {
-            stile.push($scope.stiles[mtile.index[i]]);
-            stileIndex.push(mtile.index[i])
-            if ($scope.stiles[mtile.index[i]].isDropTile) {
-                isDropTile = true;
-            }
+      // If this is not a created tile
+      if (!mtile || mtile.index.length == 0)
+        return;
+      for (var i = 0; i < mtile.index.length; i++) {
+        stile.push($scope.stiles[mtile.index[i]]);
+        stileIndex.push(mtile.index[i])
+        if ($scope.stiles[mtile.index[i]].isDropTile) {
+          isDropTile = true;
         }
+      }
 
 
-        var total = (mtile.items.obstacles > 0 ||
-            mtile.items.speedbumps > 0 ||
-            mtile.tileType.gaps > 0 ||
-            mtile.tileType.intersections > 0) * mtile.index.length;
-        // Add the number of possible passes for drop tiles
+      var total = (mtile.items.obstacles > 0 ||
+        mtile.items.speedbumps > 0 ||
+        mtile.tileType.gaps > 0 ||
+        mtile.tileType.intersections > 0 ||
+        mtile.tileType.seesaw > 0 ||
+        undefined2false(mtile.items.rampPoints)) * mtile.index.length;
 
-         if (isDropTile) {
-                for(let i=0;i<stile.length;i++){
-                    if(stileIndex[i] < $scope.mapIndexCount-2){
-                        total ++;
-                    }
-                }
-            }
-
-
-            if (total == 0) {
-                return;
-            } else if (total > 1) {
-                // Show modal
-                $scope.open(x, y, z);
-                // Save data from modal when closing it
-            } else if (total == 1) {
-                if(stile[0].scoredItems.length == 1){
-                    return;
-                }else{
-                    var selectableHtml = "";
-                    function itemPreCheck(item){
-                        if(item.scored) return "checked";
-                        return "";
-                    }
-                    for(let i=0; i<stile[0].scoredItems.length;i++){
-                        selectableHtml += '<input type="checkbox" id="element'+ i +'" ' + itemPreCheck(stile[0].scoredItems[i]) + ' disabled><label class="checkbox" for="element'+ i +'"> '+  stile[0].scoredItems[i].item +'</label><br>'
-                    }
-                    async function getFormValues () {
-                        const {value: formValues} = await swal({
-                          title: 'Multiple elements',
-                          html:selectableHtml
-                            ,
-                          focusConfirm: false,
-                          preConfirm: () => {
-                          }
-                        })
-                    }
-
-                    getFormValues();
-
-                }
-
-
-            }
+      // Add the number of possible passes for drop tiles
+      if (isDropTile) {
+        total = 0;
+        for (let i = 0; i < stile.length; i++) {
+          if (stileIndex[i] < $scope.mapIndexCount) {
+            total++;
+          }
         }
+      }
+
+
+      if (total == 0) {
+        return;
+      } else if (total > 1) {
+        // Show modal
+        $scope.open(x, y, z);
+        // Save data from modal when closing it
+      }
+    }
+
+  function undefined2false(tmp) {
+    if (tmp) return true;
+    return false;
+  }
+
     $scope.open = function (x, y, z) {
         var modalInstance = $uibModal.open({
             animation: true,
@@ -405,6 +388,7 @@ app.directive('tile', function () {
                     }
                 }
                 count(tile.scoredItems.gaps);
+                count(tile.scoredItems.seesaw);
                 count(tile.scoredItems.speedbumps);
                 count(tile.scoredItems.intersections);
                 count(tile.scoredItems.obstacles);
@@ -469,6 +453,7 @@ app.directive('tile', function () {
                     !tile.items.rampPoints &&
                     tile.tileType.gaps == 0 &&
                     tile.tileType.intersections == 0 &&
+                    tile.tileType.seesaw == 0 &&
                     !$scope.$parent.stiles[tile.index[0]].isDropTile && !isStart(tile)
                 ) {
                     return;
