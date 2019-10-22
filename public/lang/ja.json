@@ -256,8 +256,8 @@
             "calc": "得点計算",
             "item": "項目得点",
             "rescuedVictims": "@:line.view.rescuedVictims",
-            "rescuedVictimsMes" : "@:line.judge.rescuedVictimsMes"
-
+            "rescuedVictimsMes" : "@:line.judge.rescuedVictimsMes",
+            "kit": "レスキューキット"
         }
     },
     "maze": {

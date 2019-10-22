@@ -252,8 +252,8 @@
             "calc": "Score calculation",
             "item": "Item points",
             "rescuedVictims": "@:line.view.rescuedVictims",
-            "rescuedVictimsMes" : "@:line.judge.rescuedVictimsMes"
-
+            "rescuedVictimsMes" : "@:line.judge.rescuedVictimsMes",
+            "kit": "Rescue kit"
         }
     },
     "maze": {
