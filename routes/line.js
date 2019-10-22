@@ -166,16 +166,6 @@ privateRouter.get('/sign/:runid', async function (req, res) {
   res.render('line_sign', {id: id, rule: rule})
 })
 
-adminRouter.get('/approval/:runid', async function (req, res) {
-  const id = req.params.runid
-  if (!ObjectId.isValid(id)) {
-    return next()
-  }
-
-  let rule = await ruleDetector.getRuleFromLineRunId(id);
-  res.render('line_approval', {id: id, rule: rule})
-})
-
 publicRouter.all('*', function (req, res, next) {
   next()
 })
