@@ -94,6 +94,13 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     $scope.victim_list = [];
     $scope.LoPs = [];
 
+    $scope.sum  = function(arr) {
+        if(arr.length == 0) return 0;
+        return arr.reduce(function(prev, current, i, arr) {
+            return prev+current;
+        });
+    };
+
 
     if (typeof runId !== 'undefined') {
         $scope.runId = runId;
@@ -115,6 +122,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 $scope.exitBonus = data.exitBonus;
                 $scope.stiles = data.tiles;
                 $scope.score = data.score;
+                $scope.raw_score = data.raw_score;
+                $scope.multiplier = data.multiplier;
                 $scope.showedUp = data.showedUp;
                 $scope.LoPs = data.LoPs;
                 $scope.minutes = data.time.minutes;
@@ -164,6 +173,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.exitBonus = response.data.exitBonus;
             $scope.field = response.data.field.name;
             $scope.score = response.data.score;
+            $scope.raw_score = response.data.raw_score;
+            $scope.multiplier = response.data.multiplier;
             $scope.showedUp = response.data.showedUp;
             $scope.started = response.data.started;
             $scope.round = response.data.round.name;
@@ -219,6 +230,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
                 $scope.mapIndexCount = response.data.indexCount;
 
+                $scope.EvacuationAreaLoPIndex = response.data.EvacuationAreaLoPIndex;
+
                 while($scope.stiles.length < response.data.indexCount){
                     $scope.stiles.push(ntile);
                 }
@@ -273,18 +286,18 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         }
     }
 
-    $scope.calc_victim_points = function (type, effective) {
-        let tmp_point = 0;
-        if (!effective) tmp_point = 5;
+    $scope.calc_victim_multipliers = function (type, effective){
+        let multiplier;
+        if(type == "K") multiplier = 140;
+        else if (!effective) return "----";
         else if ($scope.evacuationLevel == 1) { // Low Level
-            if (type == "L") tmp_point = 30;
-            else tmp_point = 20;
+            multiplier = 120;
         } else { // High Level
-            if (type == "L") tmp_point = 40;
-            else tmp_point = 30;
+            multiplier = 140;
         }
-        return Math.max(tmp_point - $scope.LoPs[$scope.actualUsedDropTiles] * 5, 0);
-    }
+        multiplier = Math.max(multiplier - 5*$scope.LoPs[$scope.EvacuationAreaLoPIndex],100);
+        return "x" + String(multiplier/100);
+    };
 
 
     $scope.victimPoints = function(){
@@ -313,7 +326,11 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             ret += $scope.checkPointDistance[i].point;
         }
         return ret;
-    }
+    };
+
+    $scope.exitBonusPoints = function(){
+        return $scope.exitBonus * Math.max(0,60-5*$scope.sum($scope.LoPs));
+    };
 
 
     $scope.range = function (n) {
@@ -400,76 +417,80 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
 
         var total = (mtile.items.obstacles > 0 ||
-            mtile.items.speedbumps > 0 ||
-            mtile.tileType.gaps > 0 ||
-            mtile.tileType.intersections > 0 || mtile.items.rampPoints) * mtile.index.length;
+          mtile.items.speedbumps > 0 ||
+          mtile.tileType.gaps > 0 ||
+          mtile.tileType.intersections > 0 ||
+          mtile.tileType.seesaw > 0 ||
+          undefined2false(mtile.items.rampPoints)) * mtile.index.length;
+
         // Add the number of possible passes for drop tiles
-
-         if (isDropTile) {
-                for(let i=0;i<stile.length;i++){
-                    if(stileIndex[i] < $scope.mapIndexCount-2){
-                        total ++;
-                    }
+        if (isDropTile) {
+            total = 0;
+            for (let i = 0; i < stile.length; i++) {
+                if (stileIndex[i] < $scope.mapIndexCount) {
+                    total++;
                 }
-            }
-
-
-            if (total == 0) {
-                return;
-            } else if (total > 1) {
-                // Show modal
-                $scope.open(x, y, z);
-                // Save data from modal when closing it
-            } else if (total == 1) {
-                if(stile[0].scoredItems.length == 1){
-                    return;
-                }else{
-                    var selectableHtml = "";
-                    function itemPreCheck(item){
-                        if(item.scored) return "checked";
-                        return "";
-                    }
-                    for(let i=0; i<stile[0].scoredItems.length;i++){
-                        if(stile[0].scoredItems[i].item != "checkpoint" || stile[0].isDropTile){
-                            selectableHtml += '<input type="checkbox" id="element'+ i +'" ' + itemPreCheck(stile[0].scoredItems[i]) + ' disabled><label class="checkbox" for="element'+ i +'" onclick="playSound(sClick)"> ';
-                            switch(stile[0].scoredItems[i].item){
-                                case 'gap':
-                                    selectableHtml += txt_gap;
-                                    break;
-                                case 'speedbump':
-                                    selectableHtml += txt_bump;
-                                    break;
-                                case 'intersection':
-                                    selectableHtml += txt_intersection;
-                                    break;
-                                case 'ramp':
-                                    selectableHtml += txt_ramp;
-                                    break;
-                                case 'obstacle':
-                                    selectableHtml += txt_obstacle;
-                                    break;
-                            }
-                            selectableHtml += '</label><br>';                          }
-                    }
-                    async function getFormValues () {
-                        const {value: formValues} = await swal({
-                          title: txt_multi,
-                          html:selectableHtml
-                            ,
-                          focusConfirm: false,
-                          preConfirm: () => {
-                            playSound(sClick);
-                          }
-                        })
-                    }
-
-                    getFormValues();
-
-                }
-
-
             }
         }
+
+
+        if (total == 0) {
+            return;
+        } else if (total > 1) {
+            // Show modal
+            $scope.open(x, y, z);
+            // Save data from modal when closing it
+        } else if (total == 1) {
+            /*
+            if(stile[0].scoredItems.length == 1){
+                return;
+            }else{
+                var selectableHtml = "";
+                function itemPreCheck(item){
+                    if(item.scored) return "checked";
+                    return "";
+                }
+                for(let i=0; i<stile[0].scoredItems.length;i++){
+                    if(stile[0].scoredItems[i].item != "checkpoint" || stile[0].isDropTile){
+                        selectableHtml += '<input type="checkbox" id="element'+ i +'" ' + itemPreCheck(stile[0].scoredItems[i]) + ' disabled><label class="checkbox" for="element'+ i +'" onclick="playSound(sClick)"> ';
+                        switch(stile[0].scoredItems[i].item){
+                            case 'gap':
+                                selectableHtml += txt_gap;
+                                break;
+                            case 'speedbump':
+                                selectableHtml += txt_bump;
+                                break;
+                            case 'intersection':
+                                selectableHtml += txt_intersection;
+                                break;
+                            case 'ramp':
+                                selectableHtml += txt_ramp;
+                                break;
+                            case 'obstacle':
+                                selectableHtml += txt_obstacle;
+                                break;
+                        }
+                        selectableHtml += '</label><br>';                          }
+                }
+                async function getFormValues () {
+                    const {value: formValues} = await swal({
+                      title: txt_multi,
+                      html:selectableHtml
+                        ,
+                      focusConfirm: false,
+                      preConfirm: () => {
+                        playSound(sClick);
+                      }
+                    })
+                }
+
+                getFormValues();
+
+            }*/
+
+
+        }
+    }
 
 
     $scope.open = function (x, y, z) {
@@ -710,6 +731,7 @@ app.directive('tile', function () {
                     }
                 }
                 count(tile.scoredItems.gaps);
+                count(tile.scoredItems.seesaw);
                 count(tile.scoredItems.speedbumps);
                 count(tile.scoredItems.intersections);
                 count(tile.scoredItems.obstacles);
@@ -773,6 +795,7 @@ app.directive('tile', function () {
                     tile.items.speedbumps == 0 &&
                     !tile.items.rampPoints &&
                     tile.tileType.gaps == 0 &&
+                    tile.tileType.seesaw == 0 &&
                     tile.tileType.intersections == 0 &&
                     !$scope.$parent.stiles[tile.index[0]].isDropTile && !isStart(tile)
                 ) {
@@ -816,17 +839,17 @@ app.directive('tile', function () {
             $scope.tilePoint = function (tile) {
                 // If this is a non-existent tile
                 if ((!tile || tile.index.length == 0) && !isStart(tile))
-                    return ;
+                    return -1;
 
                 // If this tile has no scoring elements we should just return empty string
                 if (tile.items.obstacles == 0 &&
                     tile.items.speedbumps == 0 &&
                     !tile.items.rampPoints &&
                     tile.tileType.gaps == 0 &&
-                    tile.tileType.intersections == 0 &&
-                    !$scope.$parent.stiles[tile.index[0]].isDropTile && !isStart(tile)
+                    tile.tileType.seesaw == 0 &&
+                    tile.tileType.intersections == 0
                 ) {
-                    return;
+                    return -1;
                 }
 
                 // Number of successfully passed times
@@ -848,7 +871,10 @@ app.directive('tile', function () {
                                 successfully += 5 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
                                 break;
                             case "ramp":
-                                successfully += 5 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
+                                successfully += 10 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
+                                break;
+                            case "seesaw":
+                                successfully += 15 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
                                 break;
                         }
 
@@ -1007,7 +1033,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, mtile, 
             return "";
     }
 
-    $scope.toggle_view = function (num) {
+    /*$scope.toggle_view = function (num) {
         playSound(sClick);
         try {
             var possible = 0
@@ -1067,7 +1093,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, mtile, 
 
         }
 
-    }
+    }*/
 
     $scope.tilerotate = function (tilerot) {
         console.log(tilerot);

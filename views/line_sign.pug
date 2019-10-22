@@ -45,79 +45,31 @@ html(ng-app="ddApp")
                 |  {{'common.lops' | translate}}
               .card-body
                 div(ng-repeat='dropTile in range(actualUsedDropTiles+1) track by $index')
-                  .card-text(style='display:flex;')
+                  .card-text(style='display:flex;' ng-style="{'background-color': $index == EvacuationAreaLoPIndex?'#ffcccc':''}")
                     div(style='width:40%;font-size:10px;', align='center')
-                      | {{$index==0?'line.sign.start':'line.sign.checkpoint'|translate}}
+                      | {{$index==0?'line.judge.start':'line.judge.checkpoint'|translate}}
                       b(style='font-size:15px;color:#FF8300;') {{$index==0?'':$index}}
                       br
                       i.fas.fa-forward.fa-rotate-90(aria-hidden='true')
+                      span(ng-if="$index == EvacuationAreaLoPIndex")
+                        br
+                        i.fas.fa-ambulance.fa-2x(aria-hidden='true' style="color:#c0392b;")
+                        br
+                        i.fas.fa-forward.fa-rotate-90(aria-hidden='true')
                       br
-                      |  {{!$last?'line.sign.checkpoint':'line.sign.Lexit' | translate}}
+                      |  {{!$last?'line.judge.checkpoint':'line.judge.Lexit' | translate}}
                       b(style='font-size:15px;color:#FF8300;') {{!$last?$index+1:''}}
                     div(style='width:60%;position: relative;')
                       .input-group(style='width:100%; height:35px;position:absolute;top: 0;bottom: 0;margin: auto;')
                         span.input-group-btn
-                          button.btn.btn-danger(type='button', disabled='')
+                          button.btn.btn-danger(type='button', ng-click='decrement($index,$last)')
                             i.fas.fa-minus(aria-hidden='true')
                         div(style='background-color: #F2F2F2; width:100px; text-align: center;')
                           span.count {{LoPs[$index]?LoPs[$index]:0}}
                         span.input-group-btn
-                          button.btn.btn-success(type='button', disabled='')
+                          button.btn.btn-success(type='button', ng-click='increment($index,$last)')
                             i.fas.fa-plus(aria-hidden='true')
                   hr(ng-show='!$last')
-              h3.card-header
-                i.fas.fa-ambulance(aria-hidden='true')
-                |  {{'line.judge.rescue' | translate}}　
-                span.badge.badge-danger {{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}
-              .card-body
-                //
-                  <div style="display:flex;" class="card-text">
-                  <div style="width:40%;font-size:20px;" align="center">
-                  {{'common.lops' | translate}}
-                  </div>
-                  <div style="width:60%;position: relative;">
-                  <div class="input-group" style="width:100%; height:35px;position:absolute;top: 0;bottom: 0;margin: auto;">
-                  <span class="input-group-btn">
-                  <button type="button" class="btn btn-danger" disabled>
-                  <i class="fas fa-minus" aria-hidden="true"></i>
-                  </button>
-                  </span>
-                  <div style="background-color: #F2F2F2; width:100px; text-align: center;">
-                  <img src="/images/loader2.gif" alt="" ng-show="processing[actualUsedDropTiles] == true" style="height:100%; width:auto;">
-                  <span class="count" ng-show="processing[actualUsedDropTiles] != true">{{LoPs[actualUsedDropTiles]?LoPs[actualUsedDropTiles]:0}}</span>
-                  </div>
-                  <span class="input-group-btn">
-                  <button type="button" class="btn btn-success" disabled>
-                  <i class="fas fa-plus" aria-hidden="true"></i>
-                  </button>
-                  </span>
-                  </div>
-                  </div>
-                  </div>
-                  <hr>
-                h6 {{'line.sign.rescuedVictims' | translate}}
-                table(border='1', style='width:100%; text-align: center; margin-top: 10px;', ng-repeat='j in range(6)', ng-if='victim_list.length > j*5 || j == 0')
-                  tbody
-                    tr
-                      th(style='text-align:center;', ng-repeat='i in range(5)') {{j*5 + i+1}}
-                    tr
-                      td(ng-repeat='i in range(5)', ng-style="{'background-color': victim_list[j*5 + i].effective?'#FFD9B7':'#ccc'}")
-                        img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*5 + i].type == 'L'")
-                        img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*5 + i].type == 'D'")
-                        span(style='width:30px;', ng-hide='victim_list[j*5 + i]') ---
-                        br
-                        span(ng-show='victim_list[j*5 + i]')
-                          | {{calc_victim_points(victim_list[j*5 + i].type,victim_list[j*5 + i].effective)}} P
-                hr
-              .card-body
-                p.card-text
-                  | {{'line.judge.exit' | translate}}
-                  span.badge.badge-info 20　points
-                .col-md-12(style='position: relative;')
-                  img.img-thumbnail(src='/images/line_bonus.png', width='186.3px', height='118px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}")
-                  div(style='position:absolute; top:25px; left:65px;')
-                    i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
-                    i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
         .col-md-7.col-lg-8.tilearea(style='margin-top:-45px;')
           div(style='text-align:left;float:left;')
             .btn-group
@@ -147,7 +99,8 @@ html(ng-app="ddApp")
                 tile(tile="mtiles[r+','+ (length - c-1) +','+z]", ng-click='showElements(r,length-c-1,z)')
           br
           h2(style='text-align:center;')
-            | {{'common.stotal' | translate}} : {{score - checkTotal() - ( victimPoints() + (20 * exitBonus))}} {{'common.point' |translate}}
+            | {{'common.stotal' | translate}} : {{raw_score - checkTotal() - exitBonusPoints()}} {{'common.point' |translate}}
+      hr
       h2 {{'line.sign.checkPointScore' | translate}}
       .row(　style='margin-bottom:50px;text-align:center;display: flex;flex-wrap: wrap;')
         .col-md-3(ng-repeat='cp in checkPointDistance track by $index')
@@ -165,87 +118,49 @@ html(ng-app="ddApp")
               i.fas.fa-2x(ng-if='$index==0')
             h1 {{cp.point}} {{'common.point' | translate}}
         .col-md-6
-          .alert.alert-warning(style='margin-bottom:30px;text-align:center;', role='alert')
+          .alert.alert-info(style='margin-bottom:30px;text-align:center;', role='alert')
             div(style='min-height:100px')
               h3 {{'line.sign.checkpoint'|translate}} {{'common.stotal' | translate}}
             h1 {{checkTotal()}} {{'common.point' | translate}}
-      h2
-        | {{'line.sign.rescue' | translate}} 【{{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}】 / {{'line.sign.exitBonus' | translate}}
+      hr
+      h2 {{'line.sign.exitBonus' | translate}}
       .alert.alert-info(style='margin-bottom:50px;text-align:center;', role='alert')
         .row
-          .col-md-5
-            // <p style="height:30px;">{{'line.judge.rescue' | translate}}【{{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}】</p>
+          .col-md-4
+            img.img-thumbnail(src='/images/line_bonus.png', width='186.3px', height='118px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}")
+            div(style='position:absolute; top:20px; left:50%; margin-left:-2.5em;')
+              i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
+              i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus ', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
+          .col-md-8
             .row
-              .col-6
-                span Max : {{maxLiveVictims}}
-                br
-                .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
-                  img.img-thumbnail(src='/images/liveVictim.png', width='60px')
-                  br
-                  span(style='font-size:1.5vw;color:#444;')
-                    | {{evacuationLevel-1?'40':'30'}}
-                    span(style='font-size:10px;') p
-                    |  - ({{LoPs[actualUsedDropTiles]}}
-                    span(style='font-size:10px;') times
-                    |  x 5
-                    span(style='font-size:10px;') p
-                    | )
-                  span.badge.badge-info(style='margin-top:10px;')
-                    span(style='font-size:25px;') {{calc_victim_points("L",true)}}
-                    | 　points /victim
-              .col-6(style='')
-                span Max : {{maxDeadVictims}}
-                br
-                .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
-                  img.img-thumbnail(src='/images/deadVictim.png', width='60px')
-                  br
-                  span(style='font-size:1.5vw;color:#444;')
-                    | {{evacuationLevel-1?'30':'20'}}
-                    span(style='font-size:10px;') p
-                    |  - ({{LoPs[actualUsedDropTiles]}}
-                    span(style='font-size:10px;') times
-                    |  x 5
-                    span(style='font-size:10px;') p
-                    | )
-                  span.badge.badge-info(style='margin-top:10px;')
-                    span(style='font-size:25px;') {{calc_victim_points("D",true)}}
-                    | 　points /victim
-          .col-md-7
-            table(border='1', style='width:100%; text-align: center; margin-top: 10px;', ng-repeat='j in range(6)', ng-if='victim_list.length > j*5 || j == 0')
-              tbody
-                tr
-                  th(style='text-align:center;background-color:#fff;', ng-repeat='i in range(5)') {{j*5 + i+1}}
-                tr
-                  td(ng-repeat='i in range(5)', ng-style="{'background-color': victim_list[j*5 + i].effective?'#BDF4CB':'#ccc'}", ng-dblclick='delete_victim(j*5 + i)')
-                    img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*5 + i].type == 'L'")
-                    img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*5 + i].type == 'D'")
-                    span(style='width:30px;', ng-hide='victim_list[j*5 + i]') ---
-                    br
-                    span(ng-show='victim_list[j*5 + i]')
-                      | {{calc_victim_points(victim_list[j*5 + i].type,victim_list[j*5 + i].effective)}} P
-          .col-md-5
-          .col-md-1(style='margin-top:20px;')
-            p(style='height:30px;')
-            h1 +
-          .col-md-2(style='margin-top:20px;')
-            p(style='text-align:center;height:30px;') {{'line.sign.exitBonus' | translate}}
-            i.fas.fa-home.fa-2x  {{exitBonus}}
-            br
-            br
-            h1 {{ 20 * exitBonus}} {{'common.point' | translate}}
-          .col-md-1(style='margin-top:20px;')
-            p(style='height:30px;')
-            h1 =
-          .col-md-3(style='margin-top:20px;')
-            p(style='height:30px;') {{'common.stotal' | translate}}
-            h1 {{ victimPoints() + (20 * exitBonus)}} {{'common.point' | translate}}
-      h2 {{'line.sign.calc' | translate}}
+              .col-3
+                p Base points
+              .col-1
+              .col-3
+                p
+                  i.fas.fa-step-forward &nbsp;{{sum(LoPs)}}  × -5 {{'common.point' | translate}}
+              .col-1
+              .col-4
+                p {{'line.sign.exitBonus' | translate}}
+            .row
+              .col-3
+                h1 {{exitBonus?60:0}} {{'common.point' | translate}}
+              .col-1
+                h1 -
+              .col-3
+                h1 {{(exitBonus?60:0) - exitBonusPoints()}} {{'common.point' | translate}}
+              .col-1
+                h1 =
+              .col-4
+                h1 {{exitBonusPoints()}} {{'common.point' | translate}}
+      hr
+      h2 {{'common.stotal' | translate}}
       .alert.alert-dark(style='margin-bottom:50px;text-align:center;', role='alert')
         .row
           .col-md-2
             p(style='height:30px;') {{'line.sign.item' | translate}}
             h1
-              | {{score - checkTotal() - ( victimPoints() + (20 * exitBonus))}} {{'common.point' | translate}}
+              | {{raw_score - checkTotal() - exitBonusPoints()}} {{'common.point' | translate}}
           .col-md-1
             p(style='height:30px;')
             h1 +
@@ -256,13 +171,87 @@ html(ng-app="ddApp")
             p(style='height:30px;')
             h1 +
           .col-md-2
-            p(style='text-align:center;height:30px;') {{'line.sign.rescue' | translate}} / {{'line.sign.exitBonus' | translate}}
-            h1 {{ victimPoints() + (20 * exitBonus)}} {{'common.point' | translate}}
+            p(style='text-align:center;height:30px;') {{'line.sign.exitBonus' | translate}}
+            h1 {{ exitBonusPoints()}} {{'common.point' | translate}}
           .col-md-1
             p(style='height:30px;')
             h1 =
           .col-md-3
             p(style='height:30px;')
+            h1 {{raw_score}} {{'common.point' | translate}}
+      hr
+      h2 {{'line.sign.rescue' | translate}}&nbsp;
+        span.badge.badge-danger {{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}
+      .alert.alert-info(style='margin-bottom:50px;text-align:center;', role='alert')
+        .row
+          .col-md-5
+            // <p style="height:30px;">{{'line.judge.rescue' | translate}}【{{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}】</p>
+            .row
+              .col-6
+                .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
+                  img.img-thumbnail(src='/images/liveVictim.png', width='60px')
+                  span &nbsp;
+                  img.img-thumbnail(src='/images/deadVictim.png', width='60px')
+                  br
+                  span(style='font-size:1.5vw;color:#444;')
+                    | {{evacuationLevel-1?'x1.4':'x1.2'}}
+                    |  - (x0.05 ×
+                    i.fas.fa-step-forward
+                    | {{LoPs[EvacuationAreaLoPIndex]}}
+                    span(style='font-size:10px;') times
+                    |  )
+                  span.badge.badge-info(style='margin-top:10px;')
+                    span(style='font-size:25px;') {{calc_victim_multipliers("L",true)}}
+                    |  /victim
+              .col-6(style='')
+                .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
+                  img.img-thumbnail(src='/images/rescuekit.png', width='60px')
+                  br
+                  span(style='font-size:1.5vw;color:#444;')
+                    | x1.4
+                    |  - (x0.05 ×
+                    i.fas.fa-step-forward
+                    | {{LoPs[EvacuationAreaLoPIndex]}}
+                    span(style='font-size:10px;') times
+                    |  )
+                  span.badge.badge-info(style='margin-top:10px;')
+                    span(style='font-size:25px;') {{calc_victim_multipliers("K",true)}}
+                    |  /victim
+          .col-md-3
+            table(border='1', style='width:100%; text-align: center; margin-top: 10px;', ng-repeat='j in range(6)', ng-if='victim_list.length > j*4 || j == 0')
+              tbody
+                tr
+                  th(style='text-align:center;background-color:#fff;', ng-repeat='i in range(4)') {{j*4 + i+1}}
+                tr
+                  td(ng-repeat='i in range(4)', ng-style="{'background-color': victim_list[j*4 + i].effective?'#BDF4CB':'#ccc'}")
+                    img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'L'")
+                    img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'D'")
+                    img(src='/images/rescuekit.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K'")
+                    span(style='width:30px;', ng-hide='victim_list[j*4 + i]') ---
+                    br
+                    span(ng-show='victim_list[j*4 + i]')
+                      | {{calc_victim_multipliers(victim_list[j*4 + i].type,victim_list[j*4 + i].effective)}}
+          .col-md-4
+            div(style="margin-top:50px;")
+            p {{'common.multipliers' | translate}}
+            h1 x{{multiplier}}
+      h2 {{'line.sign.calc' | translate}}
+      .alert.alert-warning(style='margin-bottom:50px;text-align:center;', role='alert')
+        .row
+          .col-md-3
+            p(style="height:10px;") {{'common.stotal' | translate}}
+            h1 {{raw_score}} {{'common.point' | translate}}
+          .col-md-1
+            p(style="height:10px;")
+            h1 ×
+          .col-md-4
+            p(style="height:10px;") {{'common.multipliers' | translate}}
+            h1 {{multiplier}}
+          .col-md-1
+            p(style="height:10px;")
+            h1 =
+          .col-md-3
+            p(style="height:10px;") {{'common.score' | translate}}
             h1 {{score}} {{'common.point' | translate}}
       .alert.alert-success(role='alert')
         .row
