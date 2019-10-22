@@ -636,6 +636,11 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
     }
 
+    function undefined2false(tmp) {
+        if (tmp) return true;
+        return false;
+    }
+
     $scope.tile_size = function () {
         try {
             var b = $('.tilearea');
