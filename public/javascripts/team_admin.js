@@ -45,31 +45,7 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             team.checked = true;
         });
     }
-
-    $scope.set_kiosk = function (team) {
-        if(team.league == 'Maze'){
-            $http.get("/api/kiosk/1/run/maze/" + competitionId + "/" + team._id).then(function (response) {
-
-        }, function (response) {
-            console.log("Error: " + response.statusText);
-        });
-        }else{
-            $http.get("/api/kiosk/1/run/line/" + competitionId + "/" + team._id).then(function (response) {
-
-        }, function (response) {
-            console.log("Error: " + response.statusText);
-        });
-        }
-        
-    }
-
-    $scope.reset_kiosk = function (runid) {
-        $http.get("/api/kiosk/1/NA").then(function (response) {
-
-        }, function (response) {
-            console.log("Error: " + response.statusText);
-        });
-    }
+    
 
     $scope.removeSelectedTeam = function () {
         var chk = [];
