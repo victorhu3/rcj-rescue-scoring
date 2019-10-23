@@ -71,10 +71,10 @@ adminRouter.post('/', function (req, res) {
           checkpoint   : cell.tile.checkpoint,
           speedbump    : cell.tile.speedbump,
           black        : cell.tile.black,
-          rampBottom   : cell.tile.rampBottom,
-          rampTop      : cell.tile.rampTop,
+          ramp         : cell.tile.ramp,
+          steps        : cell.tile.steps,
           changeFloorTo: cell.tile.changeFloorTo
-        }
+        };
         
         if (cell.tile.victims != null) {
           tile.victims = {
@@ -93,6 +93,7 @@ adminRouter.post('/', function (req, res) {
         isTile  : cell.isTile,
         isWall  : cell.isWall,
         isLinear: cell.isLinear,
+        halfWall: cell.halfWall,
         tile    : tile
       })
     }
@@ -234,7 +235,7 @@ adminRouter.put('/:map', function (req, res, next) {
       //logger.debug(map)
       dbMap.cells = []
       err = copyProperties(map, dbMap)
-      
+
       if (err) {
         logger.error(err)
         return res.status(400).send({
@@ -242,7 +243,7 @@ adminRouter.put('/:map', function (req, res, next) {
           msg: "Could not save map"
         })
       }
-      
+
       mazeRun.findOne({
         map    : id,
         started: true

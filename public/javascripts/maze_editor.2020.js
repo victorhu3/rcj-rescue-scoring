@@ -38,6 +38,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
     $scope.cells = {};
     $scope.dice = [];
     $scope.saveasname ="";
+    $scope.finished = true;
     
     $http.get("/api/competitions/" +
         $scope.competitionId).then(function (response) {
@@ -175,7 +176,8 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         var virWall = $scope.virtualWall[x + ',' + y + ',' + z];
         if(virWall && !cell){
             $scope.cells[x + ',' + y + ',' + z] = {
-                isWall: false
+                isWall: false,
+                halfWall: 0
             }
             cell = $scope.cells[x + ',' + y + ',' + z];
         }
@@ -436,6 +438,53 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         });
     };
 
+    $scope.wallColor = function(x,y,z,rotate=0){
+        let cell = $scope.cells[x+','+y+','+z];
+        if(!cell) return {};
+        if(cell.isWall) return cell.isLinear?{'background-color': 'black'}:{'background-color': 'navy'};
+
+        if(cell.halfWall > 0){
+            let direction = 180*(cell.halfWall-1)+rotate+(y%2==1?0:90);
+            if(direction>=360) direction-=360;
+
+            //Wall color
+            let color = 'navy';
+            switch (direction) {
+                case 0:
+                    if(wallCheck($scope.cells[(x-1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x)+','+(y+2)+','+z])) color = 'black';
+                    break;
+                case 90:
+                    if(wallCheck($scope.cells[(x-1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x-1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x-2)+','+(y)+','+z])) color = 'black';
+                    break;
+                case 180:
+                    if(wallCheck($scope.cells[(x-1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x)+','+(y-2)+','+z])) color = 'black';
+                    break;
+                case 270:
+                    if(wallCheck($scope.cells[(x+1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+2)+','+(y)+','+z])) color = 'black';
+                    break;
+            }
+
+
+            let gradient = String(direction) + "deg," + color + " 0%," + color + " 50%,white 50%,white 100%";
+            return {'background': 'linear-gradient(' + gradient + ')'};
+
+        }
+
+    };
+
+    function wallCheck(cell){
+        if(!cell) return false;
+        return cell.isWall && cell.isLinear;
+    }
+
     $scope.saveMapAs = function (name) {
         if ($scope.startNotSet()) {
             alert("You must define a starting tile by clicking a tile");
@@ -488,6 +537,8 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
             startTile: $scope.startTile,
             cells: $scope.cells
         };
+        console.log($scope.finished);
+        console.log(map);
         console.log("Update map", mapId);
         console.log("Competition ID", $scope.competitionId);
         if (mapId) {
@@ -582,12 +633,21 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         if (isWall) {
             if (!cell) {
                 $scope.cells[x + ',' + y + ',' + z] = {
-                    isWall: true
+                    isWall: true,
+                    halfWall: 0
                 };
             } else {
-                cell.isWall = !cell.isWall;
+                if(cell.isWall){
+                    cell.isWall = false;
+                    cell.halfWall = 1;
+                }else if(cell.halfWall == 1){
+                    cell.halfWall = 2;
+                }else if(cell.halfWall == 2){
+                    cell.halfWall = 0;
+                }else{
+                    cell.isWall = true;
+                }
             }
-            
         } else if (isTile) {
             if (!cell) {
                 $scope.cells[x + ',' + y + ',' + z] = {

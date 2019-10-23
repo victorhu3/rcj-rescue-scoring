@@ -42,8 +42,8 @@ const mazeRunSchema = new Schema({
     scoredItems: {
       speedbump : {type: Boolean, default: false},
       checkpoint: {type: Boolean, default: false},
-      rampBottom: {type: Boolean, default: false},
-      rampTop   : {type: Boolean, default: false},
+      rampDown  : {type: Boolean, default: false},
+      rampUp    : {type: Boolean, default: false},
       victims   : {
         top   : {type: Boolean, default: false},
         right : {type: Boolean, default: false},

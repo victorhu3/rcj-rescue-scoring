@@ -9,7 +9,7 @@ const mazeFill = require('../helper/mazeFill')
 
 const logger = require('../config/logger').mainLogger
 
-const VICTIMS = ['H', 'S', 'U', "Heated", "None"]
+const VICTIMS = ['H', 'S', 'U', "Heated", "Red", "Yellow", "Green", "None"];
 
 const MazeRun = require('./mazeRun')
 
@@ -37,8 +37,8 @@ const tileSchema = new Schema({
   checkpoint   : {type: Boolean, default: false},
   speedbump    : {type: Boolean, default: false},
   black        : {type: Boolean, default: false},
-  rampBottom   : {type: Boolean, default: false},
-  rampTop      : {type: Boolean, default: false},
+  ramp         : {type: Boolean, default: false},
+  steps        : {type: Boolean, default: false},
   victims      : {
     top   : {
       type   : String,
@@ -86,9 +86,8 @@ const mazeMapSchema = new Schema({
     isTile  : {type: Boolean, default: false},
     isWall  : {type: Boolean, default: false},
     isLinear: {type: Boolean, default: false},
-    
+    halfWall: {type: Number},
     tile: tileSchema
-    
   }],
   startTile  : {
     x: {
@@ -111,20 +110,20 @@ const mazeMapSchema = new Schema({
 })
 
 mazeMapSchema.pre('save', function (next) {
-  var self = this
+  var self = this;
   
   for (let i = 0; i < self.cells.length; i++) {
-    let cell = self.cells[i]
-    
+    let cell = self.cells[i];
+
     if (cell.x > self.width * 2 || cell.y > self.length * 2 ||
         cell.z >= self.height) {
-      self.cells.splice(i, 1)
+      self.cells.splice(i, 1);
       continue
     }
     
     if (isOdd(cell.x) && isOdd(cell.y)) {
-      cell.isTile = true
-      cell.isWall = false
+      cell.isTile = true;
+      cell.isWall = false;
       
       if (cell.tile == null) {
         cell.tile = {}
@@ -139,22 +138,29 @@ mazeMapSchema.pre('save', function (next) {
         if (cell.tile.checkpoint) {
           const err = new Error("Tile can't be both black and checkpoint at x: " +
                                 cell.x + ", y: " +
-                                cell.y + ", z: " + cell.z + "!")
-          return next(err)
+                                cell.y + ", z: " + cell.z + "!");
+          return next(err);
         }
         
         if (cell.tile.rampBottom) {
           const err = new Error("Tile can't be both black and ramp bottom at x: " +
                                 cell.x + ", y: " +
-                                cell.y + ", z: " + cell.z + "!")
-          return next(err)
+                                cell.y + ", z: " + cell.z + "!");
+          return next(err);
         }
         
         if (cell.tile.rampTop) {
           const err = new Error("Tile can't be both black and ramp top at x: " +
                                 cell.x + ", y: " +
-                                cell.y + ", z: " + cell.z + "!")
-          return next(err)
+                                cell.y + ", z: " + cell.z + "!");
+          return next(err);
+        }
+
+        if (cell.tile.steps) {
+          const err = new Error("Tile can't be both black and steps at x: " +
+                                cell.x + ", y: " +
+                                cell.y + ", z: " + cell.z + "!");
+          return next(err);
         }
         
         if ((cell.tile.victims.top != null &&
@@ -181,7 +187,7 @@ mazeMapSchema.pre('save', function (next) {
                             cell.y + ", z: " + cell.z + "!")
       return next(err)
     } else {
-      if (!cell.isWall) {
+      if (!cell.isWall && !cell.halfWall) {
         self.cells.splice(i, 1)
       } else {
         cell.isTile = false
