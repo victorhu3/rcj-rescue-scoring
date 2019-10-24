@@ -283,13 +283,8 @@ var app = angular.module("RunAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'ui
         }
 
 
-
-        $scope.go_scoreSheet = function (runid) {
-            window.location = "/api/runs/maze/scoresheet?run=" + runid
-        }
-
         $scope.go_scoreSheet2 = function (runid) {
-          window.location = "/api/runs/maze/scoresheet2?run=" + runid
+          window.open("/api/runs/maze/scoresheet2?run=" + runid,"_blank");
         }
 
         $scope.go_judge = function (runid) {
@@ -352,20 +347,6 @@ var app = angular.module("RunAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'ui
           }
         }
 
-        $scope.uploadSheets = function(files){
-            console.log("Files", files);
-            for (let i = 0; i < files.length; i++) {
-                Upload.upload({
-                    url: '/api/runs/maze/scoresheet/' + competitionId,
-                    data: {file: files[i]},
-                }).then(function (resp) {
-                      console.log('Succ', resp);
-                    }, function (resp) {
-                    }, function (evt) {
-                    }
-                );
-            }
-        }
 
         $scope.go = function (path) {
             window.location = path + '?return=' + window.location.pathname;
@@ -432,9 +413,6 @@ var app = angular.module("RunAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'ui
             $scope.scoreSheetEndDatePopup.opened = true
         };
 
-        $scope.go_scoreSheetInTimeRange = function () {
-            window.open("/api/runs/maze/scoresheet?competition=" + $scope.competitionId + "&startTime=" + $scope.scoreSheetStartDateTime.getTime() + "&endTime=" + $scope.scoreSheetEndDateTime.getTime(), "_blank")
-        };
         $scope.go_scoreSheetInTimeRange2 = function () {
           window.open("/api/runs/maze/scoresheet2?competition=" + $scope.competitionId + "&startTime=" + $scope.scoreSheetStartDateTime.getTime() + "&endTime=" + $scope.scoreSheetEndDateTime.getTime(), "_blank")
         }
