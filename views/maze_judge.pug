@@ -150,7 +150,6 @@ html(ng-app="ddApp")
                     span.input-group-btn
                       button.btn.btn-success(type='button', ng-click='increment()')
                         i.fas.fa-plus(aria-hidden='true')
-                  img(ng-src='/api/runs/maze/scoresheetimg/{{runId}}/lop', style='width: 100%', ng-if='fromApproval')
                   p
                 h3.card-header
                   i.fas.fa-home(aria-hidden='true')
@@ -168,7 +167,6 @@ html(ng-app="ddApp")
                       span.input-group-btn
                         button.btn.btn-success(type='button', ng-click='incrementMis()')
                           i.fas.fa-plus(aria-hidden='true')
-                    img(ng-src='/api/runs/maze/scoresheetimg/{{runId}}/misidentification', style='width: 100%', ng-if='fromApproval')
                     br
                   .col-md-12(style='position: relative;', ng-click='changeExitBonus()')
                     strong {{'maze.judge.return' | translate}}
@@ -177,7 +175,6 @@ html(ng-app="ddApp")
                     div(style='position:absolute; top:30px; left:25px;')
                       i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
                       i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
-                  img(ng-src='/api/runs/maze/scoresheetimg/{{runId}}/exitBonus', style='width: 100%', ng-if='fromApproval')
           .col-md-8.col-lg-9.tilearea
             div(style='text-align:left;float:left;')
               .btn-group
@@ -356,7 +353,6 @@ html(ng-app="ddApp")
                         i.fas.fa-check.fa-fw.tile-image.tile-font(ng-show="tileStatus(2*width - r,c,z,$odd && $parent.$odd) == 'done'", style='padding-top:4px; color:#27ae60; opacity:0.9;')
                         i.fas.fa-play.fa-fw.fa-rotate-270.tile-image.tile-font(ng-show="tileStatus(2*width - r,c,z,$odd && $parent.$odd) == 'halfdone'", style='padding-top:4px; color:#f4d03f; opacity:0.9;')
                         i.fas.fa-times.fa-fw.tile-image.tile-font(ng-show="tileStatus(2*width - r,c,z,$odd && $parent.$odd) == 'undone'", style='padding-top:6px; color:#e74c3c; opacity:0.9;')
-            img(ng-src='/api/runs/maze/scoresheetimg/{{runId}}/tiles', ng-if='fromApproval')
         .row(style='margin:50 0 0 0;')
           .col-sm-12
             p
@@ -377,7 +373,6 @@ html(ng-app="ddApp")
                     span#sizing-addon1.input-group-addon {{'common.min' | translate}}
                     input.form-control(type='tel', placeholder='', aria-label='sec', aria-describedby='sizing-addon1', min='0', max='60', ng-model='seconds', ng-disabled='startedTime')
                     span#sizing-addon1.input-group-addon {{'common.sec' | translate}}
-                  img(ng-src='/api/runs/maze/scoresheetimg/{{runId}}/time', style='width: 100%; max-width: 250px', ng-if='fromApproval')
                 .col-sm-5
                   div(style='text-align:right;')
                     button.btn.btn-danger(type='button', ng-click='confirm()', ng-disabled='startedTime', ng-hide='networkError || fromApproval')
