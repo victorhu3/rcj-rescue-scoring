@@ -99,6 +99,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.round = response.data.round.name;
             $scope.score = response.data.score;
             $scope.team = response.data.team.name;
+            $scope.league = response.data.team.league;
             $scope.competition = response.data.competition.name;
             $scope.competition_id = response.data.competition._id;
             $scope.LoPs = response.data.LoPs;
