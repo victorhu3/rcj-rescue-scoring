@@ -35,13 +35,13 @@ html(ng-app="ddApp")
           table.map
             tbody
               tr(ng-repeat='r in range(2*length + 1)')
-                td.cell(ng-repeat='c in range(2*width + 1)', ng-class="{'tile': $odd && $parent.$odd, 'wall': cells[c+','+r+','+z].isWall, 'checkpoint': cells[c+','+r+','+z].tile.checkpoint, 'black': cells[c+','+r+','+z].tile.black, 'linear': cells[c+','+r+','+z].isLinear}", ng-click='cellClick(c, r, z, $odd != $parent.$odd, $odd && $parent.$odd)')
+                td.cell(ng-repeat='c in range(2*width + 1)', ng-class="{'tile': $odd && $parent.$odd, 'wall': cells[c+','+r+','+z].isWall, 'checkpoint': cells[c+','+r+','+z].tile.checkpoint, 'black': cells[c+','+r+','+z].tile.black, 'linear': cells[c+','+r+','+z].isLinear}", ng-click='cellClick(c, r, z, $odd != $parent.$odd, $odd && $parent.$odd)', ng-style="wallColor(c,r,z,0)")
                   .tile-image-container(ng-show="cells[c+','+r+','+z].isTile")
                     img.tile-image(ng-src='/images/log.png', ng-show="cells[c+','+r+','+z].tile.speedbump")
                     img.tile-image(ng-src='/images/elevator.png', ng-show="!isUndefined(cells[c+','+r+','+z].tile.changeFloorTo) && cells[c+','+r+','+z].tile.changeFloorTo != z")
                     img.tile-image(ng-src='/images/start.png', ng-show='startTile.x == c && startTile.y == r && startTile.z == z')
-                    img.tile-image(ng-src='/images/ramp_top.png', ng-show="cells[c+','+r+','+z].tile.rampTop")
-                    img.tile-image(ng-src='/images/ramp_bottom.png', ng-show="cells[c+','+r+','+z].tile.rampBottom")
+                    img.tile-image(ng-src='/images/ramp.png', ng-show="cells[c+','+r+','+z].tile.ramp")
+                    img.tile-image(ng-src='/images/steps.png', ng-show="cells[c+','+r+','+z].tile.steps")
                     img.tile-image(ng-src='/images/heated_top.png', ng-show="cells[c+','+r+','+z].tile.victims.top == 'Heated'")
                     img.tile-image(ng-src='/images/heated_right.png', ng-show="cells[c+','+r+','+z].tile.victims.right == 'Heated'")
                     img.tile-image(ng-src='/images/heated_bottom.png', ng-show="cells[c+','+r+','+z].tile.victims.bottom == 'Heated'")
@@ -58,6 +58,19 @@ html(ng-app="ddApp")
                     img.tile-image(ng-src='/images/u_right.png', ng-show="cells[c+','+r+','+z].tile.victims.right == 'U'")
                     img.tile-image(ng-src='/images/u_bottom.png', ng-show="cells[c+','+r+','+z].tile.victims.bottom == 'U'")
                     img.tile-image(ng-src='/images/u_left.png', ng-show="cells[c+','+r+','+z].tile.victims.left == 'U'")
+                    p.tile-point(ng-if='tileStatus(c,r,z,$odd && $parent.$odd)', style='color:#000; opacity:1;z-index:50;position: relative;text-align:center;') {{tilePoint(c,r,z,$odd && $parent.$odd)}}
+                    img.tile-image(ng-src='/images/red_top.png', ng-show="cells[c+','+r+','+z].tile.victims.top == 'Red'")
+                    img.tile-image(ng-src='/images/red_right.png', ng-show="cells[c+','+r+','+z].tile.victims.right == 'Red'")
+                    img.tile-image(ng-src='/images/red_bottom.png', ng-show="cells[c+','+r+','+z].tile.victims.bottom == 'Red'")
+                    img.tile-image(ng-src='/images/red_left.png', ng-show="cells[c+','+r+','+z].tile.victims.left == 'Red'")
+                    img.tile-image(ng-src='/images/yellow_top.png', ng-show="cells[c+','+r+','+z].tile.victims.top == 'Yellow'")
+                    img.tile-image(ng-src='/images/yellow_right.png', ng-show="cells[c+','+r+','+z].tile.victims.right == 'Yellow'")
+                    img.tile-image(ng-src='/images/yellow_bottom.png', ng-show="cells[c+','+r+','+z].tile.victims.bottom == 'Yellow'")
+                    img.tile-image(ng-src='/images/yellow_left.png', ng-show="cells[c+','+r+','+z].tile.victims.left == 'Yellow'")
+                    img.tile-image(ng-src='/images/green_top.png', ng-show="cells[c+','+r+','+z].tile.victims.top == 'Green'")
+                    img.tile-image(ng-src='/images/green_right.png', ng-show="cells[c+','+r+','+z].tile.victims.right == 'Green'")
+                    img.tile-image(ng-src='/images/green_bottom.png', ng-show="cells[c+','+r+','+z].tile.victims.bottom == 'Green'")
+                    img.tile-image(ng-src='/images/green_left.png', ng-show="cells[c+','+r+','+z].tile.victims.left == 'Green'")
                     i.fas.fa-check.fa-fw.tile-image.tile-font(ng-show="tileStatus(c,r,z,$odd && $parent.$odd) == 'done'", style='padding-top:4px; color:#27ae60; opacity:0.9;')
                     i.fas.fa-play.fa-fw.fa-rotate-270.tile-image.tile-font(ng-show="tileStatus(c,r,z,$odd && $parent.$odd) == 'halfdone'", style='padding-top:4px; color:#f4d03f; opacity:0.9;')
                     i.fas.fa-times.fa-fw.tile-image.tile-font(ng-show="tileStatus(c,r,z,$odd && $parent.$odd) == 'undone'", style='padding-top:6px; color:#e74c3c; opacity:0.9;')
@@ -67,11 +80,13 @@ html(ng-app="ddApp")
     br
     .alert.alert-info(role='alert', ng-show='exist')
       .row
-        .col-6
+        .col-4
           i.fas.fa-step-forward(aria-hidden='true')  : {{LoPs}} times
-        .col-6
+        .col-4
+          i.fas Misidentification : {{MisIdent}} times
+        .col-4
           i.fas.fa-home(aria-hidden='true')
             | : Returned:
             b {{exitBonus}}
-    
+
 
