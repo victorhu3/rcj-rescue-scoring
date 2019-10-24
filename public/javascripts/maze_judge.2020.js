@@ -66,7 +66,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             exitBonus: $scope.exitBonus,
             misidentification: $scope.MisIdent
         };
-        console.log(tmp);
         $scope.score = maze_calc_score(tmp);
       }
         if ($scope.networkError) {
@@ -303,6 +302,54 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         });
     }
 
+    $scope.wallColor = function(x,y,z,rotate=0){
+        let cell = $scope.cells[x+','+y+','+z];
+        if(!cell) return {};
+        if(cell.isWall) return cell.isLinear?{'background-color': 'black'}:{'background-color': 'navy'};
+
+        if(cell.halfWall > 0){
+            let direction = 180*(cell.halfWall-1)+(y%2==1?0:90);
+
+            //Wall color
+            let color = 'navy';
+            switch (direction) {
+                case 0:
+                    if(wallCheck($scope.cells[(x-1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x)+','+(y+2)+','+z])) color = 'black';
+                    break;
+                case 90:
+                    if(wallCheck($scope.cells[(x-1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x-1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x-2)+','+(y)+','+z])) color = 'black';
+                    break;
+                case 180:
+                    if(wallCheck($scope.cells[(x-1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x)+','+(y-2)+','+z])) color = 'black';
+                    break;
+                case 270:
+                    if(wallCheck($scope.cells[(x+1)+','+(y+1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+1)+','+(y-1)+','+z])) color = 'black';
+                    if(wallCheck($scope.cells[(x+2)+','+(y)+','+z])) color = 'black';
+                    break;
+            }
+
+            direction += rotate;
+            if(direction>=360) direction-=360;
+
+            let gradient = String(direction) + "deg," + color + " 0%," + color + " 50%,white 50%,white 100%";
+            return {'background': 'linear-gradient(' + gradient + ')'};
+
+        }
+
+    };
+
+    function wallCheck(cell){
+        if(!cell) return false;
+        return cell.isWall && cell.isLinear;
+    }
+
     var tick = function () {
         if ($scope.startedTime) {
             date = new Date();
@@ -373,8 +420,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 scoredItems: {
                     speedbump: false,
                     checkpoint: false,
-                    rampBottom: false,
-                    rampTop: false,
+                    rampDown: false,
+                    rampUp: false,
+                    steps:  false,
                     victims: {
                         top: false,
                         right: false,
@@ -410,34 +458,33 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 current++;
             }
         }
-        if (cell.tile.rampBottom) {
-            possible++;
-            if (tile.scoredItems.rampBottom) {
+        if (cell.tile.ramp) {
+            possible+=2;
+            if (tile.scoredItems.rampDown) {
+                current++;
+            }
+            if (tile.scoredItems.rampUp) {
                 current++;
             }
         }
-        if (cell.tile.rampTop) {
+        if (cell.tile.steps) {
             possible++;
-            if (tile.scoredItems.rampTop) {
+            if (tile.scoredItems.steps) {
                 current++;
             }
         }
         switch (cell.tile.victims.top) {
-            case 'Heated':
-                possible++;
-                current += tile.scoredItems.victims.top ||
-                    tile.scoredItems.rescueKits.top > 0;
-                possible++;
-                current += (tile.scoredItems.rescueKits.top >= 1);
-                break;
             case 'H':
+            case 'Red':
                 possible++;
                 current += tile.scoredItems.victims.top ||
                     tile.scoredItems.rescueKits.top > 0;
                 possible++;
                 current += (tile.scoredItems.rescueKits.top >= 2);
                 break;
+            case 'Heated':
             case 'S':
+            case 'Yellow':
                 possible++;
                 current += tile.scoredItems.victims.top ||
                     tile.scoredItems.rescueKits.top > 0;
@@ -445,27 +492,24 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 current += (tile.scoredItems.rescueKits.top >= 1);
                 break;
             case 'U':
+            case 'Green':
                 possible++;
                 current += tile.scoredItems.victims.top ||
                     tile.scoredItems.rescueKits.top > 0;
                 break;
         }
         switch (cell.tile.victims.right) {
-            case 'Heated':
-                possible++;
-                current += tile.scoredItems.victims.right ||
-                    tile.scoredItems.rescueKits.right > 0;
-                possible++;
-                current += (tile.scoredItems.rescueKits.right >= 1);
-                break;
             case 'H':
+            case 'Red':
                 possible++;
                 current += tile.scoredItems.victims.right ||
                     tile.scoredItems.rescueKits.right > 0;
                 possible++;
                 current += (tile.scoredItems.rescueKits.right >= 2);
                 break;
+            case 'Heated':
             case 'S':
+            case 'Yellow':
                 possible++;
                 current += tile.scoredItems.victims.right ||
                     tile.scoredItems.rescueKits.right > 0;
@@ -473,27 +517,24 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 current += (tile.scoredItems.rescueKits.right >= 1);
                 break;
             case 'U':
+            case 'Green':
                 possible++;
                 current += tile.scoredItems.victims.right ||
                     tile.scoredItems.rescueKits.right > 0;
                 break;
         }
         switch (cell.tile.victims.bottom) {
-            case 'Heated':
-                possible++;
-                current += tile.scoredItems.victims.bottom ||
-                    tile.scoredItems.rescueKits.bottom > 0;
-                possible++;
-                current += (tile.scoredItems.rescueKits.bottom >= 1);
-                break;
             case 'H':
+            case 'Red':
                 possible++;
                 current += tile.scoredItems.victims.bottom ||
                     tile.scoredItems.rescueKits.bottom > 0;
                 possible++;
                 current += (tile.scoredItems.rescueKits.bottom >= 2);
                 break;
+            case 'Heated':
             case 'S':
+            case 'Yellow':
                 possible++;
                 current += tile.scoredItems.victims.bottom ||
                     tile.scoredItems.rescueKits.bottom > 0;
@@ -501,27 +542,24 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 current += (tile.scoredItems.rescueKits.bottom >= 1);
                 break;
             case 'U':
+            case 'Green':
                 possible++;
                 current += tile.scoredItems.victims.bottom ||
                     tile.scoredItems.rescueKits.bottom > 0;
                 break;
         }
         switch (cell.tile.victims.left) {
-            case 'Heated':
-                possible++;
-                current += tile.scoredItems.victims.left ||
-                    tile.scoredItems.rescueKits.left > 0;
-                possible++;
-                current += (tile.scoredItems.rescueKits.left >= 1);
-                break;
             case 'H':
+            case 'Red':
                 possible++;
                 current += tile.scoredItems.victims.left ||
                     tile.scoredItems.rescueKits.left > 0;
                 possible++;
                 current += (tile.scoredItems.rescueKits.left >= 2);
                 break;
+            case 'Heated':
             case 'S':
+            case 'Yellow':
                 possible++;
                 current += tile.scoredItems.victims.left ||
                     tile.scoredItems.rescueKits.left > 0;
@@ -529,6 +567,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 current += (tile.scoredItems.rescueKits.left >= 1);
                 break;
             case 'U':
+            case 'Green':
                 possible++;
                 current += tile.scoredItems.victims.left ||
                     tile.scoredItems.rescueKits.left > 0;
@@ -561,8 +600,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 scoredItems: {
                     speedbump: false,
                     checkpoint: false,
-                    rampBottom: false,
-                    rampTop: false,
+                    rampDown: false,
+                    rampUp: false,
+                    steps: false,
                     victims: {
                         top: false,
                         right: false,
@@ -587,9 +627,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
         console.log(cell.tile);
         // Total number of scorable things on this tile
-        var total = !!cell.tile.speedbump + !!cell.tile.checkpoint +
-            !!cell.tile.rampBottom + !!cell.tile.rampTop +
-            hasVictims;
+        var total = !!cell.tile.speedbump + !!cell.tile.checkpoint + !!cell.tile.steps + cell.tile.ramp*2 + hasVictims;
         console.log("totalt antal saker", total);
         console.log("Has victims", hasVictims);
 
@@ -600,11 +638,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             if (cell.tile.checkpoint) {
                 tile.scoredItems.checkpoint = !tile.scoredItems.checkpoint;
             }
-            if (cell.tile.rampBottom) {
-                tile.scoredItems.rampBottom = !tile.scoredItems.rampBottom;
-            }
-            if (cell.tile.rampTop) {
-                tile.scoredItems.rampTop = !tile.scoredItems.rampTop;
+            if (cell.tile.steps) {
+                tile.scoredItems.steps = !tile.scoredItems.steps;
             }
             var httpdata = {
                 tiles: {
@@ -831,11 +866,12 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, cell, t
         (cell.tile.victims.left != "None");
     $scope.clickSound = function(){
         playSound(sClick);
-    }
+    };
+
     $scope.incKits = function (direction) {
         playSound(sClick);
         $scope.tile.scoredItems.rescueKits[direction]++;
-    }
+    };
 
     $scope.decKits = function (direction) {
         playSound(sClick);
@@ -843,7 +879,17 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, cell, t
         if ($scope.tile.scoredItems.rescueKits[direction] < 0) {
             $scope.tile.scoredItems.rescueKits[direction] = 0;
         }
-    }
+    };
+
+    $scope.changeRampUp = function(){
+        playSound(sClick);
+        $scope.tile.scoredItems.rampUp = !$scope.tile.scoredItems.rampUp;
+    };
+
+    $scope.changeRampDown = function(){
+        playSound(sClick);
+        $scope.tile.scoredItems.rampDown = !$scope.tile.scoredItems.rampDown;
+    };
 
     $scope.lightStatus = function(light, kit){
         if(light) return true;
@@ -853,21 +899,22 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, cell, t
 
     $scope.kitStatus = function(light, kit, type){
         switch(type){
-                case 'Heated':
-                    if(kit >= 1) return true;
-                    break;
-                case 'H':
-                    if(kit >= 2) return true;
-                    break;
-                case 'S':
-                    if(kit >= 1) return true;
-                    break;
-                case 'U':
-                    if(light || kit > 0) return true;
-                    break;
+            case 'H':
+            case 'Red':
+                if(kit >= 2) return true;
+                break;
+            case 'Heated':
+            case 'S':
+            case 'Yellow':
+                if(kit >= 1) return true;
+                break;
+            case 'U':
+            case 'Green':
+                if(light || kit > 0) return true;
+                break;
         }
         return false;
-    }
+    };
 
     $scope.modalRotate = function(dir){
         var ro;

@@ -107,85 +107,90 @@ function line_calc_score(run) {
 
 
 function maze_calc_score(run) {
-    var score = 0
+    let score = 0;
 
-    var mapTiles = []
+    let mapTiles = [];
     for (let i = 0; i < run.map.cells.length; i++) {
-        let cell = run.map.cells[i]
+        let cell = run.map.cells[i];
         if (cell.isTile) {
             mapTiles[cell.x + ',' + cell.y + ',' + cell.z] = cell
         }
     }
 
-    var victims = 0
-    var rescueKits = 0
+    let victims = 0;
+    let rescueKits = 0;
 
     for (let coord of Object.keys(run.tiles)) {
         let tile = run.tiles[coord];
-        if (mapTiles[coord].tile.reachable) {
 
-            if (tile.scoredItems.speedbump && mapTiles[coord].tile.speedbump) {
-                score += 5
-            }
-            if (tile.scoredItems.checkpoint && mapTiles[coord].tile.checkpoint) {
-                score += 10
-            }
-            if (tile.scoredItems.rampBottom && mapTiles[coord].tile.rampBottom) {
-                score += 10
-            }
-            if (tile.scoredItems.rampTop && mapTiles[coord].tile.rampTop) {
-                score += 20
-            }
+        if (tile.scoredItems.speedbump && mapTiles[coord].tile.speedbump) {
+            score += 5
+        }
+        if (tile.scoredItems.checkpoint && mapTiles[coord].tile.checkpoint) {
+            score += 10
+        }
+        if (tile.scoredItems.rampDown && mapTiles[coord].tile.ramp) {
+            score += 10
+        }
+        if (tile.scoredItems.rampUp && mapTiles[coord].tile.ramp) {
+            score += 20
+        }
+        if (tile.scoredItems.steps && mapTiles[coord].tile.steps) {
+            score += 5
+        }
 
-            const maxKits = {
-                "H": 2,
-                "S": 1,
-                "U": 0,
-                "Heated": 1
-            }
+        const maxKits = {
+            "H": 2,
+            "S": 1,
+            "U": 0,
+            "Heated": 1,
+            "Red": 2,
+            "Yellow": 1,
+            "Green": 0
+        };
 
-            if (mapTiles[coord].tile.victims.top != "None") {
-                if (tile.scoredItems.rescueKits.top > 0) {
-                    tile.scoredItems.victims.top = true
-                }
-                if (tile.scoredItems.victims.top) {
-                    victims++
-                    score += mapTiles[coord].isLinear ? 10 : 25
-                    rescueKits += Math.min(tile.scoredItems.rescueKits.top, maxKits[mapTiles[coord].tile.victims.top])
-                }
+        if (mapTiles[coord].tile.victims.top != "None") {
+            if (tile.scoredItems.rescueKits.top > 0) {
+                tile.scoredItems.victims.top = true
             }
-            if (mapTiles[coord].tile.victims.right != "None") {
-                if (tile.scoredItems.rescueKits.right > 0) {
-                    tile.scoredItems.victims.right = true
-                }
-                if (tile.scoredItems.victims.right) {
-                    victims++
-                    score += mapTiles[coord].isLinear ? 10 : 25
-                    rescueKits += Math.min(tile.scoredItems.rescueKits.right, maxKits[mapTiles[coord].tile.victims.right])
-                }
+            if (tile.scoredItems.victims.top) {
+                victims++
+                score += mapTiles[coord].isLinear ? 10 : 25
+                rescueKits += Math.min(tile.scoredItems.rescueKits.top, maxKits[mapTiles[coord].tile.victims.top])
             }
-            if (mapTiles[coord].tile.victims.bottom != "None") {
-                if (tile.scoredItems.rescueKits.bottom > 0) {
-                    tile.scoredItems.victims.bottom = true
-                }
-                if (tile.scoredItems.victims.bottom) {
-                    victims++
-                    score += mapTiles[coord].isLinear ? 10 : 25
-                    rescueKits += Math.min(tile.scoredItems.rescueKits.bottom, maxKits[mapTiles[coord].tile.victims.bottom])
-                }
+        }
+        if (mapTiles[coord].tile.victims.right != "None") {
+            if (tile.scoredItems.rescueKits.right > 0) {
+                tile.scoredItems.victims.right = true
             }
-            if (mapTiles[coord].tile.victims.left != "None") {
-                if (tile.scoredItems.rescueKits.left > 0) {
-                    tile.scoredItems.victims.left = true
-                }
-                if (tile.scoredItems.victims.left) {
-                    victims++
-                    score += mapTiles[coord].isLinear ? 10 : 25
-                    rescueKits += Math.min(tile.scoredItems.rescueKits.left, maxKits[mapTiles[coord].tile.victims.left])
-                }
+            if (tile.scoredItems.victims.right) {
+                victims++
+                score += mapTiles[coord].isLinear ? 10 : 25
+                rescueKits += Math.min(tile.scoredItems.rescueKits.right, maxKits[mapTiles[coord].tile.victims.right])
+            }
+        }
+        if (mapTiles[coord].tile.victims.bottom != "None") {
+            if (tile.scoredItems.rescueKits.bottom > 0) {
+                tile.scoredItems.victims.bottom = true
+            }
+            if (tile.scoredItems.victims.bottom) {
+                victims++
+                score += mapTiles[coord].isLinear ? 10 : 25
+                rescueKits += Math.min(tile.scoredItems.rescueKits.bottom, maxKits[mapTiles[coord].tile.victims.bottom])
+            }
+        }
+        if (mapTiles[coord].tile.victims.left != "None") {
+            if (tile.scoredItems.rescueKits.left > 0) {
+                tile.scoredItems.victims.left = true
+            }
+            if (tile.scoredItems.victims.left) {
+                victims++
+                score += mapTiles[coord].isLinear ? 10 : 25
+                rescueKits += Math.min(tile.scoredItems.rescueKits.left, maxKits[mapTiles[coord].tile.victims.left])
             }
         }
     }
+
     score += Math.min(rescueKits, 12) * 10
 
     score += Math.max((victims + Math.min(rescueKits, 12) - run.LoPs) * 10, 0)
@@ -194,7 +199,9 @@ function maze_calc_score(run) {
         score += victims * 10
     }
 
-    score -= Math.min(run.misidentification*5,score)
+
+
+    score -= Math.min(run.misidentification*5,score);
 
     return score
 }
