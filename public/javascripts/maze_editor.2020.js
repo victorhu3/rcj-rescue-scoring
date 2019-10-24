@@ -444,8 +444,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         if(cell.isWall) return cell.isLinear?{'background-color': 'black'}:{'background-color': 'navy'};
 
         if(cell.halfWall > 0){
-            let direction = 180*(cell.halfWall-1)+rotate+(y%2==1?0:90);
-            if(direction>=360) direction-=360;
+            let direction = 180*(cell.halfWall-1)+(y%2==1?0:90);
 
             //Wall color
             let color = 'navy';
@@ -472,6 +471,8 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
                     break;
             }
 
+            direction += rotate;
+            if(direction>=360) direction-=360;
 
             let gradient = String(direction) + "deg," + color + " 0%," + color + " 50%,white 50%,white 100%";
             return {'background': 'linear-gradient(' + gradient + ')'};
