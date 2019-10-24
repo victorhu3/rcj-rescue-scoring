@@ -299,7 +299,7 @@ html(ng-app="ddApp")
                       i.fas.fa-check.fa-fw.tile-image.tile-font(ng-show="tileStatus(2*width - r,c,z,$odd && $parent.$odd) == 'done'", style='padding-top:4px; color:#27ae60; opacity:0.9;')
                       i.fas.fa-play.fa-fw.fa-rotate-270.tile-image.tile-font(ng-show="tileStatus(2*width - r,c,z,$odd && $parent.$odd) == 'halfdone'", style='padding-top:4px; color:#f4d03f; opacity:0.9;')
                       i.fas.fa-times.fa-fw.tile-image.tile-font(ng-show="tileStatus(2*width - r,c,z,$odd && $parent.$odd) == 'undone'", style='padding-top:6px; color:#e74c3c; opacity:0.9;')
-          hr
+            hr
             .alert.alert-primary(style='margin-bottom:50px;text-align:center;', role='alert')
               h2(style='text-align:center;')
                 | {{'common.stotal' | translate}} : {{score - foundVictims * 10 * exitBonus - reliability() + MisIdent*5}} {{'common.point' |translate}}
