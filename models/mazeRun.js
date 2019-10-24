@@ -79,19 +79,6 @@ const mazeRunSchema = new Schema({
   comment  : {type: String, default: ""},
   acceptResult : {type: Boolean, default: true}, // The team agreed to accept the result
   startTime: {type: Number, default: 0},
-  scoreSheet: { // all data connected to the scoring sheet should it be used
-    positionData: {type: Object, default: null},
-    specialAttention : {type: Boolean, default: true}, // If the referee was not sure if he made a mistake, the "enter manually" flag is marked. During approval pecial attention should be taken.
-
-    LoPImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    misidentificationImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    tileDataImage: { data: Buffer, contentType: String }, // Image representing the up to two arena levels
-    exitBonusImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    timeImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    commentFieldImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    acceptResultImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    fullSheet: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}
-  },
   manual  : {
     victims  : {
       linear  : {

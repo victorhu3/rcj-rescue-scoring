@@ -78,20 +78,6 @@ const lineRunSchema = new Schema({
   comment           : {type: String, default: ""},
   startTime         : {type: Number, default: 0},
   test: {type: Boolean, default: false},
-  /*scoreSheet: { // all data connected to the scoring sheet should it be used
-    positionData: {type: Object, default: null},
-    specialAttention : {type: Boolean, default: true}, // If the referee was not sure if he made a mistake, the "enter manually" flag is marked. During approval pecial attention should be taken.
-
-    LoPImages: [{ data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}],
-    tileDataImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}, // Image representing the up to two arena levels
-    evacuationLevelImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    evacuationBonusImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    rescuedVictimsImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    timeImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    commentFieldImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    acceptResultImage: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}},
-    fullSheet: { data: {type: Buffer, default: null}, contentType: {type: String, default: "image/jpg"}}
-  },*/
   manual  : {
     gap: {type: Number, default: 0},
     obstacle: {type: Number, default: 0},
