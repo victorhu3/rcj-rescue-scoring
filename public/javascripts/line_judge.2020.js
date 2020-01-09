@@ -157,6 +157,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       LoPs: $scope.LoPs,
       rescueOrder: $scope.victim_list,
       evacuationLevel: $scope.evacuationLevel,
+      kitLevel: $scope.kitLevel,
       exitBonus: $scope.exitBonus,
       showedUp: $scope.showedUp,
       EvacuationAreaLoPIndex: $scope.EvacuationAreaLoPIndex
@@ -226,6 +227,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
       $scope.LoPs = response.data.LoPs;
       $scope.evacuationLevel = response.data.evacuationLevel;
+      $scope.kitLevel = response.data.kitLevel;
       $scope.exitBonus = response.data.exitBonus;
       $scope.field = response.data.field.name;
       $scope.score = response.data.score;
@@ -539,15 +541,25 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
   $scope.calc_victim_multipliers = function (type, effective){
     let multiplier;
-    if(type == "K") multiplier = 140;
+    if(type == "K"){
+      if($scope.evacuationLevel == 1){
+        if($scope.kitLevel == 1) multiplier = 1100;
+        else multiplier = 1300;
+      }else{
+        if($scope.kitLevel == 1) multiplier = 1200;
+        else multiplier = 1600;
+      }
+    }
     else if (!effective) return "----";
     else if ($scope.evacuationLevel == 1) { // Low Level
-      multiplier = 120;
+      multiplier = 1200;
     } else { // High Level
-      multiplier = 140;
+      multiplier = 1400;
     }
-    multiplier = Math.max(multiplier - 5*$scope.LoPs[$scope.EvacuationAreaLoPIndex],100);
-    return "x" + String(multiplier/100);
+
+    if($scope.evacuationLevel == 1) multiplier = Math.max(multiplier - 25*$scope.LoPs[$scope.EvacuationAreaLoPIndex],1000);
+    else multiplier = Math.max(multiplier - 50*$scope.LoPs[$scope.EvacuationAreaLoPIndex],1000);
+    return "x" + String(multiplier/1000);
   };
 
   $scope.count_victim_list = function (type) {
@@ -749,6 +761,16 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
     upload_run({
       evacuationLevel: $scope.evacuationLevel
+    });
+
+  };
+
+  $scope.changeLevelK = function (n) {
+    playSound(sClick);
+    $scope.kitLevel = n;
+
+    upload_run({
+      kitLevel: $scope.kitLevel
     });
 
   };
@@ -1070,6 +1092,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     var run = {};
     run.LoPs = $scope.LoPs;
     run.evacuationLevel = $scope.evacuationLevel;
+    run.kitLevel = $scope.kitLevel;
     run.exitBonus = $scope.exitBonus;
     run.rescueOrder = $scope.victim_list;
     run.showedUp = $scope.showedUp;
@@ -1103,6 +1126,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     run.id = runId;
     run.LoPs = $scope.LoPs;
     run.evacuationLevel = $scope.evacuationLevel;
+    run.kitLevel = $scope.kitLevel;
     run.exitBonus = $scope.exitBonus;
     run.rescueOrder = $scope.victim_list;
     run.showedUp = $scope.showedUp;
@@ -1134,6 +1158,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       var run = {};
       run.LoPs = $scope.LoPs;
       run.evacuationLevel = $scope.evacuationLevel;
+      run.kitLevel = $scope.kitLevel;
       run.exitBonus = $scope.exitBonus;
       run.rescueOrder = $scope.victim_list;
       run.showedUp = $scope.showedUp;
@@ -1170,6 +1195,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       var run = {};
       run.LoPs = $scope.LoPs;
       run.evacuationLevel = $scope.evacuationLevel;
+      run.kitLevel = $scope.kitLevel;
       run.exitBonus = $scope.exitBonus;
       run.rescueOrder = $scope.victim_list;
       run.showedUp = $scope.showedUp;

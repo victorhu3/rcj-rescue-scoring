@@ -53,6 +53,11 @@ const lineRunSchema = new Schema({
       return l == 1 || l == 2
     },
   },
+  kitLevel   : {
+    type: Number, default: 1, validate: function (l) {
+      return l == 1 || l == 2
+    },
+  },
   exitBonus         : {type: Boolean, default: false},
   rescueOrder : [{
       type: {type: String},

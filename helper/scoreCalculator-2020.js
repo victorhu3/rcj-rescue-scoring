@@ -40,7 +40,7 @@ module.exports.calculateLineScore = function (run) {
             score += 15 * tile.scoredItems[j].scored * tile.scoredItems[j].count;
             break;
           case "obstacle":
-            score += 10 * tile.scoredItems[j].scored;
+            score += 15 * tile.scoredItems[j].scored;
             break;
           case "speedbump":
             score += 5 * tile.scoredItems[j].scored;
@@ -69,21 +69,23 @@ module.exports.calculateLineScore = function (run) {
       if (run.evacuationLevel == 1) {
         for (let victim of run.rescueOrder) {
           if(victim.type == "K"){
-            multiplier *= Math.max(140-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);
-            error *= 100;
+            if(run.kitLevel == 1) multiplier *= Math.max(1100-(25*run.LoPs[run.map.EvacuationAreaLoPIndex]),1000);
+            else multiplier *= Math.max(1300-(25*run.LoPs[run.map.EvacuationAreaLoPIndex]),1000);
+            error *= 1000;
           } else if (victim.effective){
-            multiplier *= Math.max(120-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);;
-            error *= 100;
+            multiplier *= Math.max(1200-(25*run.LoPs[run.map.EvacuationAreaLoPIndex]),1000);
+            error *= 1000;
           }
         }
       } else if (run.evacuationLevel == 2) {
         for (let victim of run.rescueOrder) {
           if(victim.type == "K"){
-            multiplier *= Math.max(140-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);;
-            error *= 100;
+            if(run.kitLevel == 1) multiplier *= Math.max(1200-(50*run.LoPs[run.map.EvacuationAreaLoPIndex]),1000);
+            else multiplier *= Math.max(1600-(50*run.LoPs[run.map.EvacuationAreaLoPIndex]),1000);
+            error *= 1000;
           } else if (victim.effective){
-            multiplier *= Math.max(140-(5*run.LoPs[run.map.EvacuationAreaLoPIndex]),100);;
-            error *= 100;
+            multiplier *= Math.max(1400-(50*run.LoPs[run.map.EvacuationAreaLoPIndex]),1000);
+            error *= 1000;
           }
         }
       }

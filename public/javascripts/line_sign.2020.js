@@ -119,6 +119,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             socket.on('data', function (data) {
                 //console.log(data);
                 $scope.evacuationLevel = data.evacuationLevel;
+                $scope.kitLevel = data.kitLevel;
                 $scope.exitBonus = data.exitBonus;
                 $scope.stiles = data.tiles;
                 $scope.score = data.score;
@@ -170,6 +171,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             console.log(response.data);
             $scope.LoPs = response.data.LoPs;
             $scope.evacuationLevel = response.data.evacuationLevel;
+            $scope.kitLevel = response.data.kitLevel;
             $scope.exitBonus = response.data.exitBonus;
             $scope.field = response.data.field.name;
             $scope.score = response.data.score;
@@ -289,15 +291,25 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
     $scope.calc_victim_multipliers = function (type, effective){
         let multiplier;
-        if(type == "K") multiplier = 140;
+        if(type == "K"){
+            if($scope.evacuationLevel == 1){
+                if($scope.kitLevel == 1) multiplier = 1100;
+                else multiplier = 1300;
+            }else{
+                if($scope.kitLevel == 1) multiplier = 1200;
+                else multiplier = 1600;
+            }
+        }
         else if (!effective) return "----";
         else if ($scope.evacuationLevel == 1) { // Low Level
-            multiplier = 120;
+            multiplier = 1200;
         } else { // High Level
-            multiplier = 140;
+            multiplier = 1400;
         }
-        multiplier = Math.max(multiplier - 5*$scope.LoPs[$scope.EvacuationAreaLoPIndex],100);
-        return "x" + String(multiplier/100);
+
+        if($scope.evacuationLevel == 1) multiplier = Math.max(multiplier - 25*$scope.LoPs[$scope.EvacuationAreaLoPIndex],1000);
+        else multiplier = Math.max(multiplier - 50*$scope.LoPs[$scope.EvacuationAreaLoPIndex],1000);
+        return "x" + String(multiplier/1000);
     };
 
 
@@ -871,7 +883,7 @@ app.directive('tile', function () {
                                 successfully += 15 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored * $scope.$parent.stiles[tile.index[i]].scoredItems[j].count;
                                 break;
                             case "obstacle":
-                                successfully += 10 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
+                                successfully += 15 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
                                 break;
                             case "speedbump":
                                 successfully += 5 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;

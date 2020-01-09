@@ -209,7 +209,8 @@ html(ng-app="ddApp")
                         |  /victim
                   .col-xl-6.col-lg-12.col-md-6.col-sm-6.col-6
                     .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
-                      img.img-thumbnail(src='/images/rescuekit.png', width='60px')
+                      img.img-thumbnail(src='/images/rescuekit-1.png', width='60px', ng-if="kitLevel==1")
+                      img.img-thumbnail(src='/images/rescuekit-2.png', width='60px', ng-if="kitLevel==2")
                       br
                       span(style='font-size:1vw;color:#444;')
                         | x1.4
@@ -231,7 +232,8 @@ html(ng-app="ddApp")
                       td(ng-repeat='i in range(4)', ng-style="{'background-color': victim_list[j*4 + i].effective?'#BDF4CB':'#ccc'}")
                         img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'L'")
                         img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'D'")
-                        img(src='/images/rescuekit.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K'")
+                        img(src='/images/rescuekit-1.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K' && kitLevel==1")
+                        img(src='/images/rescuekit-2.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K' && kitLevel==2")
                         span(style='width:30px;', ng-hide='victim_list[j*4 + i]') ---
                         br
                         span(ng-show='victim_list[j*4 + i]')

@@ -178,6 +178,7 @@
             "tim_stop": "ストップ",
             "tim_reset": "リセット",
             "select_elevel": "被災者救助レベル選択",
+            "select_klevel": "キット運搬レベル選択",
             "high": "@:line.view.high",
             "low": "@:line.view.low",
             "ready": "得点記録を開始する準備が整いました！",
