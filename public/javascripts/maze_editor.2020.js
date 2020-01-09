@@ -640,11 +640,11 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
             } else {
                 if(cell.isWall){
                     cell.isWall = false;
-                    cell.halfWall = 1;
+                    /*cell.halfWall = 1;
                 }else if(cell.halfWall == 1){
                     cell.halfWall = 2;
                 }else if(cell.halfWall == 2){
-                    cell.halfWall = 0;
+                    cell.halfWall = 0;*/
                 }else{
                     cell.isWall = true;
                 }
