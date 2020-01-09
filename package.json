@@ -1,6 +1,6 @@
 {
   "name": "rcj-scoring",
-  "version": "19.3.0",
+  "version": "20.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js",
