@@ -209,8 +209,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 scoredItems: {
                     speedbump: false,
                     checkpoint: false,
-                    rampDown: false,
-                    rampUp: false,
+                    ramp: false,
                     steps:  false,
                     victims: {
                         top: false,
@@ -248,11 +247,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
         }
         if (cell.tile.ramp) {
-            possible+=2;
-            if (tile.scoredItems.rampDown) {
-                current++;
-            }
-            if (tile.scoredItems.rampUp) {
+            possible+=1;
+            if (tile.scoredItems.ramp) {
                 current++;
             }
         }
@@ -360,7 +356,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
           (cell.tile.victims.bottom != "None") ||
           (cell.tile.victims.left != "None");
         // Total number of scorable things on this tile
-        var total = !!cell.tile.speedbump + !!cell.tile.checkpoint + !!cell.tile.steps + cell.tile.ramp*2 + hasVictims;
+        var total = !!cell.tile.speedbump + !!cell.tile.checkpoint + !!cell.tile.steps + cell.tile.ramp + hasVictims;
 
         if (total > 1 || hasVictims) {
             // Open modal for multi-select
@@ -384,8 +380,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 scoredItems: {
                     speedbump: false,
                     checkpoint: false,
-                    rampBottom: false,
-                    rampTop: false,
+                    ramp: false,
                     victims: {
                         top: false,
                         right: false,
@@ -418,10 +413,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
         }
         if (cell.tile.ramp) {
-            if (tile.scoredItems.rampDown) {
-                current+=10;
-            }
-            if (tile.scoredItems.rampUp) {
+            if (tile.scoredItems.ramp) {
                 current+=10;
             }
         }

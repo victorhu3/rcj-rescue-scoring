@@ -128,12 +128,10 @@ function maze_calc_score(run) {
         if (tile.scoredItems.checkpoint && mapTiles[coord].tile.checkpoint) {
             score += 10
         }
-        if (tile.scoredItems.rampDown && mapTiles[coord].tile.ramp) {
+        if (tile.scoredItems.ramp && mapTiles[coord].tile.ramp) {
             score += 10
         }
-        if (tile.scoredItems.rampUp && mapTiles[coord].tile.ramp) {
-            score += 10
-        }
+
         if (tile.scoredItems.steps && mapTiles[coord].tile.steps) {
             score += 5
         }

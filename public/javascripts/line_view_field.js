@@ -111,6 +111,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       socket.on('data', function (data) {
                 //console.log(data);
                 $scope.evacuationLevel = data.evacuationLevel;
+                $scope.kitLevel = data.kitLevel;
                 $scope.exitBonus = data.exitBonus;
                 $scope.stiles = data.tiles;
                 $scope.score = data.score;
@@ -145,6 +146,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 $scope.LoPs_total += $scope.LoPs[i];
             }
             $scope.evacuationLevel = response.data.evacuationLevel;
+            $scope.kitLevel = response.data.kitLevel;
             $scope.exitBonus = response.data.exitBonus;
             $scope.field = response.data.field.name;
             $scope.score = response.data.score;

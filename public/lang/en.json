@@ -298,7 +298,7 @@
             "ref_sign": "@:line.view.ref_sign",
             "cref_sign": "@:line.view.cref_sign",
             "m_score": "Score items",
-            "m_reach": "Reach checkpoint",
+            "m_reach": "Checkpoint",
             "m_bump": "Speedbumps",
             "m_ramp": "Ramp",
             "m_steps": "Steps",

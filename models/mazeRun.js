@@ -42,8 +42,7 @@ const mazeRunSchema = new Schema({
     scoredItems: {
       speedbump : {type: Boolean, default: false},
       checkpoint: {type: Boolean, default: false},
-      rampDown  : {type: Boolean, default: false},
-      rampUp    : {type: Boolean, default: false},
+      ramp  : {type: Boolean, default: false},
       steps     : {type: Boolean, default: false},
       victims   : {
         top   : {type: Boolean, default: false},
@@ -97,6 +96,18 @@ const mazeRunSchema = new Schema({
         heated : {
           identify: {type: Number, default: 0},
           kit     : {type: Number, default: 0}
+        },
+        red : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        yellow : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        green : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
         }
       },
       floating  : {
@@ -115,13 +126,25 @@ const mazeRunSchema = new Schema({
         heated : {
           identify: {type: Number, default: 0},
           kit     : {type: Number, default: 0}
+        },
+        red : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        yellow : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
+        },
+        green : {
+          identify: {type: Number, default: 0},
+          kit     : {type: Number, default: 0}
         }
       }
     },
     checkpoints: {type: Number, default: 0},
     speedbumps: {type: Number, default: 0},
-    rampUP: {type: Number, default: 0},
-    rampDOWN: {type: Number, default: 0}
+    ramps: {type: Number, default: 0},
+    steps: {type: Number, default: 0}
   }
 })
 

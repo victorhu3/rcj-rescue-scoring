@@ -3,36 +3,44 @@
 </div>
 <div class="modal-body">
     <ul style="padding-inline-start: 0px;">
-        <li ng-show="cell.tile.checkpoint">
-            <input type="checkbox" ng-model="tile.scoredItems.checkpoint" id="hasCheckpoint"><label for="hasCheckpoint" class="checkbox" ng-style="{backgroundColor: tile.scoredItems.checkpoint ? '#d3f5d3': '#f5d3d4'}" ng-click="clickSound()">{{"maze.judge.m_reach" | translate}}</label>
-        </li>
-        <li ng-show="cell.tile.speedbump">
-            <input type="checkbox" ng-model="tile.scoredItems.speedbump" id="hasSpeedbumps"><label class="checkbox" for="hasSpeedbumps" ng-style="{backgroundColor: tile.scoredItems.speedbump ? '#d3f5d3': '#f5d3d4'}" ng-click="clickSound()">{{"maze.judge.m_bump" | translate}}</label>
-        </li>
-        <li ng-show="cell.tile.steps">
-            <input type="checkbox" ng-model="tile.scoredItems.steps" id="hasSteps"><label class="checkbox" for="hasSteps" ng-style="{backgroundColor: tile.scoredItems.steps ? '#d3f5d3': '#f5d3d4'}" ng-click="clickSound()">{{"maze.judge.m_steps" | translate}}</label>
-        </li>
-        <div ng-show="cell.tile.ramp">
-            <h2>{{"maze.judge.m_ramp" | translate}}</h2>
-            <div class="row">
-                <div class="col-6" style="position: relative;" ng-click="changeRampUp()">
-                    <img class="img-thumbnail" src="/images/rampUP.png" width="100%" ng-style="{'background-color': tile.scoredItems.rampUp?'#2ecc71':'#D91E18'}">
-                    <div style="position: absolute; top:20px; left:65px;">
-                        <i class="fas fa-check fa-fw fa-5x" ng-show="tile.scoredItems.rampUp" style="color:#27ae60; opacity:0.9;"></i>
-                        <i class="fas fa-times fa-fw fa-5x" ng-show="!tile.scoredItems.rampUp" style="padding-top:4px; color:#e74c3c; opacity:0.9;"></i>
-                    </div>
+        <div class="row" ng-show="cell.tile.checkpoint || cell.tile.speedbump || cell.tile.steps || cell.tile.ramp" style="margin-bottom: 20px;">
+            <div class="col-4" style="position: relative;text-align: center;" ng-click="changeCheckPoint()" ng-show="cell.tile.checkpoint">
+                <span>{{"maze.judge.m_reach" | translate}}</span>
+                <img class="img-thumbnail" src="/images/checkpoint.png" width="100%" ng-style="{'background-color': tile.scoredItems.checkpoint?'#2ecc71':'#D91E18'}">
+                <div style="position: absolute; top:20px; left:10px;">
+                    <i class="fas fa-check fa-fw fa-5x" ng-show="tile.scoredItems.checkpoint" style="color:#ffffff; opacity:0.9;"></i>
+                    <i class="fas fa-times fa-fw fa-5x" ng-show="!tile.scoredItems.checkpoint" style="padding-top:4px; color:#ffffff; opacity:0.9;"></i>
                 </div>
-                <div class="col-6" style="position: relative;" ng-click="changeRampDown()">
-                    <img class="img-thumbnail" src="/images/rampDOWN.png" width="100%" ng-style="{'background-color': tile.scoredItems.rampDown?'#2ecc71':'#D91E18'}">
-                    <div style="position: absolute; top:20px; left:65px;">
-                        <i class="fas fa-check fa-fw fa-5x" ng-show="tile.scoredItems.rampDown" style="color:#27ae60; opacity:0.9;"></i>
-                        <i class="fas fa-times fa-fw fa-5x" ng-show="!tile.scoredItems.rampDown" style="padding-top:4px; color:#e74c3c; opacity:0.9;"></i>
-                    </div>
-                </div>
+            </div>
 
+            <div class="col-4" style="position: relative;text-align: center;" ng-click="changeSpeedbump()" ng-show="cell.tile.speedbump">
+                <span>{{"maze.judge.m_bump" | translate}}</span>
+                <img class="img-thumbnail" src="/images/log.png" width="100%" ng-style="{'background-color': tile.scoredItems.speedbump?'#2ecc71':'#D91E18'}">
+                <div style="position: absolute; top:20px; left:10px;">
+                    <i class="fas fa-check fa-fw fa-5x" ng-show="tile.scoredItems.speedbump" style="color:#ffffff; opacity:0.9;"></i>
+                    <i class="fas fa-times fa-fw fa-5x" ng-show="!tile.scoredItems.speedbump" style="padding-top:4px; color:#ffffff; opacity:0.9;"></i>
+                </div>
+            </div>
+
+            <div class="col-4" style="position: relative;text-align: center;" ng-click="changeSteps()" ng-show="cell.tile.steps">
+                <span>{{"maze.judge.m_steps" | translate}}</span>
+                <img class="img-thumbnail" src="/images/steps.png" width="100%" ng-style="{'background-color': tile.scoredItems.steps?'#2ecc71':'#D91E18'}">
+                <div style="position: absolute; top:20px; left:10px;">
+                    <i class="fas fa-check fa-fw fa-5x" ng-show="tile.scoredItems.steps" style="color:#ffffff; opacity:0.9;"></i>
+                    <i class="fas fa-times fa-fw fa-5x" ng-show="!tile.scoredItems.steps" style="padding-top:4px; color:#ffffff; opacity:0.9;"></i>
+                </div>
+            </div>
+
+            <div class="col-4" style="position: relative;text-align: center;" ng-click="changeRamp()" ng-show="cell.tile.ramp">
+                <span>{{"maze.judge.m_ramp" | translate}}</span>
+                <img class="img-thumbnail" src="/images/ramp.png" width="100%" ng-style="{'background-color': tile.scoredItems.ramp?'#2ecc71':'#D91E18'}">
+                <div style="position: absolute; top:20px; left:10px;">
+                    <i class="fas fa-check fa-fw fa-5x" ng-show="tile.scoredItems.ramp" style="color:#ffffff; opacity:0.9;"></i>
+                    <i class="fas fa-times fa-fw fa-5x" ng-show="!tile.scoredItems.ramp" style="padding-top:4px; color:#ffffff; opacity:0.9;"></i>
+                </div>
             </div>
         </div>
-
+        <hr ng-if="cell.tile.checkpoint || cell.tile.speedbump || cell.tile.steps || cell.tile.ramp">
         <div ng-show="hasVictims">
             <i class="far fa-2x fa-lightbulb" aria-hidden="true" style="color:#f8b500;">&nbsp;</i>{{"maze.judge.m_flash" | translate}}
                 <div ng-repeat="(direction, type) in cell.tile.victims track by $index" ng-show="type != 'None'" style="margin-left:50px;" >

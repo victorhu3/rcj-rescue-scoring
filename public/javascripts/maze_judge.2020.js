@@ -420,8 +420,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 scoredItems: {
                     speedbump: false,
                     checkpoint: false,
-                    rampDown: false,
-                    rampUp: false,
+                    ramp: false,
                     steps:  false,
                     victims: {
                         top: false,
@@ -459,11 +458,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
         }
         if (cell.tile.ramp) {
-            possible+=2;
-            if (tile.scoredItems.rampDown) {
-                current++;
-            }
-            if (tile.scoredItems.rampUp) {
+            possible+=1;
+            if (tile.scoredItems.ramp) {
                 current++;
             }
         }
@@ -568,8 +564,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 scoredItems: {
                     speedbump: false,
                     checkpoint: false,
-                    rampDown: false,
-                    rampUp: false,
+                    ramp: false,
                     steps: false,
                     victims: {
                         top: false,
@@ -595,7 +590,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
         console.log(cell.tile);
         // Total number of scorable things on this tile
-        var total = !!cell.tile.speedbump + !!cell.tile.checkpoint + !!cell.tile.steps + cell.tile.ramp*2 + hasVictims;
+        var total = !!cell.tile.speedbump + !!cell.tile.checkpoint + !!cell.tile.steps + !!cell.tile.ramp + hasVictims;
         console.log("totalt antal saker", total);
         console.log("Has victims", hasVictims);
 
@@ -605,6 +600,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
             if (cell.tile.checkpoint) {
                 tile.scoredItems.checkpoint = !tile.scoredItems.checkpoint;
+            }
+            if (cell.tile.ramp) {
+                tile.scoredItems.ramp = !tile.scoredItems.ramp;
             }
             if (cell.tile.steps) {
                 tile.scoredItems.steps = !tile.scoredItems.steps;
@@ -849,15 +847,26 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, cell, t
         }
     };
 
-    $scope.changeRampUp = function(){
+    $scope.changeRamp = function(){
         playSound(sClick);
-        $scope.tile.scoredItems.rampUp = !$scope.tile.scoredItems.rampUp;
+        $scope.tile.scoredItems.ramp = !$scope.tile.scoredItems.ramp;
     };
 
-    $scope.changeRampDown = function(){
+    $scope.changeCheckPoint = function(){
         playSound(sClick);
-        $scope.tile.scoredItems.rampDown = !$scope.tile.scoredItems.rampDown;
+        $scope.tile.scoredItems.checkpoint = !$scope.tile.scoredItems.checkpoint;
     };
+
+    $scope.changeSpeedbump = function(){
+        playSound(sClick);
+        $scope.tile.scoredItems.speedbump = !$scope.tile.scoredItems.speedbump;
+    };
+
+    $scope.changeSteps = function(){
+        playSound(sClick);
+        $scope.tile.scoredItems.steps = !$scope.tile.scoredItems.steps;
+    };
+
 
     $scope.lightStatus = function(light, kit){
         if(light) return true;
