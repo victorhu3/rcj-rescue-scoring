@@ -123,8 +123,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
     $scope.startNotSet = function () {
         if($scope.finished){
             return ($scope.startTile.x == -1 && $scope.startTile.y == -1 &&
-              $scope.startTile.z == -1) || ($scope.startTile2.x == -1 && $scope.startTile2.y == -1 &&
-              $scope.startTile2.z == -1);
+              $scope.startTile.z == -1);
         }
         return false;
     };
@@ -199,11 +198,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         if ($scope.startNotSet()) {
             alert("You must define a starting tile by right-clicking a tile");
             return;
-        }
-        if ($scope.numberOfDropTiles == 0) {
-            if (!confirm("Are you sure you want to create a map without droptiles??")) {
-                return;
-            }
         }
 
         if (!$scope.finished) {
@@ -445,7 +439,8 @@ app.directive('tile', function () {
             };
 
             scope.isDropTile = function(tile){
-              return tile.checkPoint;
+                if(tile) return tile.checkPoint;
+                return false;
             };
 
             scope.isStart2 = function (tile) {
@@ -488,7 +483,8 @@ app.directive('tile4image', function () {
             };
 
             scope.isDropTile = function(tile){
-                return tile.checkPoint;
+                if(tile) return tile.checkPoint;
+                return false;
             };
 
             /*scope.isStart2 = function (tile) {
@@ -499,12 +495,14 @@ app.directive('tile4image', function () {
 
             scope.tileNumber = function (tile) {
                 let txt = "";
-                if(!tile.items.noCheckPoint && tile.items.obstacles==0 && !tile.items.rampPoints && tile.items.speedbumps==0 && tile.tileType.gaps==0 && tile.tileType.intersections==0){
+                console.log(tile);
+                if(tile.checkPoint){
                     for(let i=0,l=tile.index.length;i<l;i++){
                             if(txt != "") txt += " , ";
                             txt += (tile.index[i]+1);
                     }
                 }
+                console.log(txt);
                 return txt;
             };
 

@@ -219,7 +219,6 @@ html(ng-app="ddApp")
           .alert.alert-info(style='margin-bottom:50px;text-align:center;', role='alert')
             .row
               .col-md-6
-                // <p style="height:30px;">{{'line.judge.rescue' | translate}}【{{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}】</p>
                 .row
                   .col-xl-6.col-lg-12.col-md-6.col-sm-6.col-6(style="margin-bottom:10px;")
                     .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
@@ -228,8 +227,8 @@ html(ng-app="ddApp")
                       img.img-thumbnail(src='/images/deadVictim.png', width='60px')
                       br
                       span(style='font-size:1vw;color:#444;')
-                        | {{evacuationLevel-1?'x1.4':'x1.2'}}
-                        |  - (x0.05 ×
+                        | {{calc_victim_multipliers("L",true,0)}}
+                        |  - ({{evacuationLevel-1?'x0.05':'x0.025'}} ×
                         i.fas.fa-step-forward
                         | {{LoPs[EvacuationAreaLoPIndex]}}
                         span(style='font-size:10px;') times
@@ -244,8 +243,8 @@ html(ng-app="ddApp")
                       img.img-thumbnail(src='/images/rescuekit-2.png', width='60px', ng-if="kitLevel==2")
                       br
                       span(style='font-size:1vw;color:#444;')
-                        | x1.4
-                        |  - (x0.05 ×
+                        | {{calc_victim_multipliers("K",true,0)}}
+                        |  - ({{evacuationLevel-1?'x0.05':'x0.025'}} ×
                         i.fas.fa-step-forward
                         | {{LoPs[EvacuationAreaLoPIndex]}}
                         span(style='font-size:10px;') times
@@ -253,7 +252,7 @@ html(ng-app="ddApp")
                       br
                       span.badge.badge-info(style='margin-top:10px;')
                         span(style='font-size:25px;') {{calc_victim_multipliers("K",true)}}
-                        |  /victim
+                        |  /kit
               .col-md-6
                 table(border='1', style='width:100%; text-align: center; margin-top: 10px;', ng-repeat='j in range(6)', ng-if='victim_list.length > j*4 || j == 0')
                   tbody

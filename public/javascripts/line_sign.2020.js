@@ -289,7 +289,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         }
     }
 
-    $scope.calc_victim_multipliers = function (type, effective){
+    $scope.calc_victim_multipliers = function (type, effective, lop=-1){
+        if(lop == -1) lop = $scope.LoPs[$scope.EvacuationAreaLoPIndex];
         let multiplier;
         if(type == "K"){
             if($scope.evacuationLevel == 1){
@@ -307,24 +308,11 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             multiplier = 1400;
         }
 
-        if($scope.evacuationLevel == 1) multiplier = Math.max(multiplier - 25*$scope.LoPs[$scope.EvacuationAreaLoPIndex],1000);
-        else multiplier = Math.max(multiplier - 50*$scope.LoPs[$scope.EvacuationAreaLoPIndex],1000);
+        if($scope.evacuationLevel == 1) multiplier = Math.max(multiplier - 25*lop,1000);
+        else multiplier = Math.max(multiplier - 50*lop,1000);
         return "x" + String(multiplier/1000);
     };
 
-
-    $scope.victimPoints = function(){
-        let score = 0;
-        for(victiml of $scope.victim_list){
-            if(victiml.effective){
-                if(victiml.type =="L") score += $scope.calc_victim_points("L",1);
-                else score += $scope.calc_victim_points("D",1);
-            }else{
-                score += $scope.calc_victim_points("D",0);
-            }
-        }
-        return score;
-    }
 
     $scope.LoPsCountPoint = function (n){
         if(n == 0) return 5;

@@ -51,6 +51,11 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
   if (nextTile === undefined || evacTile(nextTile)) {
     let startTile2 = tiles[map.startTile2.x + ',' + map.startTile2.y + ',' +
     map.startTile2.z];
+    if(!startTile2){
+      map.EvacuationAreaLoPIndex = chpCount;
+      map.indexCount = index + 1;
+      return;
+    }
 
     let startDir2 = "";
     let startPaths2 = startTile2.tileType.paths;
