@@ -37,7 +37,7 @@ module.exports.calculateLineScore = function (run) {
             score += 10 * tile.scoredItems[j].scored;
             break;
           case "intersection":
-            score += 15 * tile.scoredItems[j].scored * tile.scoredItems[j].count;
+            score += 10 * tile.scoredItems[j].scored * tile.scoredItems[j].count;
             break;
           case "obstacle":
             score += 15 * tile.scoredItems[j].scored;

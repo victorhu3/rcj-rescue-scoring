@@ -868,7 +868,7 @@ app.directive('tile', function () {
                                 successfully += 10 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
                                 break;
                             case "intersection":
-                                successfully += 15 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored * $scope.$parent.stiles[tile.index[i]].scoredItems[j].count;
+                                successfully += 10 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored * $scope.$parent.stiles[tile.index[i]].scoredItems[j].count;
                                 break;
                             case "obstacle":
                                 successfully += 15 * $scope.$parent.stiles[tile.index[i]].scoredItems[j].scored;
