@@ -1,13 +1,14 @@
 # ロボカップジュニア RoboCup Junior
 ### Rescue Scoring System
-This is a scoring system used in RoboCup Junior's rescue competition.
+This is a scoring system used in RoboCupJunior's rescue line & maze competition at word wide.
 Please refer to the [English version README](https://github.com/rrrobo/rcj-rescue-scoring-japan/blob/master/README-EN.md) for details.
 
 --
 
 ### レスキュー　スコアリングシステム
 これは，ロボカップジュニアレスキュー競技のスコアリングシステムです．  
-2018/2019ルールに対応しています．
+2020ルールに対応しています．2018/2019ルールに対応していたv19系との後方互換はありません．
+2019ルールで運用する際は，v19系をご利用ください．
 
 --
 
@@ -20,7 +21,8 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 * ユーザー管理機能を強化
 * マップの回転機能を追加
 * インタビュー機能を追加
-* 2018/2019ルールに対応
+* 2020ルールに対応
+* ラインのタイルセットの在庫管理に対応
 * 大会データーのバックアップ/リストアに対応
 * トラブル発生時のハンドオーバーに対応
 * 紙のスコアシートの出力に対応
@@ -33,6 +35,7 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 [https://rcj.cloud](https://rcj.cloud)
 
 ## 更新情報
+* [2020/01/??] v20系にて2020ルールに対応しました．
 * [2019/07/17] スコアシートを出力できるようになりました．
 * [2019/03/19] 大会データをバックアップを取ることができるようになりました．また，トップページのUIを大幅に変更しました．
 * [2018/10/24] v.19系にて，2019ルールに対応しました．v.19系では，2018ルールに後方互換性があります．
@@ -72,6 +75,8 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 * ロボカップジュニア2019 関東ブロック大会
 * ロボカップジュニア ジャパンオープン2019 和歌山
 * RoboCup 2019 Sydney Australia
+* ロボカップジュニア2020 大阪中央ノード大会
+* ロボカップジュニア2020 関西ブロック大会
 
 ## 使用方法
 ### Dockerを利用（推奨）
@@ -112,7 +117,9 @@ admin | adminpass   |
 現時点では，原則として，本フォーラムへのアクセスを各地の大会実行委員に相当する方に限定しています．  
 アクセスを希望される場合は，各ブロックのレスキュー技術委員にご相談ください．
 
-## 主な画面
+## 主な画面礼
+*旧バージョンの情報を含みます．
+
 トップ画面(2019)
 <img src="https://raw.githubusercontent.com/rrrobo/rcj-rescue-scoring-japan/master/rcjj-scoring/1.png">
 <hr>

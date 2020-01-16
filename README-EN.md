@@ -1,5 +1,5 @@
 # RoboCup Junior Rescue Scoring System
-This is a scoring system used in RoboCup Junior's rescue competition.
+This is a scoring system used in RoboCupJunior's rescue line & maze competition.
 
 
 ## Demo
@@ -40,11 +40,13 @@ The latest version is running. It is built using Docker image.
 * RoboCup Junior 2019 Kanto (Japanese local competition)
 * RoboCup Junior Japan Open 2019 Wakayama (Japanese national competition)
 * RoboCup 2019 Sydney Australia
+* RoboCup Junior 2020 Osaka-Central (Japanese local competition)
+* RoboCup Junior 2020 Kansai (Japanese local competition)
 
 ## Usage
 ### Using Docker（Recomended）
 Use the  [Official docker image](https://hub.docker.com/r/ryorobo/rcj-rescue-scoring-japan) is strongly recommended.  
-For detail, please go to [helper files (International version)](https://github.com/rrrobo/rcj-scoring-docker-International) to make up your environment.
+For detail, please check [helper files (International version)](https://github.com/rrrobo/rcj-scoring-docker-International) to make up your environment.
 
 ### Without using docker
 #### Dependent software
