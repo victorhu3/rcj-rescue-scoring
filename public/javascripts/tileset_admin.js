@@ -52,6 +52,12 @@ var app = angular.module("TilesetAdmin", ['ngTouch','pascalprecht.translate', 'n
         }
     }
 
+    $scope.addAll = function () {
+        for(let t of $scope.tileTypes){
+            $scope.addTile(t);
+        }
+    }
+
     $scope.removeTile = function (tile) {
         var tileToRemove = tile
 
@@ -88,8 +94,10 @@ var app = angular.module("TilesetAdmin", ['ngTouch','pascalprecht.translate', 'n
             $scope.tileSet._id, $scope.tileSet).then(
             (response) => {
                 console.log("Saved!")
+                alert("Saved!");
             }, (error) => {
                 console.error(error)
+                alert("Error!")
             })
     }
 
