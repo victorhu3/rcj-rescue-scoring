@@ -83,8 +83,8 @@ adminRouter.post('/', function (req, res) {
           speedbumps: tile.items.speedbumps,
           rampPoints: undefied2false(tile.items.rampPoints)
         },
-        levelUp  : undefied2false(tile.levelUp),
-        levelDown: undefied2false(tile.levelDown),
+        levelUp  : tile.levelUp,
+        levelDown: tile.levelDown,
         checkPoint: undefied2false(tile.checkPoint)
       })
     }
