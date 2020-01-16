@@ -76,7 +76,8 @@
         "passcode": "Passcode",
         "multipliers": "Multipliers",
         "region": "Region",
-        "teamCode": "Team code"
+        "teamCode": "Team code",
+        "duplicate": "Duplication"
     },
     "accessDenied":{
         "title" : "Access denied",

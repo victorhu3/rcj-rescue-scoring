@@ -71,15 +71,15 @@ var app = angular.module("TilesetAdmin", ['ngTouch','pascalprecht.translate', 'n
     }
 
     $scope.createNewTileSet = function () {
-        const newName = $scope.newTileSetName
+        const newName = $scope.newTileSetName;
         $http.post("/api/maps/line/tilesets", {
             name: newName
         }).then(
             (response) => {
-                $scope.newTileSetName = ""
+                $scope.newTileSetName = "";
                 updateTileSetList(() => {
                     const newTileSet = $scope.tileSets.filter((tileSet) => tileSet.name ==
-                        newName)
+                        newName);
                     if (newTileSet.length > 0) {
                         $scope.tileSet = newTileSet[0]
                     }
@@ -87,6 +87,39 @@ var app = angular.module("TilesetAdmin", ['ngTouch','pascalprecht.translate', 'n
             }, (error) => {
                 console.error(error)
             })
+    }
+
+    $scope.duplicateTileSet = function () {
+        const newName = $scope.newTileSetName;
+        $http.post("/api/maps/line/tilesets", {
+            name: newName
+        }).then(
+          (response) => {
+              $scope.newTileSetName = "";
+              $scope.tileSet._id = response.data.id;
+              $scope.tileSet.name = newName;
+              $http.put("/api/maps/line/tilesets/" +
+                response.data.id, $scope.tileSet).then(
+                (response) => {
+                    console.log("Saved!")
+                    alert("Saved!");
+                    updateTileSetList(() => {
+                        const newTileSet = $scope.tileSets.filter((tileSet) => tileSet.name ==
+                          newName);
+                        if (newTileSet.length > 0) {
+                            $scope.tileSet = newTileSet[0];
+                            $scope.translationData = {
+                                setName: $scope.tileSet.name
+                            };
+                        }
+                    })
+                }, (error) => {
+                    console.error(error)
+                    alert("Error!")
+                });
+          }, (error) => {
+              console.error(error)
+          })
     }
 
     $scope.save = function () {

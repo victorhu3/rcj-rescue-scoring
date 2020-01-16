@@ -82,7 +82,8 @@
         "passcode": "パスコード",
         "multipliers": "乗数",
         "region": "国・地域",
-        "teamCode": "チームコード"
+        "teamCode": "チームコード",
+        "duplicate": "複製"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",

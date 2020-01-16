@@ -36,6 +36,7 @@ block content
             label.control-label {{"admin.line_tSet.new_tSet" | translate}}
             input.control-input(ng-model='newTileSetName')
             button(ng-click='createNewTileSet()') {{"common.create" | translate}}
+            button(ng-click='duplicateTileSet()', style="margin-left:10px;") {{"common.duplicate" | translate}}
       .row
         .col-md-offset-2.col-md-8
           .form-group
