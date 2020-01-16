@@ -27,6 +27,8 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
     })
 
 
+    var tileCountDb={};
+
     $scope.z = 0;
     $scope.tiles = {};
     $scope.startTile = {
@@ -48,6 +50,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
     $scope.tileSets = [];
     $scope.tileSet = null;
+    $scope.usedCount = {};
     $http.get("/api/maps/line/tilesets?populate=true").then(function (response) {
         $scope.tileSets = response.data
         $scope.tileSet = $scope.tileSets[0]
@@ -85,7 +88,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 $scope.finished = response.data.finished;
                 $scope.liveV = response.data.victims.live;
                 $scope.deadV = response.data.victims.dead;
-
+                $scope.updateUsedCount();
 
             }, function (response) {
                 console.log("Error: " + response.statusText);
@@ -136,6 +139,47 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         return false;
     };
 
+    $scope.updateUsedCount = function(){
+        console.log($scope.tiles)
+        let newCount = {}
+
+        for( key in $scope.tiles ) {
+            if( $scope.tiles.hasOwnProperty(key) ) {
+                if(!newCount[$scope.tiles[key].tileType._id])newCount[$scope.tiles[key].tileType._id] = 1;
+                else newCount[$scope.tiles[key].tileType._id]++;
+            }
+        }
+        $scope.usedCount = newCount;
+    }
+
+    $scope.tileRemain = function(tile){
+        return tile.count - getTileUsedCountOther(tile) - null2zero($scope.usedCount[tile.tileType._id]);
+
+    }
+
+    function getTileUsedCountOther(tile){
+        if(tileCountDb[$scope.tileSet._id]){
+            if(tileCountDb[$scope.tileSet._id][tile.tileType._id] !== undefined){
+                return tileCountDb[$scope.tileSet._id][tile.tileType._id];
+            }
+        }else{
+            tileCountDb[$scope.tileSet._id] = {};
+        }
+        let mapi = null;
+        if(mapId) mapi = mapId;
+        let count = $.ajax({
+            type: 'GET',
+            url: '/api/maps/line/tileCount/' + mapi + '/' + $scope.tileSet._id + '/' + tile.tileType._id,
+            async: false,
+            dataType: 'json'
+        }).responseJSON;
+        tileCountDb[$scope.tileSet._id][tile.tileType._id] = count.usedCount;
+    }
+
+    function null2zero(tmp){
+        if(tmp === undefined) return 0;
+        return tmp;
+    }
 
     $scope.saveMapAs = function () {
         if ($scope.startNotSet()) {
@@ -335,6 +379,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                         data.tiles[i].y + ',' +
                         data.tiles[i].z] = data.tiles[i];
                 }*/
+                $scope.updateUsedCount();
                 $scope.$apply();
             }
 
@@ -632,7 +677,6 @@ app.directive('lvlDropTarget', ['$rootScope', 'uuid', function ($rootScope, uuid
                         items: {
                             obstacles: 0,
                             speedbumps: 0,
-                            noCheckPoint: false,
                             rampPoints: false
                         }
                     };
@@ -652,6 +696,7 @@ app.directive('lvlDropTarget', ['$rootScope', 'uuid', function ($rootScope, uuid
                     delete scope.tiles[drag.attr("x") + "," + drag.attr("y") + "," +
                     drag.attr("z")];
                 }
+                scope.updateUsedCount();
                 scope.$apply();
 
             });

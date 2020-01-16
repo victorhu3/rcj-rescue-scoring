@@ -48,10 +48,14 @@ block content
       .row
         .col-md-6
           h2 {{"admin.line_tSet.available" | translate}}
-          img.tile.tile-container(ng-repeat='tileType in tileTypes' ng-src='/images/tiles/{{tileType.image}}' ng-click='addTile(tileType)' style="margin:5px 15px 5px 5px")
+          span.tile-container(ng-repeat='tileType in tileTypes')
+            div(style="width:70px;")
+              img.tile(ng-src='/images/tiles/{{tileType.image}}' ng-click='addTile(tileType)')
           button.btn.btn-success.btn-block(ng-click='addAll()') Add all types at once
+          br
         .col-md-6
           h2 {{ 'admin.line_tSet.tIn' | translate:translationData }}
           span.tile-container(ng-repeat='tile in tileSet.tiles track by tile.tileType._id')
-            img.tile(ng-src='/images/tiles/{{tile.tileType.image}}' ng-click='removeTile(tile)')
-            span(ng-bind='tile.count')
+            div(style="width:70px;")
+              img.tile(ng-src='/images/tiles/{{tile.tileType.image}}' ng-click='removeTile(tile)')
+              span(ng-bind='tile.count')

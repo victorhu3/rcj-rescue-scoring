@@ -409,6 +409,37 @@ function getTileSets(req, res, next) {
 }
 module.exports.getTileSets = getTileSets
 
+adminRouter.get('/tileCount/:expectMapId/:tileSetId/:tileId', async function(req, res, next) {
+  //Count number of used tiles in the tile set you specified expect specified mapId
+  let expectMapId = req.params.expectMapId;
+  if (!ObjectId.isValid(expectMapId)) {
+    expectMapId = null;
+  }
+  const tileSetId = req.params.tileSetId;
+  if (!ObjectId.isValid(tileSetId)) {
+    return next()
+  }
+  const countTileId = req.params.tileId;
+  if (!ObjectId.isValid(countTileId)) {
+    return next()
+  }
+
+  let result = await lineMap.aggregate([
+    {$match: {_id: {$ne: ObjectId(expectMapId)}}},
+    {$match: {tileSet: ObjectId(tileSetId)}},
+    {$unwind: "$tiles"},
+    {$match: {"tiles.tileType": ObjectId(countTileId)}}
+  ]);
+
+  res.status(200).send({
+    'tileSetId': tileSetId,
+    'tileId': countTileId,
+    'expectMapId': expectMapId,
+    'usedCount': result.length
+  })
+
+});
+
 adminRouter.post('/tilesets', function (req, res, next) {
   const tileset = req.body
   
