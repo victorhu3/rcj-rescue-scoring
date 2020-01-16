@@ -99,5 +99,5 @@ html(ng-app="LineScore")
                     td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}") {{("00"+run.time.minutes).slice(-2)}}:{{("00"+run.time.seconds).slice(-2)}}
                     td.text-center(ng-bind='run.rescuedVictims' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
                     td.text-center(ng-bind='run.LoPsNum' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
-        h5(style="text-align:center;margin-top:10px;", ng-if="comment.bottom")
+        h6(style="text-align:center;margin-top:10px;", ng-if="comment.bottom")
           i.fas.fa-info-circle &nbsp;{{comment.bottom}}
