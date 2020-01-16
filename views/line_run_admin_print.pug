@@ -52,6 +52,8 @@ html(ng-app="RunAdmin")
           .card.border-dark.mb-3(style='width:100%;')
             .card-header.bg-transparent.border-dark.fa-2x
               i.fas.fa-cog(aria-hidden='true') Config
+              button(onclick="window.print();" class='btn btn-info' style="margin-left:100px; text-align:right;")
+                i.fas.fa-print &nbsp;{{"common.print" | translate}}
             .card-body.text-dark
               h6.card-title {{'line.competition.refine.round' | translate}}
               span(ng-repeat='(key, value) in Rrounds track by key')
@@ -85,7 +87,9 @@ html(ng-app="RunAdmin")
                 input(type='checkbox' ng-model='showLoPs' id="showLoPs")
                 label.checkbox(for="showLoPs") LoPs
                 input(type='checkbox' ng-model='showVictim' id="showVictim")
-                label.checkbox(for="showVictim") Victim
+                label.checkbox(for="showVictim") Victim/Kit
+                input(type='checkbox' ng-model='showMultiplier' id="showMultiplier")
+                label.checkbox(for="showMultiplier") Multipliers
                 input(type='checkbox' ng-model='showExit' id="showExit")
                 label.checkbox(for="showExit") Exit
               hr
@@ -112,6 +116,7 @@ html(ng-app="RunAdmin")
               th(ng-if="showTime") {{"common.time" | translate}}
               th(ng-if="showLoPs") {{"common.lops" | translate}}
               th(ng-if="showVictim") {{'common.rescued' | translate}}
+              th(ng-if="showMultiplier") {{'common.multipliers' | translate}}
               th(ng-if="showExit") {{'maze.score.exit' | translate}}
           tbody
             tr(ng-repeat='run in runs | filter:list_filter | orderBy:"[startTime,round.name,team.name]"' runs-read-finished='')
@@ -123,8 +128,17 @@ html(ng-app="RunAdmin")
               td(ng-bind='run.score' ng-if="showScore")
               td(ng-bind="run.time.minutes*60*1000+run.time.seconds*1000 | date:'mm:ss'"  ng-if="showTime")
               td(ng-bind='total(run.LoPs)' ng-if="showLoPs")
-              td(ng-bind='run.rescueOrder.length' ng-if="showVictim")
-              td.text-center(ng-if="showExit")
+              td(ng-if="showVictim")
+                span.badge.badge-warning(ng-show='run.evacuationLevel == 1') Level 1
+                span.badge.badge-danger(ng-show='run.evacuationLevel == 2') Level 2
+                span(ng-repeat='victim in run.rescueOrder', style='margin-left:5px;')
+                  img(src='/images/liveVictim.png', width='20px', ng-if="victim.type == 'L'")
+                  img(src='/images/deadVictim.png', width='20px', ng-if="victim.type == 'D'")
+                  img(src='/images/rescuekit-1.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==1")
+                  img(src='/images/rescuekit-2.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==2")
+              td(ng-if="showMultiplier")
+                span ×{{run.multiplier}}
+              td(ng-if="showExit")
                 i(class="fas fa-check" aria-hidden="true" style="color:#2ecc71;" ng-if="run.exitBonus")
                 i(class="fas fa-times" aria-hidden="true" style="color:#e74c3c;" ng-if="!run.exitBonus")
 

@@ -54,6 +54,8 @@ html(ng-app="LineScore")
           .card.border-dark.mb-3(style='width:100%;')
             .card-header.bg-transparent.border-dark.fa-2x
               i.fas.fa-cog(aria-hidden='true') Config
+              button(onclick="window.print();" class='btn btn-info' style="margin-left:100px; text-align:right;")
+                i.fas.fa-print &nbsp;{{"common.print" | translate}}
             .card-body.text-dark
               h6.card-title Display items
                 br
@@ -76,7 +78,8 @@ html(ng-app="LineScore")
         div(ng-if="Runs!=null")
           .row#rank
             .col-lg-12
-              h3 [Ranking] {{league.name}} - {{comment.top}}
+              h3
+               i.fas.fa-award &nbsp;[Ranking] {{league.name}} - {{comment.top}}
               table.custom(style="overflow: scroll;")
                 thead
                   tr
@@ -96,4 +99,5 @@ html(ng-app="LineScore")
                     td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}") {{("00"+run.time.minutes).slice(-2)}}:{{("00"+run.time.seconds).slice(-2)}}
                     td.text-center(ng-bind='run.rescuedVictims' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
                     td.text-center(ng-bind='run.LoPsNum' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
-        h5(style="text-align:center;") [NOTE] {{comment.bottom}}
+        h5(style="text-align:center;margin-top:10px;", ng-if="comment.bottom")
+          i.fas.fa-info-circle &nbsp;{{comment.bottom}}

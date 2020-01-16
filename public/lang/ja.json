@@ -83,7 +83,9 @@
         "multipliers": "乗数",
         "region": "国・地域",
         "teamCode": "チームコード",
-        "duplicate": "複製"
+        "duplicate": "複製",
+        "print": "印刷",
+        "printPage": "印刷画面"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",

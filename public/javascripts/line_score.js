@@ -208,13 +208,20 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
         })
     }
 
+    function areKit(order) {
+        console.log(order);
+        for(let o of order){
+            if(o.type == "K") return 1;
+        }
+        return 0;
+    }
 
     function sumBest(runs) {
         if (runs.length == 1) {
             return {
                 score: runs[0].score,
                 time: runs[0].time,
-                rescued: runs[0].rescueOrder.length,
+                rescued: (runs[0].rescueOrder.length - areKit(runs[0].rescueOrder)),
                 lops: runs[0].LoPsNum
             }
         }
@@ -235,7 +242,7 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
             sum.score += runs[i].score
             sum.time.minutes += runs[i].time.minutes
             sum.time.seconds += runs[i].time.seconds
-            sum.rescued += runs[i].rescueOrder.length
+            sum.rescued += (runs[i].rescueOrder.length - areKit(runs[i].rescueOrder));
             sum.lops += runs[i].LoPsNum
         }
         sum.time.minutes += Math.floor(sum.time.seconds/60);
@@ -284,25 +291,13 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
         //console.log(a);
         //console.log(b);
         if (a.score == b.score) {
-            if (a.retired && !b.retired) return 1
-            else if (!a.retired && b.retired) return -1
-            else if (a.retired && b.retired) {} else if (a.time.minutes < b.time.minutes) {
+            if (a.time.minutes < b.time.minutes) {
                 return -1
             } else if (a.time.minutes > b.time.minutes) {
                 return 1
             } else if (a.time.seconds < b.time.seconds) {
                 return -1
             } else if (a.time.seconds > b.time.seconds) {
-                return 1
-            }
-            if (a.rescuedVictims > b.rescuedVictims) {
-                return -1
-            } else if (a.rescuedVictims < b.rescuedVictims) {
-                return 1
-            }
-            if (a.LoPsNum < b.LoPsNum) {
-                return -1
-            } else if (a.LoPsNum > b.LoPsNum) {
                 return 1
             } else {
                 return 0

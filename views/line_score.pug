@@ -74,6 +74,7 @@ block content
               th.text-center {{'common.score' | translate}}
               th.text-center {{'common.time' | translate}}
               th.text-center {{'common.rescued' | translate}}
+              th.text-center {{'common.multipliers' | translate}}
               th.text-center {{'common.lops' | translate}}
           tbody
             tr(ng-repeat='run in Runs | orderBy:sortOrder')
@@ -82,7 +83,16 @@ block content
               td.text-center(ng-bind='run.field.name'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
               td.text-center(ng-bind='run.score'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
               td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}") {{("00"+run.time.minutes).slice(-2)}}:{{("00"+run.time.seconds).slice(-2)}}
-              td.text-center(ng-bind='run.rescueOrder.length'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
+              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}")
+                span.badge.badge-warning(ng-show='run.evacuationLevel == 1') Level 1
+                span.badge.badge-danger(ng-show='run.evacuationLevel == 2') Level 2
+                span(ng-repeat='victim in run.rescueOrder', style='margin-left:5px;')
+                  img(src='/images/liveVictim.png', width='20px', ng-if="victim.type == 'L'")
+                  img(src='/images/deadVictim.png', width='20px', ng-if="victim.type == 'D'")
+                  img(src='/images/rescuekit-1.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==1")
+                  img(src='/images/rescuekit-2.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==2")
+              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}")
+                span ×{{run.multiplier}}
               td.text-center(ng-bind='run.LoPsNum'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
     br
     br
