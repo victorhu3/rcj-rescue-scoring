@@ -81,11 +81,11 @@ adminRouter.post('/', function (req, res) {
         items    : {
           obstacles : tile.items.obstacles,
           speedbumps: tile.items.speedbumps,
-          noCheckPoint: undefied2false(tile.items.noCheckPoint),
           rampPoints: undefied2false(tile.items.rampPoints)
         },
-        levelUp  : tile.levelUp,
-        levelDown: tile.levelDown
+        levelUp  : undefied2false(tile.levelUp),
+        levelDown: undefied2false(tile.levelDown),
+        checkPoint: undefied2false(tile.checkPoint)
       })
     }
   }
@@ -94,6 +94,7 @@ adminRouter.post('/', function (req, res) {
   
   const newMap = new lineMap({
     competition      : map.competition,
+    tileSet          : map.tileSet,
     name             : map.name,
     height           : map.height,
     width            : map.width,
@@ -109,7 +110,6 @@ adminRouter.post('/', function (req, res) {
       y: map.startTile2.y,
       z: map.startTile2.z
     },
-    numberOfDropTiles: map.numberOfDropTiles,
     finished         : map.finished,
     victims          : map.victims
   })

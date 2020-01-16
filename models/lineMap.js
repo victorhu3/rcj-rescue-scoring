@@ -28,6 +28,11 @@ const lineMapSchema = new Schema({
     required: true,
     index   : true
   },
+  tileSet      : {
+    type    : ObjectId,
+    ref     : 'TileSet',
+    required: true
+  },
   name             : {type: String, required: true},
   height           : {type: Number, integer: true, required: true, min: 1},
   width            : {type: Number, integer: true, required: true, min: 1},
