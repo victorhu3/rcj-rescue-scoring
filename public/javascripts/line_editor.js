@@ -26,15 +26,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         //console.log($scope.competitions)
     })
 
-    $scope.tileSets = [];
-    $scope.tileSet = {};
-    $http.get("/api/maps/line/tilesets?populate=true").then(function (response) {
-        $scope.tileSets = response.data
-        $scope.tileSet = $scope.tileSets[0]
-    }, function (response) {
-        console.log("Error: " + response.statusText);
-    });
-
 
     $scope.z = 0;
     $scope.tiles = {};
@@ -55,44 +46,61 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
     $scope.deadV = 1;
     $scope.name = "Awesome Testbana";
 
-    if (mapId) {
-        $http.get("/api/maps/line/" + mapId +
-            "?populate=true").then(function (response) {
-            //console.log(response)
-            for (var i = 0; i < response.data.tiles.length; i++) {
-                $scope.tiles[response.data.tiles[i].x + ',' +
-                response.data.tiles[i].y + ',' +
-                response.data.tiles[i].z] = response.data.tiles[i];
+    $scope.tileSets = [];
+    $scope.tileSet = null;
+    $http.get("/api/maps/line/tilesets?populate=true").then(function (response) {
+        $scope.tileSets = response.data
+        $scope.tileSet = $scope.tileSets[0]
+        if (mapId) {
+            $http.get("/api/maps/line/" + mapId +
+              "?populate=true").then(function (response) {
+                //console.log(response)
+                for (var i = 0; i < response.data.tiles.length; i++) {
+                    $scope.tiles[response.data.tiles[i].x + ',' +
+                    response.data.tiles[i].y + ',' +
+                    response.data.tiles[i].z] = response.data.tiles[i];
 
-                console.log(response.data.tiles[i].index)
-            }
-            $scope.competitionId = response.data.competition;
+                    console.log(response.data.tiles[i].index)
+                }
+                $scope.competitionId = response.data.competition;
+                $http.get("/api/competitions/" +
+                  $scope.competitionId).then(function (response) {
+                    $scope.competition = response.data.name;
+                })
+
+                for(let t of $scope.tileSets){
+                    if(t._id == response.data.tileSet){
+                        console.log(t._id);
+                        $scope.tileSet = t;
+                        break;
+                    }
+                }
+
+                $scope.startTile = response.data.startTile;
+                $scope.startTile2 = response.data.startTile2;
+                $scope.height = response.data.height;
+                $scope.width = response.data.width;
+                $scope.length = response.data.length;
+                $scope.name = response.data.name;
+                $scope.finished = response.data.finished;
+                $scope.liveV = response.data.victims.live;
+                $scope.deadV = response.data.victims.dead;
+
+
+            }, function (response) {
+                console.log("Error: " + response.statusText);
+            });
+        } else {
             $http.get("/api/competitions/" +
-                $scope.competitionId).then(function (response) {
+              $scope.competitionId).then(function (response) {
                 $scope.competition = response.data.name;
             })
-
-            $scope.startTile = response.data.startTile;
-            $scope.startTile2 = response.data.startTile2;
-            $scope.numberOfDropTiles = response.data.numberOfDropTiles;
-            $scope.height = response.data.height;
-            $scope.width = response.data.width;
-            $scope.length = response.data.length;
-            $scope.name = response.data.name;
-            $scope.finished = response.data.finished;
-            $scope.liveV = response.data.victims.live;
-            $scope.deadV = response.data.victims.dead;
+        }
+    }, function (response) {
+        console.log("Error: " + response.statusText);
+    });
 
 
-        }, function (response) {
-            console.log("Error: " + response.statusText);
-        });
-    } else {
-        $http.get("/api/competitions/" +
-            $scope.competitionId).then(function (response) {
-            $scope.competition = response.data.name;
-        })
-    }
 
     $scope.go = function (path) {
         window.location = path
@@ -144,12 +152,12 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         victims.dead = $scope.deadV;
         var map = {
             competition: $scope.se_competition,
+            tileSet: $scope.tileSet._id,
             name: $scope.saveasname,
             length: $scope.length,
             height: $scope.height,
             width: $scope.width,
             finished: $scope.finished,
-            numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
             startTile2: $scope.startTile2,
             tiles: $scope.tiles,
@@ -219,12 +227,12 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
         var map = {
             competition: $scope.competitionId,
+            tileSet: $scope.tileSet._id,
             name: $scope.name,
             length: $scope.length,
             height: $scope.height,
             width: $scope.width,
             finished: $scope.finished,
-            numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
             startTile2: $scope.startTile2,
             tiles: $scope.tiles,
@@ -264,12 +272,12 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         victims.dead = $scope.deadV;
         
         var map = {
+            tileSet: $scope.tileSet._id,
             name: $scope.name,
             length: $scope.length,
             height: $scope.height,
             width: $scope.width,
             finished: $scope.finished,
-            numberOfDropTiles: $scope.numberOfDropTiles,
             startTile: $scope.startTile,
             startTile2: $scope.startTile2,
             tiles: $scope.tiles,
@@ -303,6 +311,13 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 var data = JSON.parse(reader.result);
                 $scope.tiles = data.tiles;
                 $scope.competitionId = competitionId;
+
+                for(let t of $scope.tileSets){
+                    if(t._id == data.tileSet){
+                        $scope.tileSet = t;
+                        break;
+                    }
+                }
 
                 $scope.startTile = data.startTile;
                 $scope.startTile2 = data.startTile2;
