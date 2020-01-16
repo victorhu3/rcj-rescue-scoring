@@ -453,7 +453,6 @@ adminRouter.post('/tilesets', function (req, res, next) {
         err: err.message
       })
     } else {
-      res.location("/api/maps/line/tilesets" + data._id)
       res.status(201).send({
         msg: "New tileset has been saved",
         id : data._id
