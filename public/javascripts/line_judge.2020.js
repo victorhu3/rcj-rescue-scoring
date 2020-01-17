@@ -462,7 +462,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     playSound(sClick);
     prevTime = 0;
     $scope.time = 0;
-    $scope.retired = false;
     $scope.saveEverything();
   };
 
@@ -1100,7 +1099,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     run.tiles = $scope.stiles;
     $scope.minutes = Math.floor($scope.time / 60000);
     $scope.seconds = Math.floor(($scope.time % 60000) / 1000);
-    run.retired = $scope.retired;
     run.time = {
       minutes: $scope.minutes,
       seconds: $scope.seconds
@@ -1132,7 +1130,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     run.showedUp = $scope.showedUp;
     run.started = $scope.started;
     run.tiles = $scope.stiles;
-    run.retired = $scope.retired;
     run.time = {
       minutes: $scope.minutes,
       seconds: $scope.seconds
@@ -1166,7 +1163,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       run.tiles = $scope.stiles;
       //$scope.minutes = Math.floor($scope.time / 60000)
       //$scope.seconds = Math.floor(($scope.time % 60000) / 1000)
-      run.retired = $scope.retired;
       run.time = {
         minutes: $scope.minutes,
         seconds: $scope.seconds
@@ -1201,7 +1197,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       run.showedUp = $scope.showedUp;
       run.started = $scope.started;
       run.tiles = $scope.stiles;
-      run.retired = $scope.retired;
       run.time = {
         minutes: $scope.minutes,
         seconds: $scope.seconds

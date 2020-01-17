@@ -87,12 +87,12 @@ app.controller('HandOverController', ['$scope', '$uibModal', '$log', '$timeout',
         var run = {}
         run.LoPs = tmp.LoPs;
         run.evacuationLevel = tmp.evacuationLevel;
+        run.kitLevel = tmp.kitLevel;
         run.exitBonus = tmp.exitBonus;
         run.rescueOrder = tmp.rescueOrder;
         run.showedUp = tmp.showedUp;
         run.started = tmp.started;
         run.tiles = tmp.stiles;
-        run.retired = tmp.retired;
         run.time = {
             minutes: tmp.time.minutes,
             seconds: tmp.time.seconds
