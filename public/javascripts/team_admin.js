@@ -37,7 +37,7 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             value: operation
         } = await swal({
             title: "Update team code",
-            text: "Update team code from '" + $scope.teams.teamCode + "'",
+            text: "Update team code from '" + team.teamCode + "'",
             type: "info",
             showCancelButton: true,
             confirmButtonText: "Update",
