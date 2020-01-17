@@ -195,7 +195,7 @@ app.controller("LineTimetableController", ['$scope', '$http', '$translate','$win
                 })*/
                 swal({
                     title: "Registration Completed!",
-                    html: "Please attach the wristband so that it does not be off. <br> Do not remove it until the tournament is over.",
+                    html: "Please attach the wristband so that it does not be off. <br> Do not remove it until the competition is all over.",
                     type: "success",
                     showCancelButton: false,
                     confirmButtonText: "OK",
@@ -204,7 +204,8 @@ app.controller("LineTimetableController", ['$scope', '$http', '$translate','$win
                     if (result.value) {
                         $http.put("/api/teams/" + competitionId +
                           "/" + teamId, {
-                            checkin: true
+                            checkin: true,
+                            code: $scope.selected
                         }).then(function (response) {
                             parentScope.reset();
                             parentScope.$apply();

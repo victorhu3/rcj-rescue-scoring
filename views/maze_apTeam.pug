@@ -2,7 +2,7 @@
 
 html(ng-app="MazeTimetable")
   head
-    title 競技割り当て
+    title Assign game slot
     script.
       var competitionId = "#{id}"
       var teamId = "#{tid}"
@@ -48,7 +48,7 @@ html(ng-app="MazeTimetable")
             button(ng-show= "!selected" ng-click="reset()" class='btn btn-danger') Exit
     .container.nav-cont
         h1 Team:    {{team.name}}
-            h2 Country: {{team.country}}
+            h2 Region: {{team.country}}
             .row
                 .col-md-6
                     .card
@@ -67,7 +67,7 @@ html(ng-app="MazeTimetable")
                                 a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/teams/pic/{{competitionId}}/{{teamId}}/machine" data-lightbox="image")
                                     img.img-thumbnail(style="max-width: 100%;height: auto;margin-bottom:20px;" ng-src="/api/teams/pic/{{competitionId}}/{{teamId}}/machine")
             br
-            h1 Selected: {{selected}}
+            h1 Selected slot No.: {{selected}}
         //div(style='text-align: center;' ng-if='!checked')
           
           br

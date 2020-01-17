@@ -199,6 +199,7 @@ privateRouter.put('/:competitionid/:teamid', function (req, res, next) {
                     if (team.inspected != null) dbTeam.inspected = team.inspected
                     if (team.docPublic != null) dbTeam.docPublic = team.docPublic
                     if (team.checkin != null) dbTeam.checkin = team.checkin;
+                    if (team.code != null) dbTeam.code = team.code;
 
                     dbTeam.save(function (err) {
                         if (err) {
