@@ -129,7 +129,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 $scope.LoPs = data.LoPs;
                 $scope.minutes = data.time.minutes;
                 $scope.seconds = data.time.seconds;
-                $scope.retired = data.retired;
 
                 $scope.victim_list = data.rescueOrder;
 
@@ -184,7 +183,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.league = response.data.team.league;
             $scope.competition = response.data.competition.name;
             $scope.competition_id = response.data.competition._id;
-            $scope.retired = response.data.retired;
             // Verified time by timekeeper
             $scope.minutes = response.data.time.minutes;
             $scope.seconds = response.data.time.seconds;
