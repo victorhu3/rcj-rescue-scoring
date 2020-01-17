@@ -21,6 +21,7 @@ block content
     .col-md-1
     .col-md-10
       h1 {{competition.name}} - {{"admin.teams.title" | translate}}
+      p(ng-if="showMd5" ng-bind="md5(competition.name)")
       table.custom
         thead
             tr
@@ -48,12 +49,14 @@ block content
           button(ng-click="selectAll()" class='btn btn-primary' style="margin: 5px 5px 5px 5px;") {{"common.selectAll" | translate}}
           button(ng-click="removeSelectedTeam()" class='btn btn-danger' style="margin: 5px 5px 5px 5px;") {{"common.delS" | translate}}
           button(ng-click="reset_kiosk()" class='btn btn-secondary' style="margin: 5px 5px 5px 5px; text-align:right;") Reset Kiosk
+          button(ng-click="showMd5=!showMd5" data-toggle="button" aria-pressed="false" autocomplete="off" class='btn btn-secondary' style="margin: 5px 5px 5px 5px; text-align:right;") Show hashed info
       table.custom
         thead
             tr
               th
               th(ng-if="showCode") {{"common.teamCode" | translate}}
               th {{"common.team" | translate}}
+              th(ng-if="showMd5") Hashed team name
               th {{"common.league" | translate}}
               th {{"common.operation" | translate}}
         tbody
@@ -62,12 +65,13 @@ block content
                 input(type='checkbox' ng-model='team.checked' style="display:initial;")
               td(ng-bind='team.teamCode' ng-if="showCode")
               td(ng-bind='team.name')
+              td(ng-bind='md5(team.name)' ng-if="showMd5")
               td(ng-bind='team.league')
               td
                   .dropdown
                   button#dropdownMenu.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') {{"common.action" | translate}}
                   .dropdown-menu(aria-labelledby='dropdownMenu')
-                    button.dropdown-item(type='button' ng-click="updateCode(team)") {{"admin.teams.updateCode" | translate}}
-                    .dropdown-divider
-                    button.dropdown-item(type='button' ng-click='removeTeam(team._id)') {{"common.delete" | translate}}
+                      button.dropdown-item(type='button' ng-click="updateCode(team)") {{"admin.teams.updateCode" | translate}}
+                      .dropdown-divider
+                      button.dropdown-item(type='button' ng-click='removeTeam(team._id)') {{"common.delete" | translate}}
       
