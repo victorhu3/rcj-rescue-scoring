@@ -1092,7 +1092,7 @@ for (var i in tileTypes) {
   defaultTileSet.push(
     {
       'tileType': tileType._id,
-      'count':1
+      'count':100
     }
   )
 }
@@ -1108,7 +1108,7 @@ TileSet.findById('5c19d2439590f2d68b15b301', function (err, dbTileSet) {
   }else{
     let newTileSet = new TileSet({
       '_id': '5c19d2439590f2d68b15b301',
-      'name': 'FULL(2020)',
+      'name': 'Default(2020)',
       'tiles': defaultTileSet
     });
     newTileSet.save(function (err) {
