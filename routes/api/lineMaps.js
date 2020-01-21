@@ -442,10 +442,20 @@ adminRouter.get('/tileCount/:expectMapId/:tileSetId/:tileId', async function(req
 
 adminRouter.post('/tilesets', function (req, res, next) {
   const tileset = req.body
+  let newset;
+  if(tileset.tiles){
+    newset = {
+      name: tileset.name,
+      tiles: tileset.tiles
+    };
+  }else{
+    newset = {
+      name: tileset.name
+    };
+  }
+
   
-  new tileSet({
-    name: tileset.name
-  }).save(function (err, data) {
+  new tileSet(newset).save(function (err, data) {
     if (err) {
       logger.error(err)
       res.status(400).send({

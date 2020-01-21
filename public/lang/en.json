@@ -58,8 +58,9 @@
         "name": "Name",
         "delete": "Delete",
         "operation": "Operation",
-        "create": "Create",
+        "create": "Create new",
         "save": "Save",
+        "overwrite": "Overwrite save",
         "comment": "Comment",
         "inspected": "Inspected",
         "interview": "Inspection / Interview",
@@ -401,10 +402,12 @@
             "num": "Number of games"
         },
         "line_tSet": {
-            "new_tSet": "New tileset: ",
-            "tSet": "Tileset: ",
+            "new_tSet": "Input tile set name",
+            "tSet": "Displaying tile set: ",
             "available": "Available tiles",
-            "tIn": "Tiles in {{setName}}"
+            "tIn": "Tiles in {{setName}}",
+            "export": "Export this tile set",
+            "import": "Import from file"
         },
         "users":{
             "title": "User management",

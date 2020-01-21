@@ -64,8 +64,9 @@
         "name": "名前",
         "delete": "削除",
         "operation": "操作",
-        "create": "作成",
+        "create": "新規作成",
         "save": "保存",
+        "overwrite": "上書き保存",
         "comment": "コメント",
         "inspected": "検査済",
         "interview": "検査・インタビュー",
@@ -405,10 +406,12 @@
             "num": "使用競技数"
         },
         "line_tSet": {
-            "new_tSet": "新しいタイルセット: ",
-            "tSet": "タイルセット: ",
+            "new_tSet": "タイルセット名を入力 ",
+            "tSet": "表示中のタイルセット: ",
             "available": "使用可能タイル",
-            "tIn": "{{setName}}のタイル"
+            "tIn": "{{setName}}のタイル",
+            "export": "このタイルセットをエクスポート",
+            "import": "タイルセットをファイルからインポート"
         },
         "users":{
             "title": "ユーザー管理",
