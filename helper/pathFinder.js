@@ -51,7 +51,7 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
   if (nextTile === undefined || evacTile(nextTile)) {
     let startTile2 = tiles[map.startTile2.x + ',' + map.startTile2.y + ',' +
     map.startTile2.z];
-    if(!startTile2){
+    if(!startTile2 || startTile2.index.length > 0){
       map.EvacuationAreaLoPIndex = chpCount;
       map.indexCount = index + 1;
       return;
@@ -60,12 +60,13 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
     let startDir2 = "";
     let startPaths2 = startTile2.tileType.paths;
     Object.keys(startPaths2).forEach(function (dir, index) {
-      let nextTile2 = tiles[nextCoord(startTile2, dir)];
+      let nextTile2 = tiles[nextCoord(startTile2, rotateDir(dir, startTile2.rot))];
       if (nextTile2 !== undefined && !evacTile(nextTile2)) {
-        startDir2 = dir;
+        startDir2 = rotateDir(dir, startTile2.rot);
+        next_Coord = nextCoord(startTile2, rotateDir(dir, startTile2.rot));
       }
     });
-    curTile.next.push(startTile2);
+    curTile.next.push(next_Coord);
     map.EvacuationAreaLoPIndex = chpCount;
     traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
     return;
