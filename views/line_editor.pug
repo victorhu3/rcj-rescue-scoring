@@ -11,6 +11,7 @@ append scripts
 
   script(src="/javascripts/lvl-uuid.js")
   script(src="/javascripts/line_editor.js")
+  script(src="/javascripts/pathFinder.js")
   //script(src="/components/bootstrap-fileinput/js/plugins/piexif.min.js")
   //script(src="/components/bootstrap-fileinput/js/plugins/sortable.min.js")
   //script(src="/components/bootstrap-fileinput/js/plugins/purify.min.js")
@@ -26,10 +27,14 @@ append css
 
 block location
     a.breadcrumb-item(ng-click="go('/home')") Home
-    a.breadcrumb-item(ng-click="go('/admin')") Admin
-    a.breadcrumb-item(ng-click="go('/admin/'+competitionId)") {{competition}}
-    a.breadcrumb-item(ng-click="go('/admin/'+competitionId + '/line/maps')") Line maps
-    span.breadcrumb-item.active Line editor
+    if !pubService
+        a.breadcrumb-item(ng-click="go('/admin')") Admin
+        a.breadcrumb-item(ng-click="go('/admin/'+competitionId)") {{competition}}
+        a.breadcrumb-item(ng-click="go('/admin/'+competitionId + '/line/maps')") Line maps
+        span.breadcrumb-item.active Line editor
+    else
+        a.breadcrumb-item(ng-click="go('/service')") Public services
+        span.breadcrumb-item.active Line editor
 
 block content
     h1 {{"admin.lineMapEditor.title" | translate}} 2020
@@ -43,24 +48,25 @@ block content
         br
         .row
             .col-md-12
-                .input-group.mb-3
-                    .input-group-prepend
-                        span.input-group-text {{"admin.lineMapEditor.name" | translate}}
-                    input.form-control(type='text', ng-model='name')
-                    .input-group-append
-                        button.btn.btn-secondary(type='button', ng-click='saveMap()') {{"admin.lineMapEditor.save" | translate}}
-                hr
-                .input-group.mb-3
-                    .input-group-prepend
-                        span.input-group-text {{"admin.lineMapEditor.name" | translate}}
-                    input.form-control(type='text', ng-model='saveasname')
-                    .input-group-append
-                        span.input-group-text(for="selectComp") @
-                    select.custom-select#selectComp(ng-model='se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions', value='{{competitionId}}')
-                    .input-group-append
-                        button.btn.btn-secondary(type='button', ng-click='saveMapAs()') {{"admin.lineMapEditor.saveAs" | translate}}
+                if !pubService
+                    .input-group.mb-3
+                        .input-group-prepend
+                            span.input-group-text {{"admin.lineMapEditor.name" | translate}}
+                        input.form-control(type='text', ng-model='name')
+                        .input-group-append
+                            button.btn.btn-secondary(type='button', ng-click='saveMap()') {{"admin.lineMapEditor.save" | translate}}
+                    hr
+                    .input-group.mb-3
+                        .input-group-prepend
+                            span.input-group-text {{"admin.lineMapEditor.name" | translate}}
+                        input.form-control(type='text', ng-model='saveasname')
+                        .input-group-append
+                            span.input-group-text(for="selectComp") @
+                        select.custom-select#selectComp(ng-model='se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions', value='{{competitionId}}')
+                        .input-group-append
+                            button.btn.btn-secondary(type='button', ng-click='saveMapAs()') {{"admin.lineMapEditor.saveAs" | translate}}
 
-                hr
+                    hr
                 .input-group.mb-3
                     .input-group-prepend
                         span.input-group-text {{"admin.lineMapEditor.height" | translate}}
@@ -72,19 +78,20 @@ block content
                         span.input-group-text {{"admin.lineMapEditor.length" | translate}}
                     input.form-control(type='number', ng-model='length', min='1')
 
-                .input-group.mb-3
-                    .input-group-prepend
-                        span.input-group-text {{"admin.lineMapEditor.liveVictim" | translate}}
-                    input.form-control(type='number', ng-model='liveV', min='0')
-                    .input-group-append
-                        span.input-group-text {{"admin.lineMapEditor.deadVictim" | translate}}
-                    input.form-control(type='number', ng-model='deadV', min='0')
-                hr
+                if !pubService
+                    .input-group.mb-3
+                        .input-group-prepend
+                            span.input-group-text {{"admin.lineMapEditor.liveVictim" | translate}}
+                        input.form-control(type='number', ng-model='liveV', min='0')
+                        .input-group-append
+                            span.input-group-text {{"admin.lineMapEditor.deadVictim" | translate}}
+                        input.form-control(type='number', ng-model='deadV', min='0')
+                    hr
 
-                input#isFinished(type='checkbox', ng-model='finished')
-                label.checkbox(for='isFinished') {{"admin.lineMapEditor.finished" | translate}}
-                br
-                .error(ng-show='startNotSet()') {{"admin.lineMapEditor.noStart" | translate}}
+                    input#isFinished(type='checkbox', ng-model='finished')
+                    label.checkbox(for='isFinished') {{"admin.lineMapEditor.finished" | translate}}
+                    br
+                    .error(ng-show='startNotSet()') {{"admin.lineMapEditor.noStart" | translate}}
         .row
             .col-md-6.tools
                 p
@@ -110,7 +117,10 @@ block content
             .col-6
                 h3 Generate course map image
             .col-6
-                button.btn.btn-dark(type='button', ng-click='makeImage()') Generate image
+                if pubService
+                    button.btn.btn-dark(type='button', ng-click='makeImageDl()') Generate image
+                else
+                    button.btn.btn-dark(type='button', ng-click='makeImage()') Prepare for generate score sheets
         #outputImageArea(style="background-color: #ddd;float:left;padding-left:18px;padding-right:15px;padding-bottom:2px;")
             div(ng-repeat='z in range(height)')
                 .row(ng-repeat='r in range(length)')

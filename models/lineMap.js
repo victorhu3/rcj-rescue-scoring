@@ -679,7 +679,7 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "bottom"
+      "top": "bottom"
     },
     "_id"          : "5976bc04d6ef2a2620cdfc86"
   },

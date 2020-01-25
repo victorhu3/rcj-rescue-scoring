@@ -62,8 +62,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                     $scope.tiles[response.data.tiles[i].x + ',' +
                     response.data.tiles[i].y + ',' +
                     response.data.tiles[i].z] = response.data.tiles[i];
-
-                    console.log(response.data.tiles[i].index)
                 }
                 $scope.competitionId = response.data.competition;
                 $http.get("/api/competitions/" +
@@ -89,6 +87,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 $scope.liveV = response.data.victims.live;
                 $scope.deadV = response.data.victims.dead;
                 $scope.updateUsedCount();
+                $scope.updateTileIndex();
 
             }, function (response) {
                 console.log("Error: " + response.statusText);
@@ -128,6 +127,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         $scope.tiles[x + ',' + y + ',' + $scope.z].rot += 90;
         if ($scope.tiles[x + ',' + y + ',' + $scope.z].rot >= 360)
             $scope.tiles[x + ',' + y + ',' + $scope.z].rot = 0;
+        $scope.updateTileIndex();
     }
 
 
@@ -151,6 +151,37 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         }
         $scope.usedCount = newCount;
     }
+
+    $scope.updateTileIndex = function(){
+        let tiles = [];
+        for(let i in $scope.tiles){
+            let tile = {};
+            tile = $scope.tiles[i];
+            tile.index = [];
+            tile.next = [];
+            const coords = i.split(',');
+            tile.x = Number(coords[0]);
+            tile.y = Number(coords[1]);
+            tile.z = Number(coords[2]);
+            tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile;
+        }
+        console.log(tiles);
+        let map = {
+            startTile: $scope.startTile,
+            startTile2: $scope.startTile2,
+            tiles: tiles
+        };
+        let result = pathFinder(map);
+
+        for(let i in result.tiles){
+            $scope.tiles[i] = result.tiles[i];
+        }
+        console.log($scope.tiles)
+        $scope.EvacuationAreaLoPIndex = result.EvacuationAreaLoPIndex;
+        $scope.indexCount = result.indexCount;
+    }
+
+
 
     $scope.tileRemain = function(tile){
         return tile.count - getTileUsedCountOther(tile) - null2zero($scope.usedCount[tile.tileType._id]);
@@ -245,6 +276,19 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
       });
     };
 
+    $scope.makeImageDl = function(){
+        $scope.updateTileIndex();
+        return;
+        window.scrollTo(0,0);
+        html2canvas(document.getElementById("outputImageArea"),{
+            scale: 2
+        }).then(function(canvas) {
+            let imgData = canvas.toDataURL();
+            console.log(imgData);
+
+        });
+    };
+
 
     $scope.saveMap = function () {
         if ($scope.startNotSet()) {
@@ -310,7 +354,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
     }
 
     $scope.export = function () {
-        
         var victims = {};
         victims.live = $scope.liveV;
         victims.dead = $scope.deadV;
@@ -327,6 +370,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             tiles: $scope.tiles,
             victims: victims
         };
+
         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(map))
         var downloadLink = document.createElement('a')
         document.body.appendChild(downloadLink);
@@ -380,6 +424,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                         data.tiles[i].z] = data.tiles[i];
                 }*/
                 $scope.updateUsedCount();
+                $scope.updateTileIndex();
                 $scope.$apply();
             }
 
@@ -548,7 +593,8 @@ app.directive('tile4image', function () {
             };
 
             scope.scoringItems = function (tile){
-                return tile.items.obstacles || tile.items.rampPoints || tile.items.speedbumps || tile.tileType.gaps || tile.tileType.intersections || tile.tileType.seesaw;
+                if(tile) return tile.items.obstacles || tile.items.rampPoints || tile.items.speedbumps || tile.tileType.gaps || tile.tileType.intersections || tile.tileType.seesaw;
+                return false;
             };
 
             scope.tileNumber = function (tile) {
@@ -691,6 +737,7 @@ app.directive('lvlDropTarget', ['$rootScope', 'uuid', function ($rootScope, uuid
                     drag.attr("z")];
                 }
                 scope.updateUsedCount();
+                scope.updateTileIndex();
                 scope.$apply();
 
             });

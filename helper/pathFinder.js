@@ -15,9 +15,9 @@ module.exports.findPath = function (map) {
     let startDir = "";
     let startPaths = startTile.tileType.paths;
     Object.keys(startPaths).forEach(function (dir, index) {
-      let nextTile = tiles[nextCoord(startTile, dir)];
+      let nextTile = tiles[nextCoord(startTile, rotateDir(dir, startTile.rot))];
       if (nextTile !== undefined) {
-        startDir = dir
+        startDir = rotateDir(dir, startTile.rot)
       }
     });
 
