@@ -59,8 +59,9 @@
         <div ng-show="hasVictims">
             <i class="fas fa-2x fa-medkit" aria-hidden="true" style="color:#c53d43;">&nbsp;</i>{{"maze.judge.m_kit" | translate}}
                 <div ng-repeat="(direction, type) in cell.tile.victims" ng-show="type != 'None'" style="margin-left:50px;">
-                    <div class="input-group" style="width:100%;" >
-                        <span class="input-group-addon" ng-style="{backgroundColor: kitStatus(tile.scoredItems.victims[direction],tile.scoredItems.rescueKits[direction],type) ? '#d3f5d3': '#f5d3d4'}">
+                    <div class="input-group mb-3" style="width:100%;" >
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" ng-style="{backgroundColor: kitStatus(tile.scoredItems.victims[direction],tile.scoredItems.rescueKits[direction],type) ? '#d3f5d3': '#f5d3d4'}">
                                <img src="/images/thermometer.png" height=30px ng-if="type=='Heated'">
                                 <img src="/images/H.png" height=30px ng-if="type=='H'">
                                 <img src="/images/U.png" height=30px ng-if="type=='U'">
@@ -69,14 +70,15 @@
                                 <img src="/images/yellow.png" height=30px ng-if="type=='Yellow'">
                                 <img src="/images/green.png" height=30px ng-if="type=='Green'">
                                 &nbsp;{{modalRotate(direction)}}
-                        </span>
-                        <span class="input-group-btn">
+                            </span>
+                        </div>
+                        <span class="input-group-append">
                             <button type="button" class="btn btn-danger"  ng-click="decKits(direction)">
                                 <i class="fa fa-2x fa-minus" aria-hidden="true"></i>
                             </button>
                         </span>
                         <input type="text" name="quant[2]" class="form-control input-number" ng-model="tile.scoredItems.rescueKits[direction]" min="1" max="12" readonly="readonly" style="font-size:25px;" ng-style="{backgroundColor: kitStatus(tile.scoredItems.victims[direction],tile.scoredItems.rescueKits[direction],type) ? '#d3f5d3': '#f5d3d4'}">
-                        <span class="input-group-btn">
+                        <span class="input-group-append">
                             <button type="button" class="btn btn-success" ng-click="incKits(direction)">
                                 <i class="fa fa-2x fa-plus" aria-hidden="true"></i>
                             </button>
