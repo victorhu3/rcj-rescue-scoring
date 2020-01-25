@@ -13,7 +13,7 @@ router.get('/', function (req, res) {
 })
 
 router.get('/editor/maze/2020', async function (req, res, next) {
-  res.render('maze_editor', {user: req.user, pubService:true})
+  res.render('maze_editor', {user: req.user,rule: 2020, pubService:true})
 })
 
 
