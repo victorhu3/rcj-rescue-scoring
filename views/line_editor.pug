@@ -96,8 +96,9 @@ block content
                 img
             .col-md-6
                 .btn-group(style='margin-bottom:5px;')
-                    span.input-group-addon
-                        i.fas.fa-arrows-alt-v(aria-hidden='true')
+                    .input-group-prepend
+                        span.input-group-text
+                            i.fas.fa-arrows-alt-v(aria-hidden='true')
                     button.btn.btn-outline-dark(type='button', ng-click='changeFloor(zz)', ng-repeat='zz in range(height)', ng-class='{active: zz == z}')  {{zz}} 
                 .row(ng-repeat='r in range(length)')
                     .slot(ng-repeat='c in range(width)')

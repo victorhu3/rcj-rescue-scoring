@@ -178,8 +178,9 @@ html(ng-app="ddApp")
           .col-md-8.col-lg-9.tilearea
             div(style='text-align:left;float:left;')
               .btn-group
-                span.input-group-addon
-                  i.fas.fa-arrows-alt-v(aria-hidden='true')
+                .input-group-prepend
+                  span.input-group-text
+                    i.fas.fa-arrows-alt-v(aria-hidden='true')
                 button.btn.btn-outline-dark(type='button', ng-click='changeFloor(zz)', ng-repeat='zz in range(height)', ng-class='{active: zz == z}')  {{zz}} 
             div(style='text-align:right;float:right;')
               .btn-group
