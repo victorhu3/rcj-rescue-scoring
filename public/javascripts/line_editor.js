@@ -278,16 +278,25 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
     $scope.makeImageDl = function(){
         $scope.updateTileIndex();
-        return;
         window.scrollTo(0,0);
         html2canvas(document.getElementById("outputImageArea"),{
             scale: 2
         }).then(function(canvas) {
             let imgData = canvas.toDataURL();
             console.log(imgData);
-
+            downloadURI(imgData,'Line-FieldMap.png')
         });
     };
+
+    function downloadURI(uri, name) {
+        var link = document.createElement("a");
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        delete link;
+    }
 
 
     $scope.saveMap = function () {

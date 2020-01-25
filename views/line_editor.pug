@@ -41,10 +41,15 @@ block content
     p {{"admin.lineMapEditor.desc" | translate}}
     div(style='margin-top:50px;')
         .row
-            .col-md-6
+            .col-md-4
                 button.btn.btn-dark(type='button', ng-click='export()') {{"admin.lineMapEditor.export" | translate}}
-            .col-md-6
+            .col-md-4
                 input#select(type='file', name='select')
+            .col-md-4(style="text-align:right;")
+                if pubService
+                    button.btn.btn-info(type='button', ng-click='makeImageDl()') Generate image
+                else
+                    button.btn.btn-info(type='button', ng-click='makeImage()') Prepare for generate score sheets
         br
         .row
             .col-md-12
@@ -109,6 +114,7 @@ block content
                         span.input-group-text
                             i.fas.fa-arrows-alt-v(aria-hidden='true')
                     button.btn.btn-outline-dark(type='button', ng-click='changeFloor(zz)', ng-repeat='zz in range(height)', ng-class='{active: zz == z}')  {{zz}} 
+
                 .row(ng-repeat='r in range(length)')
                     .slot(ng-repeat='c in range(width)')
                         tile(tile="tiles[c+','+r+','+z]", x='{{c}}', y='{{r}}', z='{{z}}', x-lvl-draggable='true', x-lvl-drop-target='true', ng-right-click='open(c,r)', ng-click='$parent.rotateTile(c,r)')
@@ -118,9 +124,9 @@ block content
                 h3 Generate course map image
             .col-6
                 if pubService
-                    button.btn.btn-dark(type='button', ng-click='makeImageDl()') Generate image
+                    button.btn.btn-info(type='button', ng-click='makeImageDl()') Generate image
                 else
-                    button.btn.btn-dark(type='button', ng-click='makeImage()') Prepare for generate score sheets
+                    button.btn.btn-info(type='button', ng-click='makeImage()') Prepare for generate score sheets
         #outputImageArea(style="background-color: #ddd;float:left;padding-left:18px;padding-right:15px;padding-bottom:2px;")
             div(ng-repeat='z in range(height)')
                 .row(ng-repeat='r in range(length)')
