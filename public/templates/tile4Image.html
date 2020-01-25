@@ -10,7 +10,8 @@
         vertical-align: bottom;
     }
 </style>
-<p class="text-right chnumtxt" style="font-size: 10px; color: orange; z-index:2;position: relative; right:2px;" ng-if="tile">{{tileNumber(tile)}}</p>
+<p class="text-right chnumtxt" style="font-size: 10px; color: orange; z-index:2;position: relative; right:2px;" ng-if="tile.checkPoint">{{tileNumber(tile)}}</p>
+<p class="text-right chnumtxt" style="font-size: 10px; color: #48dbfb; z-index:10;position: relative; right:2px;" ng-if="scoringItems(tile)">{{tileNumber(tile)}}</p>
 <img ng-src="/images/tiles/{{tile.tileType.image}}"  class="rot{{tilerotate(tile.rot)}} tile4-image" ng-class="{'drop-tile': isDropTile(tile) || isStart(tile)}" ng-show="tile.tileType.image">
 
 <img ng-src="/images/mapimage/bump1.png"  class="tile4-image"  ng-show="tile.items.speedbumps==1" style="opacity:0.7;z-index:2"/>

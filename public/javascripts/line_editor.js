@@ -547,22 +547,16 @@ app.directive('tile4image', function () {
                 return false;
             };
 
-            /*scope.isStart2 = function (tile) {
-                return attrs.x == scope.$parent.startTile2.x &&
-                  attrs.y == scope.$parent.startTile2.y &&
-                  attrs.z == scope.$parent.startTile2.z;
-            };*/
+            scope.scoringItems = function (tile){
+                return tile.items.obstacles || tile.items.rampPoints || tile.items.speedbumps || tile.tileType.gaps || tile.tileType.intersections || tile.tileType.seesaw;
+            };
 
             scope.tileNumber = function (tile) {
                 let txt = "";
-                console.log(tile);
-                if(tile.checkPoint){
-                    for(let i=0,l=tile.index.length;i<l;i++){
-                            if(txt != "") txt += " , ";
-                            txt += (tile.index[i]+1);
-                    }
-                }
-                console.log(txt);
+                for(let i=0,l=tile.index.length;i<l;i++){
+                        if(txt != "") txt += " , ";
+                        txt += (tile.index[i]+1);
+                };
                 return txt;
             };
 
