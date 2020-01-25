@@ -43,42 +43,44 @@ block content
         br
         .row
             .col-md-12
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.name" | translate}}
+                .input-group.mb-3
+                    .input-group-prepend
+                        span.input-group-text {{"admin.lineMapEditor.name" | translate}}
                     input.form-control(type='text', ng-model='name')
-                    span.input-group-btn
+                    .input-group-append
                         button.btn.btn-secondary(type='button', ng-click='saveMap()') {{"admin.lineMapEditor.save" | translate}}
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.name" | translate}}
+                hr
+                .input-group.mb-3
+                    .input-group-prepend
+                        span.input-group-text {{"admin.lineMapEditor.name" | translate}}
                     input.form-control(type='text', ng-model='saveasname')
-                    span.input-group-addon
-                        | @
-                        select(ng-model='se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions', value='{{competitionId}}')
-                    span.input-group-btn
+                    .input-group-append
+                        span.input-group-text(for="selectComp") @
+                    select.custom-select#selectComp(ng-model='se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions', value='{{competitionId}}')
+                    .input-group-append
                         button.btn.btn-secondary(type='button', ng-click='saveMapAs()') {{"admin.lineMapEditor.saveAs" | translate}}
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.height" | translate}}
-                    input(type='number', ng-model='height', ng-change='sliderOptions.ceil = height - 1', min='1')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.width" | translate}}
-                    input(type='number', ng-model='width', min='1')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.length" | translate}}
-                    input(type='number', ng-model='length', min='1')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.liveVictim" | translate}}
-                    input(type='number', ng-model='liveV', min='0')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.lineMapEditor.deadVictim" | translate}}
-                    input(type='number', ng-model='deadV', min='0')
-                br
-                br
+
+                hr
+                .input-group.mb-3
+                    .input-group-prepend
+                        span.input-group-text {{"admin.lineMapEditor.height" | translate}}
+                    input.form-control(type='number', ng-model='height', ng-change='sliderOptions.ceil = height - 1', min='1')
+                    .input-group-append
+                        span.input-group-text {{"admin.lineMapEditor.width" | translate}}
+                    input.form-control(type='number', ng-model='width', min='1')
+                    .input-group-append
+                        span.input-group-text {{"admin.lineMapEditor.length" | translate}}
+                    input.form-control(type='number', ng-model='length', min='1')
+
+                .input-group.mb-3
+                    .input-group-prepend
+                        span.input-group-text {{"admin.lineMapEditor.liveVictim" | translate}}
+                    input.form-control(type='number', ng-model='liveV', min='0')
+                    .input-group-append
+                        span.input-group-text {{"admin.lineMapEditor.deadVictim" | translate}}
+                    input.form-control(type='number', ng-model='deadV', min='0')
+                hr
+                
                 input#isFinished(type='checkbox', ng-model='finished')
                 label.checkbox(for='isFinished') {{"admin.lineMapEditor.finished" | translate}}
                 br
