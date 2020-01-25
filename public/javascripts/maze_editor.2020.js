@@ -386,7 +386,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
         return result;
     }
     var big = Range('A', 'Z');
-    var small = Range('a', 'z');
+    var small = Range('α', 'ω');
 
     $scope.isVictim = function(type,x,y,z){
         if($scope.cells[x + ',' + y + ',' + z] && $scope.cells[x + ',' + y + ',' + z].tile){

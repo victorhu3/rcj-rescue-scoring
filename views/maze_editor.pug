@@ -41,35 +41,36 @@ block content
         br
         .row
             .col-md-12
-                .input-group
-                    span.input-group-addon {{"admin.mazeMapEditor.name" | translate}}
+                .input-group.mb-3
+                    .input-group-prepend
+                        span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
                     input.form-control(type='text', ng-model='name')
-                    span.input-group-btn
+                    .input-group-append
                         button.btn.btn-secondary(type='button', ng-click='saveMap()') {{"admin.mazeMapEditor.save" | translate}}
-                br
-                .input-group(ng-if='!parent')
-                    span.input-group-addon {{"admin.mazeMapEditor.name" | translate}}
+                hr
+                .input-group.mb-3(ng-if='!parent')
+                    .input-group-prepend
+                        span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
                     input.form-control(type='text', ng-model='asname')
-                    span.input-group-addon
-                        | @
-                        select(ng-model='$parent.se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions')
-                    span.input-group-btn
+                    .input-group-append
+                        span.input-group-text(for="selectComp") @
+                    select.custom-select#selectComp(ng-model='$parent.se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions')
+                    .input-group-append
                         button.btn.btn-secondary(type='button', ng-click='saveMapAs(asname)') {{"admin.mazeMapEditor.saveAs" | translate}}
-                br
-                .input-group
-                    span.input-group-addon {{"admin.mazeMapEditor.height" | translate}}
-                    input(type='number', ng-model='height', ng-change='sliderOptions.ceil = height - 1', min='1')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.mazeMapEditor.width" | translate}}
-                    input(type='number', ng-model='width', min='1')
-                br
-                .input-group
-                    span.input-group-addon {{"admin.mazeMapEditor.length" | translate}}
-                    input(type='number', ng-model='length', min='1')
-                br
+                hr
+                .input-group.mb-3
+                    .input-group-prepend
+                        span.input-group-text {{"admin.mazeMapEditor.height" | translate}}
+                    input.form-control(type='number', ng-model='height', ng-change='sliderOptions.ceil = height - 1', min='1')
+                    .input-group-append
+                        span.input-group-text {{"admin.mazeMapEditor.width" | translate}}
+                    input.form-control(type='number', ng-model='width', min='1')
+                    .input-group-append
+                        span.input-group-text {{"admin.mazeMapEditor.length" | translate}}
+                    input.form-control(type='number', ng-model='length', min='1')
+                hr
                 div(ng-if='!parent')
-                    h3 {{"admin.mazeMapEditor.pattern" | translate}}
+                    i.fas.fa-dice.fa-2x(style="margin-bottom:10px;") {{"admin.mazeMapEditor.pattern" | translate}}
                     p(ng-if="mapId == ''")
                         | {{"admin.mazeMapEditor.patSave" | translate}}
                     table.custom(style='width: initial; margin:0;', ng-if="mapId != ''")
