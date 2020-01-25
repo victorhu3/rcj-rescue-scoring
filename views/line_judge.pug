@@ -152,12 +152,12 @@ html(ng-app="ddApp")
                 .row
                   .col-6(style='position: relative;', ng-click='changeLevelK(1)')
                     img.img-thumbnail(src='/images/line-kit-1.png', width='100%', ng-style="{'background-color': kitLevel==1?'#2ecc71':'#95a5a6' , 'opacity':kitLevel==1?'1':'0.4' }")
-                    div(style='position:absolute; top:10px; left:30px;') {{'line.judge.low' | translate}}
+                    div(style='position:absolute; top:10px; left:30px;') {{'line.judge.noSearch' | translate}}
                     div(style='position:absolute; bottom:10px; right:25px;', ng-show='kitLevel==1')
                       i.far.fa-3x.fa-check-circle(aria-hidden='true', style='color:#27ae60;')
                   .col-6(style='position: relative;', ng-click='changeLevelK(2)')
                     img.img-thumbnail(src='/images/line-kit-2.png', width='100%', ng-style="{'background-color': kitLevel==2?'#2ecc71':'#95a5a6' , 'opacity':kitLevel==2?'1':'0.4' }")
-                    div(style='position:absolute; top:10px; left:30px;') {{'line.judge.high' | translate}}
+                    div(style='position:absolute; top:10px; left:30px;') {{'line.judge.search' | translate}}
                     div(style='position:absolute; bottom:10px; right:25px;', ng-show='kitLevel==2')
                       i.far.fa-3x.fa-check-circle(aria-hidden='true', style='color:#27ae60;')
             br

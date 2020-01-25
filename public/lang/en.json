@@ -181,7 +181,7 @@
             "tim_stop": "Stop",
             "tim_reset": "Reset",
             "select_elevel": "Select evacuation level",
-            "select_klevel": "Select kit transport level",
+            "select_klevel": "Select rescue kit level",
             "high": "@:line.view.high",
             "low": "@:line.view.low",
             "ready": "We are ready to start run recording!!",
@@ -211,6 +211,8 @@
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "To delete a rescued victim, double click or swipe left (Mobile Device)",
             "noShow": "Start timer when team no show",
+            "search": "Search",
+            "noSearch": "No search",
             "js": {
                 "score_element": "Place checkpoint markers on tiles without scoring elements (rule 3.3.5)",
                 "cantvisit": "Cannot place checkpoint markers on tile that robot can't visit.",
