@@ -48,6 +48,7 @@ var interviewRoute = require('./routes/interview')
 var signageRoute = require('./routes/signage')
 var shortRoute = require('./routes/shortURL')
 var kioskRoute = require('./routes/kiosk')
+var serviceRoute = require('./routes/service')
 
 
 //========================================================================
@@ -166,6 +167,7 @@ app.use('/logout', pass.ensureAuthenticated, function (req, res, next) {
 app.use('/home', homeRoute)
 app.use('/locales', localesRoute)
 app.use('/s', shortRoute.public)
+app.use('/service', serviceRoute)
 
 app.use('/line', [lineRoute.public, pass.ensureAuthenticated, lineRoute.private, pass.ensureAdmin, lineRoute.admin])
 app.use('/maze', [mazeRoute.public, pass.ensureAuthenticated, mazeRoute.private, pass.ensureAdmin, mazeRoute.admin])
