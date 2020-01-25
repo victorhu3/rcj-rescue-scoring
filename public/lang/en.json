@@ -14,6 +14,9 @@
         "management": "Settings / Competition Management",
         "access_level": "The you logged in account, {{account}}, does not have permission to access Competition Management."
     },
+    "service_home": {
+        "about": "The RCJ Scoring System was designed for help the referees of RoboCup Junior Rescue Line / Maze.  In this system, it is very easy to do everything related to competition management, from course map creation to score calculation and ranking. From this page, you can create a Line/Maze field map and download it as an image without logging in to the system."
+    },
     "login": {
         "title" : "Staff Login",
         "description": "Please enter the username and password notified by the OC/TC and login.",
