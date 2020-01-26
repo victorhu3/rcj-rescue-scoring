@@ -30,7 +30,8 @@ block content
       .row
         .col-9
           .input-group(style="width:100%;margin 0 auto;")
-            span.input-group-addon {{"admin.settings.cname" | translate}}
+            .input-group-prepend
+              span.input-group-text {{"admin.settings.cname" | translate}}
             input.form-control(type='string', ng-model='cName' style="")
         .col-3(style="text-align:right;")
           button.btn.btn-success(type='button', ng-click='set()')
@@ -39,8 +40,10 @@ block content
       br
       .row
         .col-md-4
-          span {{"admin.settings.rule" | translate}}:
-            select(ng-model='competitonUseRule' ng-options='rule for rule in rules')
+          .input-group(style="width:100%;margin 0 auto;")
+            .input-group-prepend
+              span.input-group-text {{"admin.settings.rule" | translate}}:
+            select.custom-select(ng-model='competitonUseRule' ng-options='rule for rule in rules')
           hr
           .row
             .col-6
@@ -78,9 +81,10 @@ block content
         .col-10
           p {{"admin.settings.useNum" | translate}}
           .input-group(style="width:100%;margin-bottom:20px;" ng-repeat="rank in ranking")
-            span.input-group-addon ID : {{rank.id}}
-            span.input-group-addon {{"admin.settings.leagueName" | translate}} : {{rank.name}}
-            span.input-group-addon {{"admin.settings.num" | translate}}
+            .input-group-prepend
+              span.input-group-text ID : {{rank.id}}
+              span.input-group-text {{"admin.settings.leagueName" | translate}} : {{rank.name}}
+              span.input-group-text {{"admin.settings.num" | translate}}
             input.form-control(type='number', ng-model='rank.count' style="")
         .col-2(style="text-align:right;")
           button.btn.btn-success(type='button', ng-click='set()')
