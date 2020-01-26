@@ -86,6 +86,7 @@ const mazeMapSchema = new Schema({
     isTile  : {type: Boolean, default: false},
     isWall  : {type: Boolean, default: false},
     isLinear: {type: Boolean, default: false},
+    virtualWall: {type: Boolean, default: false},
     halfWall: {type: Number},
     tile: tileSchema
   }],

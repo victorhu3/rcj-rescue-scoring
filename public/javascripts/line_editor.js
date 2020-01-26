@@ -189,6 +189,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
     }
 
     function getTileUsedCountOther(tile){
+        if(pubService) return 0;
         if(tileCountDb[$scope.tileSet._id]){
             if(tileCountDb[$scope.tileSet._id][tile.tileType._id] !== undefined){
                 return tileCountDb[$scope.tileSet._id][tile.tileType._id];
@@ -284,7 +285,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         }).then(function(canvas) {
             let imgData = canvas.toDataURL();
             console.log(imgData);
-            downloadURI(imgData,'Line-FieldMap.png')
+            downloadURI(imgData,$scope.name + '.png')
         });
     };
 

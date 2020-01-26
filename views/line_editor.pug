@@ -8,6 +8,7 @@ append scripts
   script.
     var mapId = "#{mapid}"
     var competitionId = "#{compid}"
+    var pubService = "#{pubService}"
 
   script(src="/javascripts/lvl-uuid.js")
   script(src="/javascripts/line_editor.js")
@@ -53,6 +54,14 @@ block content
         br
         .row
             .col-md-12
+                if pubService
+                    .input-group.mb-3
+                        .input-group-prepend
+                            span.input-group-text {{"admin.lineMapEditor.name" | translate}}
+                        input.form-control(type='text', ng-model='name')
+                        .input-group-append
+                            button.btn.btn-secondary(type='button', ng-click='export()') {{"admin.lineMapEditor.export" | translate}}
+                    hr
                 if !pubService
                     .input-group.mb-3
                         .input-group-prepend

@@ -8,6 +8,7 @@ append scripts
   script.
     var mapId = "#{mapid}"
     var competitionId = "#{compid}"
+    var pubService = "#{pubService}"
 
   script(src="/javascripts/lvl-uuid.js")
   script(src="/javascripts/maze_editor."+rule+".js")
@@ -22,10 +23,14 @@ append css
 
 block location
     a.breadcrumb-item(ng-click="go('/home')") Home
-    a.breadcrumb-item(ng-click="go('/admin')") Admin
-    a.breadcrumb-item(ng-click="go('/admin/'+competitionId)") {{competition}}
-    a.breadcrumb-item(ng-click="go('/admin/'+competitionId+'/maze/maps')") Maze maps
-    span.breadcrumb-item.active Maze editor
+    if !pubService
+        a.breadcrumb-item(ng-click="go('/admin')") Admin
+        a.breadcrumb-item(ng-click="go('/admin/'+competitionId)") {{competition}}
+        a.breadcrumb-item(ng-click="go('/admin/'+competitionId + '/maze/maps')") Maze maps
+        span.breadcrumb-item.active Maze editor
+    else
+        a.breadcrumb-item(ng-click="go('/service')") Public services
+        span.breadcrumb-item.active Maze editor
 
 block content
     h1 {{"admin.mazeMapEditor.title" | translate}} 2020
@@ -34,29 +39,43 @@ block content
     button.btn.btn-info(type='button', ng-click='saveMap(parent)', ng-if='parent') {{"admin.mazeMapEditor.backToParent" | translate}}
     div(style='margin-top:50px;')
         .row
-            .col-md-6
+            .col-md-4
                 button.btn.btn-dark(type='button', ng-click='export()') {{"admin.mazeMapEditor.export" | translate}}
-            .col-md-6
+            .col-md-4
                 input#select(type='file', name='select')
+            .col-md-4(style="text-align:right;")
+                if pubService
+                    button.btn.btn-info(type='button', ng-click='makeImageDl()') Generate image
+                else
+                    button.btn.btn-info(type='button', ng-click='makeImage()') Prepare for generate score sheets
         br
         .row
             .col-md-12
-                .input-group.mb-3
-                    .input-group-prepend
-                        span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
-                    input.form-control(type='text', ng-model='name')
-                    .input-group-append
-                        button.btn.btn-secondary(type='button', ng-click='saveMap()') {{"admin.mazeMapEditor.save" | translate}}
-                hr
-                .input-group.mb-3(ng-if='!parent')
-                    .input-group-prepend
-                        span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
-                    input.form-control(type='text', ng-model='asname')
-                    .input-group-append
-                        span.input-group-text(for="selectComp") @
-                    select.custom-select#selectComp(ng-model='$parent.se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions')
-                    .input-group-append
-                        button.btn.btn-secondary(type='button', ng-click='saveMapAs(asname)') {{"admin.mazeMapEditor.saveAs" | translate}}
+                if pubService
+                    .input-group.mb-3
+                        .input-group-prepend
+                            span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
+                        input.form-control(type='text', ng-model='name')
+                        .input-group-append
+                            button.btn.btn-secondary(type='button', ng-click='export()') {{"admin.mazeMapEditor.export" | translate}}
+                    hr
+                if !pubService
+                    .input-group.mb-3
+                        .input-group-prepend
+                            span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
+                        input.form-control(type='text', ng-model='name')
+                        .input-group-append
+                            button.btn.btn-secondary(type='button', ng-click='saveMap()') {{"admin.mazeMapEditor.save" | translate}}
+                    hr
+                    .input-group.mb-3(ng-if='!parent')
+                        .input-group-prepend
+                            span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
+                        input.form-control(type='text', ng-model='asname')
+                        .input-group-append
+                            span.input-group-text(for="selectComp") @
+                        select.custom-select#selectComp(ng-model='$parent.se_competition', ng-options='b_competitions._id as b_competitions.name for b_competitions in competitions')
+                        .input-group-append
+                            button.btn.btn-secondary(type='button', ng-click='saveMapAs(asname)') {{"admin.mazeMapEditor.saveAs" | translate}}
                 hr
                 .input-group.mb-3
                     .input-group-prepend
@@ -69,32 +88,33 @@ block content
                         span.input-group-text {{"admin.mazeMapEditor.length" | translate}}
                     input.form-control(type='number', ng-model='length', min='1')
                 hr
-                div(ng-if='!parent')
-                    i.fas.fa-dice.fa-2x(style="margin-bottom:10px;") {{"admin.mazeMapEditor.pattern" | translate}}
-                    p(ng-if="mapId == ''")
-                        | {{"admin.mazeMapEditor.patSave" | translate}}
-                    table.custom(style='width: initial; margin:0;', ng-if="mapId != ''")
-                        tbody
-                            tr
-                                th No.
-                                th {{"common.map" | translate}}
-                                th {{"common.operation" | translate}}
-                                th {{"common.operation" | translate}}
-                            tr(ng-repeat='i in range(6)')
-                                th {{i+1}}
-                                td
-                                    select(ng-model='dice[i]', ng-options='b_maps._id as b_maps.name for b_maps in maps')
-                                td
-                                    button(type='button', ng-click='childNew(i+1)') {{"admin.mazeMapEditor.create" | translate}}
-                                td
-                                    button(type='button', ng-click='saveMap(dice[i])') {{"admin.mazeMapEditor.edit" | translate}}
-                br
-                div(ng-show='(dice[0]&&dice[1]&&dice[2]&&dice[3]&&dice[4]&&dice[5]) || parent')
-                    input#isFinished(type='checkbox', ng-model='finished')
-                    label.checkbox(for='isFinished') {{"admin.mazeMapEditor.finished" | translate}}
-                .error(ng-if='!(dice[0]&&dice[1]&&dice[2]&&dice[3]&&dice[4]&&dice[5])&&!parent') {{"admin.mazeMapEditor.patYet" | translate}}
-                br
-                .error(ng-if='startNotSet()') {{"admin.mazeMapEditor.noStart" | translate}}
+                if !pubService
+                    div(ng-if='!parent')
+                        i.fas.fa-dice.fa-2x(style="margin-bottom:10px;") {{"admin.mazeMapEditor.pattern" | translate}}
+                        p(ng-if="mapId == ''")
+                            | {{"admin.mazeMapEditor.patSave" | translate}}
+                        table.custom(style='width: initial; margin:0;', ng-if="mapId != ''")
+                            tbody
+                                tr
+                                    th No.
+                                    th {{"common.map" | translate}}
+                                    th {{"common.operation" | translate}}
+                                    th {{"common.operation" | translate}}
+                                tr(ng-repeat='i in range(6)')
+                                    th {{i+1}}
+                                    td
+                                        select(ng-model='dice[i]', ng-options='b_maps._id as b_maps.name for b_maps in maps')
+                                    td
+                                        button(type='button', ng-click='childNew(i+1)') {{"admin.mazeMapEditor.create" | translate}}
+                                    td
+                                        button(type='button', ng-click='saveMap(dice[i])') {{"admin.mazeMapEditor.edit" | translate}}
+                    br
+                    div(ng-show='(dice[0]&&dice[1]&&dice[2]&&dice[3]&&dice[4]&&dice[5]) || parent')
+                        input#isFinished(type='checkbox', ng-model='finished')
+                        label.checkbox(for='isFinished') {{"admin.mazeMapEditor.finished" | translate}}
+                    .error(ng-if='!(dice[0]&&dice[1]&&dice[2]&&dice[3]&&dice[4]&&dice[5])&&!parent') {{"admin.mazeMapEditor.patYet" | translate}}
+                    br
+                    .error(ng-if='startNotSet()') {{"admin.mazeMapEditor.noStart" | translate}}
         .row
             .col-md-12
                 .btn-group(style='margin-bottom:5px;')
@@ -145,7 +165,10 @@ block content
             .col-6
                 h3 Export course map to image
             .col-6
-                button.btn.btn-dark(type='button', ng-click='makeImage()') Make image
+                if pubService
+                    button.btn.btn-info(type='button', ng-click='makeImageDl()') Generate image
+                else
+                    button.btn.btn-info(type='button', ng-click='makeImage()') Prepare for generate score sheets
         .row
             #outputImageArea(style="float:left;padding-top:100px;padding-left:0px;padding-right:0px;padding-bottom:100px;")
                 style.
