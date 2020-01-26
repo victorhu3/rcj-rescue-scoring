@@ -11,7 +11,7 @@ app.controller("ScannerController", ['$scope', '$http', '$translate', function (
         window.location = path
     }
 
-    document.getElementById("first").focus();
+    if(document.getElementById("first")) document.getElementById("first").focus();
 
     $scope.handleKeydown = function(e) {
         console.log(e.keyCode)

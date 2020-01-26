@@ -1,7 +1,9 @@
 // -*- tab-width: 2 -*-
-var express = require('express')
-var router = express.Router()
-var ObjectId = require('mongoose').Types.ObjectId
+const express = require('express')
+const router = express.Router()
+const ObjectId = require('mongoose').Types.ObjectId
+const auth = require('../helper/authLevels')
+const ACCESSLEVELS = require('../models/user').ACCESSLEVELS
 
 
 /* GET home page. */
@@ -21,7 +23,8 @@ router.get('/:competitionid', function (req, res, next) {
   if (!ObjectId.isValid(id)) {
     return next()
   }
-  res.render('competition_home', {id: id, user: req.user})
+
+  res.render('competition_home', {id: id, user: req.user, judge: auth.authCompetition(req.user,id,ACCESSLEVELS.JUDGE)})
 })
 
 router.get('/access_denied', function (req, res) {
