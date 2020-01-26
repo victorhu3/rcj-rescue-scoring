@@ -501,7 +501,7 @@
         },
         "lineMapEditor": {
             "title": "Rescue Line map editor",
-            "desc": "Draw the tiles to the field to create a new layout",
+            "desc": "Drag and drop tiles from the tile set area on the left onto the map area on the right. Right-click on a tile in the map area to set score item such as gaps and obstacles and ramps etc...",
             "save": "Save map",
             "saveAs": "Save map as",
             "name": "Name of design: ",
@@ -550,7 +550,7 @@
         },
         "mazeMapEditor": {
             "title": "Rescue Maze map editor",
-            "desc": "Press the walls to create a new layout",
+            "desc": "Click on the wall to create a maze. Click on the floor of the maze to set items such as victims, checkpoints, bumps and others.",
             "save": "@:admin.lineMapEditor.save",
             "saveAs": "@:admin.lineMapEditor.saveAs",
             "name": "@:admin.lineMapEditor.name",
