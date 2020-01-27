@@ -120,9 +120,6 @@ async function drawRun(doc, config, scoringRun) {
     y = 35;
   }
 
-  console.log(x);
-  console.log(y);
-
 
   let text_padding = 10;
   switch(x){
@@ -130,13 +127,13 @@ async function drawRun(doc, config, scoringRun) {
       if(y > 35){
         base_size_x = 76;
         base_size_y = 29;
-        text_padding = 10;
+        text_padding = 7;
       }
       break;
     case 915:
       base_size_x = 76;
       base_size_y = 29;
-      text_padding = 10;
+      text_padding = 7;
     default:
       break;
   }
@@ -192,6 +189,7 @@ async function drawRun(doc, config, scoringRun) {
               break;
             case 'speedbump':
               pdf.drawImage(doc,item_x,item_y,"scoresheet_generation/line/" + i +".png",base_size_y-5,base_size_y-5,"center",tile.rot);
+              break;
             default:
               pdf.drawImage(doc,item_x,item_y,"scoresheet_generation/line/" + i +".png",base_size_y-5,base_size_y-5,"center");
           }
@@ -208,7 +206,6 @@ async function drawRun(doc, config, scoringRun) {
 
   pdf.drawImage(doc,x,y,"scoresheet_generation/line/after_final.png",base_size_x,50,"center");
 
-  console.log(getTileInfo(scoringRun.map.tiles,0))
   return;
 }
 
