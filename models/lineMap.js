@@ -273,10 +273,10 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "left"  : "top",
-      "top"   : "left",
-      "right" : "bottom",
-      "bottom": "right"
+      "left"  : "bottom",
+      "bottom"   : "left",
+      "right" : "top",
+      "top": "right"
     },
     "_id"          : "570c27c3f5a9dabe23f3af94"
   },
@@ -374,8 +374,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "right" : "bottom",
-      "bottom": "right"
+      "left" : "bottom",
+      "bottom": "left"
     },
     "_id"          : "570c27c3f5a9dabe23f3af9c"
   },
@@ -489,8 +489,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "570c27c3f5a9dabe23f3afa5"
   },
@@ -500,8 +500,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "570c27c3f5a9dabe23f3afa6"
   },
@@ -522,8 +522,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "570c27c3f5a9dabe23f3afa8"
   },
@@ -533,10 +533,10 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "left"  : "top",
-      "top"   : "left",
-      "bottom": "right",
-      "right" : "bottom"
+      "right"  : "top",
+      "top"   : "right",
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "570c27c3f5a9dabe23f3afa9"
   },
@@ -546,8 +546,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "570c27c3f5a9dabe23f3afaa"
   },
@@ -674,6 +674,71 @@ const tileTypes = [
     "_id"          : "5975fb67038dda73c0f5ddaf"
   },
   {
+    "image"        : "tile-46.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "seesaw"       : 0,
+    "paths"        : {
+      "left" : "right",
+      "right": "left"
+    },
+    "_id"          : "58cfd6549792e9313b1610e4"
+  },
+  {
+    "image"        : "tile-49.png",
+    "gaps"         : 1,
+    "intersections": 0,
+    "seesaw"       : 0,
+    "paths"        : {
+      "left" : "right",
+      "right": "left"
+    },
+    "_id"          : "58cfd6549792e9313b1610e5"
+  },
+  {
+    "image"        : "tile-50.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "seesaw"       : 0,
+    "paths"        : {
+      "left" : "right",
+      "right": "left"
+    },
+    "_id"          : "58cfd6549792e9313b1610e6"
+  },
+  {
+    "image"        : "tile-51.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "seesaw"       : 0,
+    "paths"        : {
+      "left": "bottom",
+      "bottom": "left"
+    },
+    "_id"          : "58cfd6549792e9313b1610e7"
+  },
+  {
+    "image"        : "tile-52.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "seesaw"       : 0,
+    "paths"        : {
+      "left": "bottom",
+      "bottom": "left"
+    },
+    "_id"          : "58cfd6549792e9313b1610e8"
+  },
+  {
+    "image"        : "tile-53.png",
+    "gaps"         : 0,
+    "intersections": 0,
+    "seesaw"       : 0,
+    "paths"        : {
+      "left": "right"
+    },
+    "_id"          : "58cfd6549792e9313b1610e9"
+  },
+  {
     "image"        : "tile-55.png",
     "gaps"         : 0,
     "intersections": 0,
@@ -700,8 +765,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "5975fb67038dda73c0f5ddb1"
   },
@@ -744,8 +809,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "5975fb67038dda73c0f5ddb5"
   },
@@ -766,10 +831,10 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom",
-      "left"  : "top",
-      "top"   : "left"
+      "bottom": "left",
+      "left" : "bottom",
+      "right"  : "top",
+      "top"   : "right"
     },
     "_id"          : "5975fb67038dda73c0f5ddb7"
   },
@@ -790,8 +855,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "bottom": "right",
-      "right" : "bottom"
+      "bottom": "left",
+      "left" : "bottom"
     },
     "_id"          : "5975fb67038dda73c0f5ddb9"
   },
@@ -878,8 +943,8 @@ const tileTypes = [
     "intersections": 0,
     "seesaw"       : 0,
     "paths"        : {
-      "right" : "bottom",
-      "bottom": "right"
+      "left" : "bottom",
+      "bottom": "left"
     },
     "_id"          : "58cfd6549792e9313b1610d3"
   },
