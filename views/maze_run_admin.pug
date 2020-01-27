@@ -60,7 +60,7 @@ block content
               select(ng-model='run.field' ng-options='field as field.name for field in fields')
             td
               p.input-group
-                span.input-group-btn
+                span.input-group-prepend
                   button.btn.btn-info(type="button" ng-click="openStartDate()")
                     i.fa.fa-calendar(aria-hidden='true')
                 input.form-control(type="text" uib-datepicker-popup ng-model="startDate" ng-change="updateStartTime()" is-open="startDatePopup.opened" datepicker-options="startDateOptions" close-text="Close")
@@ -97,7 +97,7 @@ block content
         .col-md-2
           div
             p.input-group
-              span.input-group-btn
+              span.input-group-prepend
                 button.btn.btn-info(type="button" ng-click="openScoreSheetStartDate()")
                   i.fa.fa-calendar(aria-hidden='true')
               input.form-control(type="text" uib-datepicker-popup ng-model="scoreSheetStartDateTime" is-open="scoreSheetStartDatePopup.opened" datepicker-options="startDateOptions" close-text="Close")
@@ -105,7 +105,7 @@ block content
         .col-md-2
           div
             p.input-group
-              span.input-group-btn
+              span.input-group-prepend
                 button.btn.btn-info(type="button" ng-click="openScoreSheetEndDate()")
                   i.fa.fa-calendar(aria-hidden='true')
               input.form-control(type="text" uib-datepicker-popup ng-model="scoreSheetEndDateTime" is-open="scoreSheetEndDatePopup.opened" datepicker-options="startDateOptions" close-text="Close")
