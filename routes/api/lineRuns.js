@@ -567,7 +567,7 @@ adminRouter.get('/scoresheet2', function (req, res, next) {
   query.populate([
     {
       path: "competition",
-      select: "name rule"
+      select: "name rule logo"
     },
     {
       path: "round",
@@ -583,7 +583,10 @@ adminRouter.get('/scoresheet2', function (req, res, next) {
     },
     {
       path: "map",
-      select: "name height width length numberOfDropTiles finished startTile tiles indexCount victims"
+      select: "name height width length numberOfDropTiles finished startTile tiles indexCount victims EvacuationAreaLoPIndex",
+      populate: {
+        path: 'tiles.tileType'
+      }
     }
   ]);
 
