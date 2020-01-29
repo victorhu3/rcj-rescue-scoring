@@ -95,6 +95,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         $scope.competition = response.data.competition;
         $scope.LoPs = response.data.LoPs;
         $scope.MisIdent = response.data.misidentification;
+        $scope.score = response.data.score;
 
         // Verified time by timekeeper
         $scope.minutes = response.data.time.minutes;
@@ -390,6 +391,29 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             );
         });
     };
+
+    $scope.approval = function () {
+        playSound(sClick);
+        var run = {}
+
+        run.status = 6;
+
+        $http.put("/api/runs/maze/" + runId, run, http_config).then(function (response) {
+            $scope.go($scope.getParam('return'));
+        }, function (response) {
+            console.log("Error: " + response.statusText);
+            playSound(sError);
+            Swal.fire(
+              'Error',
+              response.statusText,
+              'error'
+            );
+        });
+    };
+
+    $scope.cancel = function(){
+        $scope.go($scope.getParam('return'));
+    }
 
 
     $scope.getParam = function (key) {

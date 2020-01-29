@@ -5,7 +5,7 @@ html(ng-app="ddApp")
       var runId = "#{id}"
 
     include ./includes/common_component
-    script(src="/javascripts/maze_check."+rule+".js")
+    script(src="/javascripts/maze_input.js")
     script(src="/javascripts/translate_config.js")
     script(src='/components/lightbox2/dist/js/lightbox.min.js')
 
@@ -35,114 +35,98 @@ html(ng-app="ddApp")
       .col-md-1.col-sm4.col-12
         li.navbar-brand(href='#')
           img(ng-src="{{competition.logo}}" height="30px")
-    .container.nav-cont
+    .container-fluid.nav-cont
       div#inputcontent
         .row
-          .col-md-6
+          .col-12
             .card
               h4.card-header(style="background-color:#fd79a8;")
                 i.fas.fa-user-injured(aria-hidden='true' style="color:white;") &nbsp;Victims
               .card-body
-                table(border="3")
-                  tr
-                    td Tile type
-                    td Victim type
-                    td(style="width:20%;") Identify
-                    td(style="width:20%;") Rescue kit
-                  tr
-                    td(colspan="1" rowspan="4" style="background-color:#fffdea;") Linear tile
-                    td
-                      img(src="/images/U.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{lui}}
-                    td(style="width:20%;background-color:#cd84f1;")
-                      p ---
-                  tr
-                    td
-                      img(src="/images/S.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{lsi}}
-                    td(style="width:20%;background-color:#cd84f1")
-                      h2(style="text-align:center;") {{lsk}}
-                  tr
-                    td
-                      img(src="/images/H.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{lhi}}
-                    td(style="width:20%;background-color:#cd84f1;")
-                      h2(style="text-align:center;") {{lhk}}
-                  tr
-                    td
-                      img(src="/images/thermometer.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{lhhi}}
-                    td(style="width:20%;background-color:#cd84f1;")
-                      h2(style="text-align:center;") {{lhhk}}
-
-
-                  tr
-                    td(colspan="1" rowspan="4" style="background-color:#b4ffd5;") Floating tile
-                    td
-                      img(src="/images/U.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{fui}}
-                    td(style="width:20%;background-color:#cd84f1;")
-                      p ---
-                  tr
-                    td
-                      img(src="/images/S.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{fsi}}
-                    td(style="width:20%;background-color:#cd84f1")
-                      h2(style="text-align:center;") {{fsk}}
-                  tr
-                    td
-                      img(src="/images/H.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{fhi}}
-                    td(style="width:20%;background-color:#cd84f1;")
-                      h2(style="text-align:center;") {{fhk}}
-                  tr
-                    td
-                      img(src="/images/thermometer.png" height="40px;")
-                    td(style="width:20%;background-color:#ffcccc;")
-                      h2(style="text-align:center;") {{fhhi}}
-                    td(style="width:20%;background-color:#cd84f1;")
-                      h2(style="text-align:center;") {{fhhk}}
-
-          .col-md-6
+                .row(ng-repeat="(victimType,vic) in victimsList")
+                  .col-md-3(ng-repeat="victim in itemList[victimType].linear")
+                    table(style="background-color:#fffeec;border:1px solid #444")
+                      tr(style="text-align:center;height:50px;")
+                        td(style="width:43px;")
+                          img(ng-src="/images/{{vic.image}}" height="40px;")
+                        td(style="width:35px;text-align:center;")
+                          span(style="font-size:30px") {{victim.name}}
+                        td
+                          button.btn(type='button',ng-class="{'btn-success': clearStatus(victim),'btn-danger':!clearStatus(victim)}",style="height:100%;width:100%;")
+                            i.far.fa-lightbulb
+                        td
+                          .btn-toolbar(role='toolbar',ng-show="vic.kit")
+                            .btn-group.mr-2(role='group')
+                              button.btn.btn-dark(type='button')
+                                i.fas.fa-first-aid
+                              button.btn(type='button',ng-class="{'btn-success': kitStatus(victim,k+1),'btn-light':!kitStatus(victim,k+1)}",ng-repeat="k in range(vic.kit)") {{k+1}}
+                  .col-md-3(ng-repeat="victim in itemList[victimType].floating")
+                    table(style="background-color:#c2f5d7;border:1px solid #444")
+                      tr(style="text-align:center;height:50px;")
+                        td(style="width:43px;")
+                          img(ng-src="/images/{{vic.image}}" height="40px;")
+                        td(style="width:35px;text-align:center;")
+                          span(style="font-size:30px") {{victim.name}}
+                        td
+                          button.btn(type='button',ng-class="{'btn-success': clearStatus(victim),'btn-danger':!clearStatus(victim)}",style="height:100%;width:100%;")
+                            i.far.fa-lightbulb
+                        td
+                          .btn-toolbar(role='toolbar',ng-show="vic.kit")
+                            .btn-group.mr-2(role='group')
+                              button.btn.btn-dark(type='button')
+                                i.fas.fa-first-aid
+                              button.btn(type='button',ng-class="{'btn-success': kitStatus(victim,k+1),'btn-light':!kitStatus(victim,k+1)}",ng-repeat="k in range(vic.kit)") {{k+1}}
+        hr
+        .row
+          .col-12
             .card
               h4.card-header(style="background-color:#0984e3;")
                 i.fas.fa-clipboard(aria-hidden='true' style="color:white;") &nbsp;Score elements
               .card-body
-                table(border="3")
-                  tr
-                    td Type
-                    td(style="width:20%;") Number
-                  tr
-                    td
-                      img(src="/images/checkpoint.png" height="40px;")
-                      span(style="font-size:30px;") Checkpoints
-                    td(style="background-color:#74b9ff;")
-                      h2(style="text-align:center;") {{checkpoints}}
-                  tr
-                    td
-                      img(src="/images/log.png" height="40px;")
-                      span(style="font-size:30px;") Speedbumps
-                    td(style="background-color:#74b9ff;")
-                      h2(style="text-align:center;") {{speedbumps}}
-                  tr
-                    td
-                      img(src="/images/ramp_top.png" height="40px;")
-                      span(style="font-size:30px;") Ramps(UP)
-                    td(style="background-color:#74b9ff;")
-                      h2(style="text-align:center;") {{rampUP}}
-                  tr
-                    td
-                      img(src="/images/ramp_bottom.png" height="40px;")
-                      span(style="font-size:30px;") Ramps(DOWN)
-                    td(style="background-color:#74b9ff;")
-                      h2(style="text-align:center;") {{rampDOWN}}
+                .row
+                  //Checkpoint
+                  .col-md-2(ng-repeat="item in itemList.checkpoint")
+                    table(style="background-color:#DFF7FD;border:1px solid #444;width:100%;")
+                      tr(style="text-align:center;height:50px;")
+                        td(style="width:43px;")
+                          img(ng-src="/images/checkpoint.png" height="40px;")
+                        td(style="width:35px;text-align:center;")
+                          span(style="font-size:30px") {{item.name}}
+                        td
+                          button.btn(type='button',ng-class="{'btn-success': clearStatus(item),'btn-danger':!clearStatus(item)}",ng-if="!item.afterLoP",style="width:100%;height:100%;")
+                            i.far(ng-class="{'fa-check-square': clearStatus(item), 'fa-times-circle': !clearStatus(item)}")
+                  .col-md-2(ng-repeat="item in itemList.speedbump")
+                    table(style="background-color:#DFF7FD;border:1px solid #444;width:100%;")
+                      tr(style="text-align:center;height:50px;")
+                        td(style="width:43px;")
+                          img(ng-src="/images/speedbump.png" height="40px;")
+                        td(style="width:35px;text-align:center;")
+                          span(style="font-size:30px") {{item.name}}
+                        td
+                          button.btn(type='button',ng-class="{'btn-success': clearStatus(item),'btn-danger':!clearStatus(item)}",ng-if="!item.afterLoP",style="width:100%;height:100%;")
+                            i.far(ng-class="{'fa-check-square': clearStatus(item), 'fa-times-circle': !clearStatus(item)}")
+                  .col-md-2(ng-repeat="item in itemList.ramp")
+                    table(style="background-color:#DFF7FD;border:1px solid #444;width:100%;")
+                      tr(style="text-align:center;height:50px;")
+                        td(style="width:43px;")
+                          img(ng-src="/images/ramp.png" height="40px;")
+                        td(style="width:35px;text-align:center;")
+                          span(style="font-size:30px") {{item.name}}
+                        td
+                          button.btn(type='button',ng-class="{'btn-success': clearStatus(item),'btn-danger':!clearStatus(item)}",ng-if="!item.afterLoP",style="width:100%;height:100%;")
+                            i.far(ng-class="{'fa-check-square': clearStatus(item), 'fa-times-circle': !clearStatus(item)}")
+                  .col-md-2(ng-repeat="item in itemList.steps")
+                    table(style="background-color:#DFF7FD;border:1px solid #444;width:100%;")
+                      tr(style="text-align:center;height:50px;")
+                        td(style="width:43px;")
+                          img(ng-src="/images/steps.png" height="40px;")
+                        td(style="width:35px;text-align:center;")
+                          span(style="font-size:30px") {{item.name}}
+                        td
+                          button.btn(type='button',ng-class="{'btn-success': clearStatus(item),'btn-danger':!clearStatus(item)}",ng-if="!item.afterLoP",style="width:100%;height:100%;")
+                            i.far(ng-class="{'fa-check-square': clearStatus(item), 'fa-times-circle': !clearStatus(item)}")
+
+
         hr
         .row
           .col-md-12
@@ -157,17 +141,21 @@ html(ng-app="ddApp")
                   tr
                     td LoPs
                     td
-                      h2(style="text-align:center;") {{LoPs}}
+                      input.form-control(type='number', placeholder='', min='0', ng-model='LoPs', disabled)
                   tr
                     td Misidentifications
                     td
-                      h2(style="text-align:center;") {{MisIdent}}
+                      input.form-control(type='number', placeholder='', min='0', ng-model='MisIdent',disabled)
                   tr
                     td Time
                     td
                       .input-group.input-group-lg
-                        h2(style="text-align:center;") {{minutes}}&nbsp;{{'common.min' | translate}}&nbsp;{{seconds}}&nbsp;{{'common.sec' | translate}}
-
+                        input.form-control(type='tel', placeholder='', aria-label='min', min='0', max='8', ng-model='minutes',disabled)
+                        .input-group-append
+                          span.input-group-text {{'common.min' | translate}}
+                        input.form-control(type='tel', placeholder='', aria-label='sec', min='0', max='60', ng-model='seconds', disabled)
+                        .input-group-append
+                          span.input-group-text {{'common.sec' | translate}}
                   tr
                     td Exit bonus
                     td
@@ -177,9 +165,20 @@ html(ng-app="ddApp")
                           i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
                           i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
       .row
-        .col-md-12(style="text-align:center;")
+        .col-12
           hr
-          h1(style="text-align:center") {{score}} points
+          .alert.alert-success(style='margin:50 0 30 0;', role='alert')
+            .row
+              .col-md-12(style="text-align:center;")
+                .d-none.d-sm-block
+                  i.fas.fa-calculator.fa-3x(aria-hidden='true')  : {{score}} {{'common.point' | translate}}
+                .d-sm-none
+                  i.fas.fa-calculator.fa-2x(aria-hidden='true')  : {{score}} {{'common.point' | translate}}
           hr
-          button.btn.btn-warning.btn-lg(type='button', ng-click='send()', style="margin-bottom:20px;")
-            i.fas.fa-check.fa-2x(aria-hidden='true')  Approval
+          .row(style="text-align:center;")
+            .col-md-6
+              button.btn.btn-danger.btn-lg(type='button', ng-click='cancel()', style="margin-bottom:20px;")
+                i.fas.fa-times.fa-2x(aria-hidden='true')  Cancel
+            .col-md-6
+              button.btn.btn-success.btn-lg(type='button', ng-click='approval()', style="margin-bottom:20px;")
+                i.fas.fa-check.fa-2x(aria-hidden='true')  Approval
