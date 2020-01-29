@@ -390,9 +390,7 @@ privateRouter.put('/:runid', function (req, res, next) {
   delete run.team
   delete run.field
   delete run.score
-
-  //logger.debug(run)
-
+  
   lineRun.findById(id)
   //.select("-_id -__v -competition -round -team -field -score")
     .populate([{
@@ -475,19 +473,21 @@ privateRouter.put('/:runid', function (req, res, next) {
           
         if(prevStatus != dbRun.status) statusUpdate = 1;
 
-        if(dbRun.manualFlag) dbRun.score = scoreCalculator.calculateLineScoreManual(dbRun);
-        else {
-          let cal = scoreCalculator.calculateLineScore(dbRun);
-          dbRun.score = cal.score;
-          dbRun.raw_score = cal.raw_score;
-          dbRun.multiplier = cal.multiplier;
-        }
+
+        let cal = scoreCalculator.calculateLineScore(dbRun);
+        dbRun.score = cal.score;
+        dbRun.raw_score = cal.raw_score;
+        dbRun.multiplier = cal.multiplier;
 
         if (dbRun.score > 0 || dbRun.time.minutes != 0 ||
           dbRun.time.seconds != 0 || dbRun.status >= 2) {
           dbRun.started = true
         } else {
           dbRun.started = false
+        }
+
+        if(run.tiles){
+          dbRun.tiles = run.tiles;
         }
 
         dbRun.save(function (err) {
