@@ -212,7 +212,7 @@ html(ng-app="ddApp")
                         .col-4(style='', ng-click="addVictimTmp('D')")
                           span Max : {{maxDeadVictims}}
                           br
-                          .victim_btn(style='width:100%;position: relative;', ng-style="{'background-color': count_victim_list('K') + count_victim_tmp('D') >= maxDeadVictims?'#ccc':'#E1FFFE'}")
+                          .victim_btn(style='width:100%;position: relative;', ng-style="{'background-color': count_victim_list('D') + count_victim_tmp('D') >= maxDeadVictims?'#ccc':'#E1FFFE'}")
                             img.img-thumbnail(src='/images/deadVictim.png', height='60px')
                         .col-4(style='', ng-click="addVictimTmp('K')")
                           span Max : 1
