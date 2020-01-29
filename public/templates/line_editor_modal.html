@@ -5,18 +5,38 @@
     <ul>
         <li>
             <label>{{"admin.lineMapEditor.bump" | translate}}</label>
-            <a href="#" ng-click="tile.items.speedbumps>0?tile.items.speedbumps=tile.items.speedbumps-1:0">-</a> {{tile.items.speedbumps}}
-            <a href="#" ng-click="tile.items.speedbumps=tile.items.speedbumps+1">+</a>
+            <div ng-hide="tile.checkPoint">
+                <a href="#" ng-click="tile.items.speedbumps>0?tile.items.speedbumps=tile.items.speedbumps-1:0">-</a> {{tile.items.speedbumps}}
+                <a href="#" ng-click="tile.items.speedbumps=tile.items.speedbumps+1">+</a>
+            </div>
+            <div ng-show="tile.checkPoint">
+                <span style="color:red">{{"admin.lineMapEditor.cantset" | translate}}</span>
+            </div>
+
         </li>
         <li>
             <label>{{"admin.lineMapEditor.obstacle" | translate}}</label>
-            <a href="#" ng-click="tile.items.obstacles>0?tile.items.obstacles=tile.items.obstacles-1:0">-</a> {{tile.items.obstacles}}
-            <a href="#" ng-click="tile.items.obstacles=tile.items.obstacles+1">+</a>
+            <div ng-hide="tile.checkPoint">
+                <a href="#" ng-click="tile.items.obstacles>0?tile.items.obstacles=tile.items.obstacles-1:0">-</a> {{tile.items.obstacles}}
+                <a href="#" ng-click="tile.items.obstacles=tile.items.obstacles+1">+</a>
+            </div>
+            <div ng-show="tile.checkPoint">
+                <span style="color:red">{{"admin.lineMapEditor.cantset" | translate}}</span>
+            </div>
+
         </li>
     </ul>
-    <input type="checkbox" ng-model="tile.checkPoint" id="isCheckpoint"><label class="checkbox" for="isCheckpoint"> {{"admin.lineMapEditor.setCheckpoint" | translate}}</label>
-    <input type="checkbox" ng-model="tile.items.rampPoints" id="isRampPoints"><label class="checkbox" for="isRampPoints"> {{"admin.lineMapEditor.rampPoint" | translate}}</label>
-
+    <div ng-hide="tile.checkPoint">
+        <input type="checkbox" ng-model="tile.items.rampPoints" id="isRampPoints"><label class="checkbox" for="isRampPoints"> {{"admin.lineMapEditor.rampPoint" | translate}}</label>
+    </div>
+    <div ng-show="tile.checkPoint">
+        <label>{{"admin.lineMapEditor.rampPoint" | translate}}</label>
+        <span style="color:red">{{"admin.lineMapEditor.cantset" | translate}}</span>
+    </div>
+    <hr>
+    <div ng-hide="tile.items.speedbumps>0 || tile.items.obstacles || tile.items.rampPoints || tile.tileType.gaps|| tile.tileType.intersections || tile.tileType.seesaw">
+        <input type="checkbox" ng-model="tile.checkPoint" id="isCheckpoint"><label class="checkbox" for="isCheckpoint"> {{"admin.lineMapEditor.setCheckpoint" | translate}}</label>
+    </div>
     <input type="checkbox" ng-model="start" ng-disabled="start" id="isStartCheck"><label class="checkbox" for="isStartCheck"> {{"admin.lineMapEditor.start" | translate}}</label>
     <input type="checkbox" ng-model="start2" ng-disabled="start2" id="isStartCheck2"><label class="checkbox" for="isStartCheck2"> {{"admin.lineMapEditor.start2" | translate}}</label>
     

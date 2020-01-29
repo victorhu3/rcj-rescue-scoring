@@ -529,7 +529,8 @@
             "liveVictim": "Number of the live victims",
             "deadVictim" : "Number of the dead victims",
             "rampPoint": "Ramp points",
-            "setCheckpoint": "Set this tile as a checkpoint"
+            "setCheckpoint": "Set this tile as a checkpoint",
+            "cantset": "You can't set this element in some reasons."
         },
         "teamBulk": {
             "title": "Teams Bulk Registration",

@@ -533,7 +533,8 @@
             "liveVictim": "生きている被災者の数",
             "deadVictim" : "死んでいる被災者の数",
             "rampPoint": "坂得点",
-            "setCheckpoint": "このタイルをチェックポイントに指定する"
+            "setCheckpoint": "このタイルをチェックポイントに指定する",
+            "cantset": "このタイルに得点項目は設定できません．"
         },
         "teamBulk": {
             "title": "チーム一括登録",
