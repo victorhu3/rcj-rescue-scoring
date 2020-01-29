@@ -396,6 +396,7 @@ privateRouter.put('/:runid', function (req, res, next) {
     .populate([{
       path: 'map',
       populate: {
+        select: 'indexCount',
         path: 'tiles.tileType'
       }
     }, "competition"])
@@ -487,7 +488,11 @@ privateRouter.put('/:runid', function (req, res, next) {
         }
 
         if(run.tiles){
-          dbRun.tiles = run.tiles;
+          if(run.tiles.length == dbRun.map.indexCount){
+            for(let d in dbRun.tiles){
+              dbRun.tiles[d].scoredItems = run.tiles[d].scoredItems;
+            }
+          }
         }
 
         dbRun.save(function (err) {
