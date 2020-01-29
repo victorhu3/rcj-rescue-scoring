@@ -1,5 +1,6 @@
-# RoboCup Junior Rescue Scoring System
+# RoboCup Junior Rescue Scoring System 2020
 This is a scoring system used in RoboCupJunior's rescue line & maze competition.
+This system is full compatible with 2020 rules published by RoboCup Federation.
 
 
 ## Demo
