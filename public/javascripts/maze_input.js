@@ -379,7 +379,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
 
         $http.put("/api/runs/maze/" + runId, run).then(function (response) {
-            playSound(sInfo);
             $scope.go($scope.getParam('return'));
         }, function (response) {
             console.log("Error: " + response.statusText);

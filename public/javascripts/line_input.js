@@ -572,7 +572,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
 
             $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
-                playSound(sInfo);
                 $scope.go($scope.getParam('return'));
             }, function (response) {
                 console.log("Error: " + response.statusText);
