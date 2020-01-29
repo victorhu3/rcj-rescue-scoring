@@ -45,6 +45,16 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     $scope.cells = {};
     $scope.tiles = {};
 
+    let maxKit={
+        'Heated': 1,
+        'H': 3,
+        'S': 2,
+        'U': 0,
+        'Red': 1,
+        'Yellow': 1,
+        'Green': 0
+    }
+
     //$cookies.remove('sRotate')
     if($cookies.get('sRotate')){
         $scope.sRotate = Number($cookies.get('sRotate'));
@@ -259,73 +269,29 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
         }
 
-        switch (cell.tile.victims.top) {
-            case 'H':
-            case 'S':
-            case 'Red':
-            case 'Heated':
-            case 'Yellow':
-                possible++;
-                current += tile.scoredItems.victims.top;
-                possible++;
-                current += (tile.scoredItems.rescueKits.top >= 1);
-                break;
-            case 'U':
-            case 'Green':
-                possible++;
-                current += tile.scoredItems.victims.top;
-                break;
+        if(cell.tile.victims.top != "None"){
+            possible++;
+            current += tile.scoredItems.victims.top;
+            possible += maxKit[cell.tile.victims.top];
+            current += Math.min(tile.scoredItems.rescueKits.top,maxKit[cell.tile.victims.top]);
         }
-        switch (cell.tile.victims.right) {
-            case 'H':
-            case 'S':
-            case 'Red':
-            case 'Heated':
-            case 'Yellow':
-                possible++;
-                current += tile.scoredItems.victims.right;
-                possible++;
-                current += (tile.scoredItems.rescueKits.right >= 1);
-                break;
-            case 'U':
-            case 'Green':
-                possible++;
-                current += tile.scoredItems.victims.right;
-                break;
+        if(cell.tile.victims.left != "None"){
+            possible++;
+            current += tile.scoredItems.victims.left;
+            possible += maxKit[cell.tile.victims.left];
+            current += Math.min(tile.scoredItems.rescueKits.left,maxKit[cell.tile.victims.left]);
         }
-        switch (cell.tile.victims.bottom) {
-            case 'H':
-            case 'S':
-            case 'Red':
-            case 'Heated':
-            case 'Yellow':
-                possible++;
-                current += tile.scoredItems.victims.bottom;
-                possible++;
-                current += (tile.scoredItems.rescueKits.bottom >= 1);
-                break;
-            case 'U':
-            case 'Green':
-                possible++;
-                current += tile.scoredItems.victims.bottom;
-                break;
+        if(cell.tile.victims.right != "None"){
+            possible++;
+            current += tile.scoredItems.victims.right;
+            possible += maxKit[cell.tile.victims.right];
+            current += Math.min(tile.scoredItems.rescueKits.right,maxKit[cell.tile.victims.right]);
         }
-        switch (cell.tile.victims.left) {
-            case 'H':
-            case 'S':
-            case 'Red':
-            case 'Heated':
-            case 'Yellow':
-                possible++;
-                current += tile.scoredItems.victims.left;
-                possible++;
-                current += (tile.scoredItems.rescueKits.left >= 1);
-                break;
-            case 'U':
-            case 'Green':
-                possible++;
-                current += tile.scoredItems.victims.left;
-                break;
+        if(cell.tile.victims.bottom != "None"){
+            possible++;
+            current += tile.scoredItems.victims.bottom;
+            possible += maxKit[cell.tile.victims.bottom];
+            current += Math.min(tile.scoredItems.rescueKits.bottom,maxKit[cell.tile.victims.bottom]);
         }
 
         if (tile.processing)
