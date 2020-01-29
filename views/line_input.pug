@@ -121,14 +121,11 @@ html(ng-app="ddApp")
                               th(style='text-align:center;', ng-repeat='i in range(5)') {{j*5 + i+1}}
                             tr
                               td(ng-repeat='i in range(5)', ng-style="{'background-color': victim_list[j*5 + i].effective?'#E1FFFE':'#ccc'}", ng-dblclick='delete_victim(j*5 + i)', ng-swipe-left='delete_victim(j*5 + i)')
-                                img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*5 + i].type == 'L'")
-                                img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*5 + i].type == 'D'")
-                                img(src='/images/rescuekit-1.png', width='30px', ng-if="victim_list[j*5 + i].type == 'K' && kitLevel==1")
-                                img(src='/images/rescuekit-2.png', width='30px', ng-if="victim_list[j*5 + i].type == 'K' && kitLevel==2")
+                                img(src='/images/liveVictim.png', width='60px', ng-if="victim_list[j*5 + i].type == 'L'")
+                                img(src='/images/deadVictim.png', width='60px', ng-if="victim_list[j*5 + i].type == 'D'")
+                                img(src='/images/rescuekit-1.png', width='60px', ng-if="victim_list[j*5 + i].type == 'K' && kitLevel==1")
+                                img(src='/images/rescuekit-2.png', width='60px', ng-if="victim_list[j*5 + i].type == 'K' && kitLevel==2")
                                 span(style='width:30px;', ng-hide='victim_list[j*5 + i]') ---
-                                br
-                                span(ng-show='victim_list[j*5 + i]')
-                                  | {{calc_victim_multipliers(victim_list[j*5 + i].type,victim_list[j*5 + i].effective)}}
           .col-md-12(style="margin-top:20px;")
             .card
               h4.card-header
@@ -159,5 +156,5 @@ html(ng-app="ddApp")
         .row
           .col-md-12(style="text-align:center;")
             br
-            button.btn.btn-danger.btn-lg(type='button', ng-click='send()', style="margin-bottom:20px;")
-              i.fas.fa-arrow-right.fa-2x(aria-hidden='true')  Complete
+            button.btn.btn-success.btn-lg(type='button', ng-click='send()', style="margin-bottom:20px;")
+              i.fas.fa-check.fa-2x(aria-hidden='true')  Complete
