@@ -52,6 +52,8 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.exitBonus = response.data.exitBonus;
             $scope.field = response.data.field.name;
             $scope.score = response.data.score;
+            $scope.raw_score = response.data.raw_score;
+            $scope.multiplier = response.data.multiplier;
             $scope.showedUp = response.data.showedUp;
             $scope.started = response.data.started;
             $scope.round = response.data.round.name;
@@ -572,18 +574,6 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
                 playSound(sInfo);
                 $scope.go($scope.getParam('return'));
-                return;
-                Swal.fire({
-                    title: response.data.score + "  points",
-                    text: "Please write it down on the scoresheet.",
-                    type: 'success',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Wrote!'
-                }).then((result) => {
-                    playSound(sClick);
-                    $scope.go($scope.getParam('return'));
-                })
             }, function (response) {
                 console.log("Error: " + response.statusText);
                 playSound(sError);
@@ -594,6 +584,30 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 );
             });
     };
+
+    $scope.approval = function () {
+        playSound(sClick);
+        var run = {}
+
+        run.status = 6;
+
+        $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
+            playSound(sInfo);
+            $scope.go($scope.getParam('return'));
+        }, function (response) {
+            console.log("Error: " + response.statusText);
+            playSound(sError);
+            Swal.fire(
+              'Error',
+              response.statusText,
+              'error'
+            );
+        });
+    };
+
+    $scope.cancel = function(){
+        $scope.go($scope.getParam('return'));
+    }
 
     $scope.changeExitBonus = function () {
         playSound(sClick);
