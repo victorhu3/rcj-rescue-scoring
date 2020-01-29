@@ -390,7 +390,7 @@ privateRouter.put('/:runid', function (req, res, next) {
   delete run.team
   delete run.field
   delete run.score
-  
+
   lineRun.findById(id)
   //.select("-_id -__v -competition -round -team -field -score")
     .populate([{
