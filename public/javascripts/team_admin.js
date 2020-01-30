@@ -19,7 +19,6 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             name: $scope.teamName,
             league: $scope.teamLeague,
             competition: competitionId,
-            code: $scope.passcode,
             country: $scope.country
         };
 

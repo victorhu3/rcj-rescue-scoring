@@ -27,7 +27,6 @@ block content
             tr
                 th {{"common.team" | translate}}
                 th {{"common.league" | translate}}
-                th {{"common.passcode" | translate}}
                 th {{"common.region" | translate}}
                 th {{"common.operation" | translate}}
         tbody
@@ -36,8 +35,6 @@ block content
                     input(ng-model='teamName' style="width:100%;")
                 td
                     select(ng-model='teamLeague' ng-options='league for league in leagues' style="width:100%;")
-                td
-                    input(ng-model='passcode' style="width:100px;")
                 td
                     input(ng-model='country' style="width:100px;")
                 td

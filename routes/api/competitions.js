@@ -225,7 +225,6 @@ publicRouter.get('/:competition/teams/:teamid', function (req, res, next) {
                 delete data.interviewer;
                 if(!data.docPublic) delete data.comment
             }
-            delete data.code;
             res.status(200).send(data)
         }
     })

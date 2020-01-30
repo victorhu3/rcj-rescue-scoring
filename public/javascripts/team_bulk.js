@@ -37,21 +37,15 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             return;
         }
 
-        var passcode = "";
-        if(obj[$scope.now][2]){
-            passcode = obj[$scope.now][2];
-        }
-
         var country = "";
-        if(obj[$scope.now][3]){
-            country = obj[$scope.now][3];
+        if(obj[$scope.now][2]){
+            country = obj[$scope.now][2];
         }
 
         var team = {
             name: obj[$scope.now][0],
             league: obj[$scope.now][1],
             competition: competitionId,
-            code: passcode,
             country: country
         };
         $http.post("/api/teams", team).then(function (response) {
@@ -87,10 +81,7 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
 
                     // tableで出力
                     let insert = "<table class=\"custom\"><thead><tr><th>Team name</th><th>League</th>";
-                    if(obj[1][2] || obj[1][3]){
-                        insert += '<th>Passcode</th>';
-                        if(obj[1][3]) insert += '<th>Country</th>';
-                    }
+                    if(obj[1][2]) insert += '<th>Country</th>';
                     insert += '</tr></thead><tbody>';
 
                     for (var i = 1; i < obj.length; i++) {

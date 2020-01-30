@@ -133,7 +133,6 @@ const teamSchema = new Schema({
   comment    : {type: String, default: ""},
   interviewer: {type: String, default: ""},
   docPublic  : {type: Boolean, default: false},
-  code       : {type: String, default: ""},
   country    : {type: String, default: ""},
   checkin    : {type: Boolean, default: false},
   teamCode   : {type: String, default: ""}
