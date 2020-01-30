@@ -33,44 +33,42 @@ block location
     span.breadcrumb-item.active Line tilesets
 
 block content
-  .row
-    .col-md-offset-1.col-md-10
-      .row
-        .col-md-12
-          .input-group
-            input.form-control(type='text', placeholder="{{'admin.line_tSet.new_tSet' | translate}}", aria-label="Recipient's username with two button addons", aria-describedby='button-addon4',ng-model='newTileSetName')
-            #button-addon4.input-group-append
-              button.btn.btn-outline-success(type='button',ng-click='createNewTileSet()') {{"common.create" | translate}}
-              button.btn.btn-outline-warning(type='button',ng-click='duplicateTileSet()') {{"common.duplicate" | translate}}
-      hr
-      .row
-        .col-md-6
-          button.btn.btn-dark(type='button', ng-click='export()') {{"admin.line_tSet.export" | translate}}
-        .col-md-6
-          input#select(type='file', name='select')
-      hr
-      .row
-        .col-md-6
-          .input-group.mb-3
-            .input-group-prepend
-              label.input-group-text(for='inputGroupSelect01') {{"admin.line_tSet.tSet" | translate}}
-            select#inputGroupSelect01.custom-select(ng-model='tileSet' ng-options='set as set.name for set in tileSets')
-            .input-group-append
-              button.btn.btn-outline-danger(type='button',ng-click='delete()') {{"common.delete" | translate}}
-              button.btn.btn-outline-info(type='button',ng-click='save()') {{"common.overwrite" | translate}}
+    .row
+      .col-md-12
+        .input-group
+          input.form-control(type='text', placeholder="{{'admin.line_tSet.new_tSet' | translate}}", aria-label="Recipient's username with two button addons", aria-describedby='button-addon4',ng-model='newTileSetName')
+          #button-addon4.input-group-append
+            button.btn.btn-outline-success(type='button',ng-click='createNewTileSet()') {{"common.create" | translate}}
+            button.btn.btn-outline-warning(type='button',ng-click='duplicateTileSet()') {{"common.duplicate" | translate}}
+    hr
+    .row
+      .col-md-6
+        button.btn.btn-dark(type='button', ng-click='export()') {{"admin.line_tSet.export" | translate}}
+      .col-md-6
+        input#select(type='file', name='select')
+    hr
+    .row
+      .col-md-6
+        .input-group.mb-3
+          .input-group-prepend
+            label.input-group-text(for='inputGroupSelect01') {{"admin.line_tSet.tSet" | translate}}
+          select#inputGroupSelect01.custom-select(ng-model='tileSet' ng-options='set as set.name for set in tileSets')
+          .input-group-append
+            button.btn.btn-outline-danger(type='button',ng-click='delete()') {{"common.delete" | translate}}
+            button.btn.btn-outline-info(type='button',ng-click='save()') {{"common.overwrite" | translate}}
 
-      hr
-      .row
-        .col-md-6
-          h2 {{"admin.line_tSet.available" | translate}}
-          span.tile-container(ng-repeat='tileType in tileTypes')
-            div(style="width:70px;")
-              img.tile(ng-src='/images/tiles/{{tileType.image}}' ng-click='addTile(tileType)')
-          button.btn.btn-success.btn-block(ng-click='addAll()') Add all types at once
-          br
-        .col-md-6
-          h2 {{ 'admin.line_tSet.tIn' | translate:translationData }}
-          span.tile-container(ng-repeat='tile in tileSet.tiles track by tile.tileType._id')
-            div(style="width:70px;")
-              img.tile(ng-src='/images/tiles/{{tile.tileType.image}}' ng-click='removeTile(tile)')
-              span(ng-bind='tile.count')
+    hr
+    .row
+      .col-md-6
+        h2 {{"admin.line_tSet.available" | translate}}
+        span.tile-container(ng-repeat='tileType in tileTypes')
+          div(style="width:70px;")
+            img.tile(ng-src='/images/tiles/{{tileType.image}}' ng-click='addTile(tileType)')
+        button.btn.btn-success.btn-block(ng-click='addAll()') Add all types at once
+        br
+      .col-md-6
+        h2 {{ 'admin.line_tSet.tIn' | translate:translationData }}
+        span.tile-container(ng-repeat='tile in tileSet.tiles track by tile.tileType._id')
+          div(style="width:70px;")
+            img.tile(ng-src='/images/tiles/{{tile.tileType.image}}' ng-click='removeTile(tile)')
+            span(ng-bind='tile.count')
