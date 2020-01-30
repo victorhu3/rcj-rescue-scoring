@@ -165,7 +165,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             tile.z = Number(coords[2]);
             tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile;
         }
-        console.log(tiles);
         let map = {
             startTile: $scope.startTile,
             startTile2: $scope.startTile2,
@@ -483,9 +482,10 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 $scope.startTile2.y = y;
                 $scope.startTile2.z = $scope.z;
             }
-
+            $scope.updateTileIndex();
         }, function () {
             console.log('Modal dismissed at: ' + new Date());
+            $scope.updateTileIndex();
         });
     };
 }]);
