@@ -434,7 +434,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 break;
             case 'U':
             case 'Green':
-                current += victimPoint * tile.scoredItems.victims.right;
+                current += victimPoint * tile.scoredItems.victims.right / 2;
                 break;
         }
         switch (cell.tile.victims.bottom) {
@@ -457,7 +457,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 break;
             case 'U':
             case 'Green':
-                current += victimPoint * tile.scoredItems.victims.bottom;
+                current += victimPoint * tile.scoredItems.victims.bottom / 2;
                 break;
         }
         switch (cell.tile.victims.left) {
@@ -480,7 +480,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 break;
             case 'U':
             case 'Green':
-                current += victimPoint * tile.scoredItems.victims.left;
+                current += victimPoint * tile.scoredItems.victims.left / 2;
                 break;
         }
 
