@@ -29,9 +29,8 @@ html(ng-app="ddApp")
         i.fas.fa-stopwatch.fa-2x(aria-hidden='true')
         li.navbar-brand(href='#')  {{time*1000 | date:'mm:ss'}}
     .row.nav-cont
-      .col-md-12.tilearea.mx-auto(ng-if='exist')
-        div(ng-repeat='z in range(height) track by $index', style='float: left; margin-right: 10px')
-          h3 {{countWords[$index]}} floor
+      .col-md-12.tilearea.mx-auto(ng-if='exist', style="text-align:center;")
+        div(ng-repeat='z in range(height) track by $index', style='display: inline-block;')
           table.map
             tbody
               tr(ng-repeat='r in range(2*length + 1)')
@@ -76,7 +75,8 @@ html(ng-app="ddApp")
                     i.fas.fa-times.fa-fw.tile-image.tile-font(ng-show="tileStatus(c,r,z,$odd && $parent.$odd) == 'undone'", style='padding-top:6px; color:#e74c3c; opacity:0.9;')
       .col-md-12(ng-show='!exist')
         .alert.alert-dark(role='alert')
-          h1 現在，このフィールドでは競技が行われていません
+          h2 現在，このフィールドでは競技が行われていません
+          h4 We have no games running at this competition field right now.
     br
     .alert.alert-info(role='alert', ng-show='exist')
       .row
