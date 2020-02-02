@@ -244,7 +244,7 @@ function force_reload(st){
     var date = new Date() ;
     var time = date.getTime();
     if(time >= st){
-        location.reload();
+        location.reload(true);
     }
     else{
         setTimeout(force_reload,1,st);
