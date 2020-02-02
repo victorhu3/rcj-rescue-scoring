@@ -490,7 +490,7 @@ privateRouter.put('/:runid', function (req, res, next) {
         if(run.tiles){
           if(run.tiles.length == dbRun.map.indexCount){
             for(let d in dbRun.tiles){
-              dbRun.tiles[d].scoredItems = run.tiles[d].scoredItems;
+              dbRun.tiles[d] = run.tiles[d];
             }
           }
         }
