@@ -855,8 +855,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, cell, t
                 break;
             case 'U':
             case 'Green':
-                if(light || kit > 0) return true;
-                break;
+                return true;
         }
         return false;
     };

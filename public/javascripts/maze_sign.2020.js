@@ -408,7 +408,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 break;
             case 'U':
             case 'Green':
-                current += victimPoint * tile.scoredItems.victims.top;
+                current += victimPoint * tile.scoredItems.victims.top / 2;
                 break;
         }
         switch (cell.tile.victims.right) {
@@ -788,8 +788,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, cell, t
                 break;
             case 'U':
             case 'Green':
-                if(light || kit > 0) return true;
-                break;
+                return true;
         }
         return false;
     };
