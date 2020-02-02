@@ -33,7 +33,13 @@
         "return" : "When login is successful, it returns to the you tried access page."
     },
     "signage": {
-      "create": "Create"
+        "create": "Create",
+        "editor": {
+            "title": "Signage editor",
+            "name": "Pattern name",
+            "save": "Save",
+            "saveAs": "Save as"
+        }
     },
     "common": {
         "back": "Back",
