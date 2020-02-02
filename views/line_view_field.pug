@@ -35,19 +35,23 @@ html(ng-app="ddApp")
               tile(tile="mtiles[c+','+r+','+z]", ng-repeat='z in range(height)', ng-style="{'opacity': getOpacity(c,r)}", ng-click='showElements(c,r,z)')
       .col-md-12(ng-show='!exist')
         .alert.alert-dark(role='alert')
-          h1 現在，このフィールドでは競技が行われていません
+          h2 現在，このフィールドでは競技が行われていません
+          h4 We have no games running at this competition field right now.
     br
     .alert.alert-info(role='alert', ng-show='exist')
       .row
         .col-4
           i.fas.fa-step-forward(aria-hidden='true')  : {{LoPs_total}} times
-        .col-4
+        .col-8
           i.fas.fa-ambulance(aria-hidden='true' style="color:#e74c3c;") &nbsp;
-          span(ng-show='evacuationLevel==1') Level: 1
-          span(ng-show='evacuationLevel==2') Level: 2
-          span &nbsp;&nbsp; L: {{count_victim_list("L")}} 　D: {{count_victim_list("D")}} 　K: {{count_victim_list("K")}}
-        .col-4
-          span Multiplier: {{multiplier}}
+          span.badge.badge-warning(ng-show='evacuationLevel == 1') Level 1
+          span.badge.badge-danger(ng-show='evacuationLevel == 2') Level 2
+          span(ng-repeat='victim in victim_list', style='margin-left:5px;')
+            img(src='/images/liveVictim.png', width='20px', ng-if="victim.type == 'L'")
+            img(src='/images/deadVictim.png', width='20px', ng-if="victim.type == 'D'")
+            img(src='/images/rescuekit-1.png', width='20px', ng-if="victim.type == 'K' && kitLevel==1")
+            img(src='/images/rescuekit-2.png', width='20px', ng-if="victim.type == 'K' && kitLevel==2")
+          span &nbsp;【 ×{{multiplier}} 】
 
 
 

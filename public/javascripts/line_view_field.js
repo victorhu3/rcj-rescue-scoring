@@ -89,8 +89,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
           $scope.time = 0;
           $scope.score = 0;
           $scope.multiplier = 1.0;
-          $scope.rescuedLiveVictims = 0;
-          $scope.rescuedDeadVictims = 0;
+          $scope.victim_list = [];
           marker = [];
           $scope.dRunId = $scope.runId;
           return;
