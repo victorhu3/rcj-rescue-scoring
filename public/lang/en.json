@@ -273,7 +273,10 @@
             "item": "Item points",
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "@:line.judge.rescuedVictimsMes",
-            "kit": "Rescue kit"
+            "kit": "Rescue kit",
+            "write": "Write signature",
+            "clear": "Clear",
+            "comp": "Complete"
         }
     },
     "maze": {
@@ -384,7 +387,10 @@
             "kits": "Successful rescue deployment",
             "calc": "Score calculation",
             "item": "Item points",
-            "misidentification": "@:maze.view.misidentification"
+            "misidentification": "@:maze.view.misidentification",
+            "write": "@:line.sign.write",
+            "clear": "@:line.sign.clear",
+            "comp": "@:line.sign.comp"
         }
     },
     "admin": {

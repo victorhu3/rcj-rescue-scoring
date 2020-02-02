@@ -277,7 +277,10 @@
             "item": "項目得点",
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "@:line.judge.rescuedVictimsMes",
-            "kit": "レスキューキット"
+            "kit": "レスキューキット",
+            "write": "署名する",
+            "clear": "書き直す",
+            "comp": "完了"
         }
     },
     "maze": {
@@ -388,7 +391,10 @@
             "kits": "配置成功数",
             "calc": "得点計算",
             "item": "項目得点",
-            "misidentification": "@:maze.view.misidentification"
+            "misidentification": "@:maze.view.misidentification",
+            "write": "@:line.sign.write",
+            "clear": "@:line.sign.clear",
+            "comp": "@:line.sign.comp"
         }
     },
     "admin": {

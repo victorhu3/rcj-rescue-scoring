@@ -547,29 +547,77 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         console.log("Success!!");
     }
 
+    $scope.toggleSign = function(index){
+        $scope.enableSign[index] = !$scope.enableSign[index];
+        if(!$scope.enableSign[index]){
+            switch (index) {
+                case 0:
+                    $scope.signData[index] = "data:" + $("#cap_sig").jSignature("getData", "svgbase64");
+                    break;
+                case 1:
+                    $scope.signData[index] = "data:" + $("#ref_sig").jSignature("getData", "svgbase64");
+                    break;
+                case 2:
+                    $scope.signData[index] = "data:" + $("#refas_sig").jSignature("getData", "svgbase64");
+                    break;
+            }
+        }else{
+            if(!$scope.signData[index]) setTimeout(initSign,100,index);
+        }
+    }
+
+    function initSign(index){
+        switch (index) {
+            case 0:
+                $("#cap_sig").jSignature();
+                break;
+            case 1:
+                $("#ref_sig").jSignature();
+                break;
+            case 2:
+                $("#refas_sig").jSignature();
+                break;
+        }
+    }
+
+    $scope.clearSign = function(index){
+        switch (index) {
+            case 0:
+                $("#cap_sig").jSignature("clear");
+                break;
+            case 1:
+                $("#ref_sig").jSignature("clear");
+                break;
+            case 2:
+                $("#refas_sig").jSignature("clear");
+                break;
+        }
+        $scope.toggleSign(index);
+    }
+
     $scope.send_sign = function () {
-        playSound(sInfo);
+        playSound(sClick);
         var sign_empty = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMCIgaGVpZ2h0PSIwIj48L3N2Zz4="
         var run = {}
         run.comment = $scope.comment;
         run.sign = {}
         var err_mes = ""
         var datapair = $("#cap_sig").jSignature("getData", "svgbase64")
-        if (datapair[1] == sign_empty) {
+        if (!datapair||datapair[1] == sign_empty) {
             err_mes += "[" + txt_cap_sign + "] "
         } else {
             run.sign.captain = "data:" + datapair[0] + "," + datapair[1]
         }
 
         var datapair = $("#ref_sig").jSignature("getData", "svgbase64")
-        if (datapair[1] == sign_empty) {
+        if (!datapair||datapair[1] == sign_empty) {
             err_mes += "[" + txt_ref_sign + "] "
         } else {
             run.sign.referee = "data:" + datapair[0] + "," + datapair[1]
         }
 
         var datapair = $("#refas_sig").jSignature("getData", "svgbase64")
-        if (datapair[1] == sign_empty) {
+        if (!datapair||datapair[1] == sign_empty) {
             err_mes += "[" + txt_cref_sign + "] "
         } else {
             run.sign.referee_as = "data:" + datapair[0] + "," + datapair[1]
