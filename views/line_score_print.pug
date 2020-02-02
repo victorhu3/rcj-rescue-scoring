@@ -78,8 +78,12 @@ html(ng-app="LineScore")
         div(ng-if="Runs!=null")
           .row#rank
             .col-lg-12
-              h3
-               i.fas.fa-award &nbsp;[Ranking] {{league.name}} - {{comment.top}}
+              .row
+                .col-10
+                  h3
+                   i.fas.fa-award &nbsp;[Ranking] {{league.name}} - {{comment.top}}
+                .col-2(style="text-align:right;")
+                  img(ng-src="{{competition.logo}}" style="width:100%;max-height:40px;")
               table.custom(style="overflow: scroll;")
                 thead
                   tr

@@ -44,8 +44,8 @@ html(ng-app="RunAdmin")
     .row
       .col-10(style="text-align:center;")
         h1 {{topComment}}
-      .col-2
-        img(ng-src="{{competition.logo}}" style="width:100%;")
+      .col-2(style="text-align:right;")
+        img(ng-src="{{competition.logo}}" style="width:100%;max-height:50px;")
     .row
       .col-12
         .refine.no_print
@@ -67,8 +67,9 @@ html(ng-app="RunAdmin")
               hr
               h6.card-title {{'line.competition.refine.team' | translate}}
               .input-group
-                span#basic-addon1.input-group-addon
-                  i.fas.fa-users(aria-hidden='true')
+                .input-group-prepend
+                  span.input-group-text
+                    i.fas.fa-users(aria-hidden='true')
                 input.form-control(type='text', placeholder='Team name', aria-label='Username', aria-describedby='basic-addon1' ng-model='teamName')
               hr
               h6.card-title Display items
@@ -95,8 +96,9 @@ html(ng-app="RunAdmin")
               hr
               h6.card-title Comment
                 .input-group
-                  span#basic-addon1.input-group-addon
-                    i.fas.fa-pen(aria-hidden='true')
+                  .input-group-prepend
+                    span.input-group-text
+                      i.fas.fa-pen(aria-hidden='true')
                   input.form-control(type='text', placeholder='', aria-label='Username', aria-describedby='basic-addon1' ng-model='topComment')
 
 
