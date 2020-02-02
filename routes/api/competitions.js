@@ -102,7 +102,7 @@ publicRouter.get('/:competition', function (req, res, next) {
             if(!data.bkColor) data.bkColor = "ffffff";
             if(!data.message) data.message = "";
             if(!data.description) data.description = "";
-            if(!data.logo) data.logo = "/images/NoImage.png";
+            if(!data.logo) data.logo = "/images/noLogo.png";
             res.status(200).send(data)
         }
     })
