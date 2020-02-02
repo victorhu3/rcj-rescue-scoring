@@ -42,6 +42,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
     $scope.MisIdent = 0;
 
+    $scope.enableSign = [false,false,false];
+    $scope.signData = [null,null,null];
+
     $scope.cells = {};
     $scope.tiles = {};
 
