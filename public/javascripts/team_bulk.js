@@ -1,5 +1,26 @@
-var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamAdminController", function ($scope, $http) {
-    $scope.competitionId = competitionId
+var app = angular.module('TeamAdmin', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
+
+// function referenced by the drop target
+app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$timeout', '$http','$translate', '$cookies',function ($scope, $uibModal, $log, $timeout, $http, $translate, $cookies) {
+
+    var txt_team,txt_league,txt_region;
+    $translate('common.team').then(function (val) {
+        txt_team = val;
+    }, function (translationId) {
+        // = translationId;
+    });
+    $translate('common.league').then(function (val) {
+        txt_league = val;
+    }, function (translationId) {
+        // = translationId;
+    });
+    $translate('common.region').then(function (val) {
+        txt_region = val;
+    }, function (translationId) {
+        // = translationId;
+    });
+
+    $scope.competitionId = competitionId;
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
     })
@@ -80,8 +101,8 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
                     console.log(obj)
 
                     // tableで出力
-                    let insert = "<table class=\"custom\"><thead><tr><th>Team name</th><th>League</th>";
-                    if(obj[1][2]) insert += '<th>Country</th>';
+                    let insert = "<table class=\"custom\"><thead><tr><th>"+txt_team+"</th><th>"+txt_league+"</th>";
+                    if(obj[1][2]) insert += '<th>'+txt_region+'</th>';
                     insert += '</tr></thead><tbody>';
 
                     for (var i = 1; i < obj.length; i++) {
@@ -163,4 +184,4 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
     });
 
 
-})
+}]);

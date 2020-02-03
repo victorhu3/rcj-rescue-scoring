@@ -26,17 +26,17 @@ block content
         thead
             tr
                 th {{"common.team" | translate}}
-                th {{"common.league" | translate}}
                 th {{"common.region" | translate}}
+                th {{"common.league" | translate}}
                 th {{"common.operation" | translate}}
         tbody
             tr
                 td
                     input(ng-model='teamName' style="width:100%;")
                 td
-                    select(ng-model='teamLeague' ng-options='league for league in leagues' style="width:100%;")
+                    input(ng-model='country' style="width:100%;")
                 td
-                    input(ng-model='country' style="width:100px;")
+                    select(ng-model='teamLeague' ng-options='league for league in leagues' style="width:100%;")
                 td
                     button(ng-click='addTeam()' style="width:100%;") {{"admin.teams.add" | translate}}
       a(ng-href='/admin/{{competitionId}}/teams/bulk') {{"admin.teams.bulk" | translate}}
@@ -54,6 +54,7 @@ block content
               th(ng-if="showCode") {{"common.teamCode" | translate}}
               th {{"common.team" | translate}}
               th(ng-if="showMd5") Hashed team name
+              th {{"common.region" | translate}}
               th {{"common.league" | translate}}
               th {{"common.operation" | translate}}
         tbody
@@ -63,6 +64,7 @@ block content
               td(ng-bind='team.teamCode' ng-if="showCode")
               td(ng-bind='team.name')
               td(ng-bind='md5(team.name)' ng-if="showMd5")
+              td(ng-bind='team.country')
               td(ng-bind='team.league')
               td
                   .dropdown
