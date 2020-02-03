@@ -408,7 +408,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
     $scope.makeImage = function(){
         window.scrollTo(0,0);
         html2canvas(document.getElementById("outputImageArea"),{
-            scale: 3
+            scale: 5
         }).then(function(canvas) {
             let ctx = canvas.getContext("2d");
 
@@ -448,7 +448,7 @@ app.controller('MazeEditorController', ['$scope', '$uibModal', '$log', '$http','
     $scope.makeImageDl = function(){
         window.scrollTo(0,0);
         html2canvas(document.getElementById("outputImageArea"),{
-            scale: 3
+            scale: 5
         }).then(function(canvas) {
             let ctx = canvas.getContext("2d");
 

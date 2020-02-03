@@ -262,7 +262,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
     $scope.makeImage = function(){
       window.scrollTo(0,0);
       html2canvas(document.getElementById("outputImageArea"),{
-        scale: 2
+        scale: 5
       }).then(function(canvas) {
         let imgData = canvas.toDataURL();
         console.log(imgData);
@@ -280,7 +280,7 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         $scope.updateTileIndex();
         window.scrollTo(0,0);
         html2canvas(document.getElementById("outputImageArea"),{
-            scale: 2
+            scale: 5
         }).then(function(canvas) {
             let imgData = canvas.toDataURL();
             console.log(imgData);
