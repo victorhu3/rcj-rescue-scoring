@@ -204,7 +204,8 @@ async function drawRun(doc, config, scoringRun) {
     index++;
   }
 
-  pdf.drawImage(doc,x,y,"scoresheet_generation/line/after_final.png",base_size_x,50,"center");
+  if(scoringRun.map.EvacuationAreaLoPIndex == checkPointNum) pdf.drawImage(doc,x,y,"scoresheet_generation/line/after_finalE.png",base_size_x,50,"center");
+  else pdf.drawImage(doc,x,y,"scoresheet_generation/line/after_final.png",base_size_x,50,"center");
 
   return;
 }
