@@ -564,6 +564,136 @@ app.directive('tile', function () {
                   attrs.z == scope.$parent.startTile2.z;
             };
 
+            scope.entranceOrExit = function (tile) {
+                if(!tile) return false;
+                if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
+
+                if(tile.tileType._id == "58cfd6549792e9313b1610e1"){
+                    //4side
+                    let t;
+                    //Top
+                    t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                    //Left
+                    t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                    //Right
+                    t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                    //Bottom
+                    t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                }else{
+                    //2 side
+                    if(tile.rot == 0 || tile.rot == 180){
+                        // left or right
+                        let t;
+                        //Left
+                        t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                        //Right
+                        t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                    }else{
+                        // top or bottom
+                        let t;
+                        //Top
+                        t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                        //Bottom
+                        t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            scope.evacTapeRot = function (tile) {
+                if(!tile) return false;
+                if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
+                let t;
+                //Top
+                t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 0;
+                    }
+                }
+                //Left
+                t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 270;
+                    }
+                }
+                //Right
+                t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 90;
+                    }
+                }
+                //Bottom
+                t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 180;
+                    }
+                }
+                return 0;
+            }
         }
     };
 });
@@ -615,6 +745,136 @@ app.directive('tile4image', function () {
                 };
                 return txt;
             };
+
+            scope.entranceOrExit = function (tile) {
+                if(!tile) return false;
+                if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
+
+                if(tile.tileType._id == "58cfd6549792e9313b1610e1"){
+                    let t;
+                    //Top
+                    t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                    //Left
+                    t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                    //Right
+                    t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                    //Bottom
+                    t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
+                    if(t){
+                        if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                            //Not evacuation zone
+                            if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                            else return "Entrance";
+                        }
+                    }
+                }else{
+                    //2 side
+                    if(tile.rot == 0 || tile.rot == 180){
+                        // left or right
+                        let t;
+                        //Left
+                        t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                        //Right
+                        t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                    }else{
+                        // top or bottom
+                        let t;
+                        //Top
+                        t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                        //Bottom
+                        t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
+                        if(t){
+                            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                                //Not evacuation zone
+                                if(t.x == scope.$parent.startTile2.x && t.y == scope.$parent.startTile2.y && t.z == scope.$parent.startTile2.z) return "Exit";
+                                else return "Entrance";
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            scope.evacTapeRot = function (tile) {
+                if(!tile) return false;
+                if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
+                let t;
+                //Top
+                t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 0;
+                    }
+                }
+                //Left
+                t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 270;
+                    }
+                }
+                //Right
+                t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 90;
+                    }
+                }
+                //Bottom
+                t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
+                if(t){
+                    if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
+                        //Not evacuation zone
+                        return 180;
+                    }
+                }
+                return 0;
+            }
 
 
         }
