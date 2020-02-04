@@ -38,7 +38,31 @@
           "title": "サイネージ エディター",
           "name": "パターン名",
           "save": "保存",
-          "saveAs": "別名で保存"
+          "saveAs": "別名で保存",
+          "content": "表示内容",
+          "duration": "継続時間",
+          "type": "タイプ",
+          "iframe": "WEBコンテンツ",
+          "image": "画像",
+          "movie": "動画",
+          "group": "表示対象グループID",
+          "all": "共通",
+          "use": "使用",
+          "news": "ニュース設定",
+          "enable": "有効",
+          "disable": "無効",
+          "refresh": "稼働中のサイネージを強制更新する",
+          "add_blank": "空の項目を追加",
+          "timetable": "タイムテーブル",
+          "score": "競技結果（ランキング）",
+          "alert": {
+              "update": "更新",
+              "update_mes": "既存のサイネージパターンを更新しました",
+              "create": "新規作成",
+              "create_mes": "新しいサイネージパターンを作成しました",
+              "sameName": "同じ名前",
+              "sameName_mes": "元の名前と同じです．違う名前にしてください．"
+          }
       }
     },
     "common": {

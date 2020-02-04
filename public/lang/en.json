@@ -38,7 +38,31 @@
             "title": "Signage editor",
             "name": "Pattern name",
             "save": "Save",
-            "saveAs": "Save as"
+            "saveAs": "Save as",
+            "content": "Content settings",
+            "duration": "Duration",
+            "type": "Type",
+            "iframe": "WEB content",
+            "image": "Image",
+            "movie": "Movie",
+            "group": "Display group ID",
+            "all": "for ALL",
+            "use": "Use",
+            "news": "News settings",
+            "enable": "Enable",
+            "disable": "Disable",
+            "refresh": "Force refresh working signage display",
+            "add_blank": "Add blank item",
+            "timetable": "Time table",
+            "score": "Score report (ranking)",
+            "alert": {
+                "update": "Updated!",
+                "update_mes": "Successfully updated exist signage pattern.",
+                "create": "Created!",
+                "create_mes": "Successfully created new signage pattern.",
+                "sameName": "Same name!",
+                "sameName_mes": "You must have a new name when you duplicate the signage pattern!"
+            }
         }
     },
     "common": {

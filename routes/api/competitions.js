@@ -246,7 +246,7 @@ publicRouter.get('/:competition/:league/teams', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id,
-        league: new RegExp(".*" + league + ".*" , "i")
+        league: league
     },'_id name competition league inspected country checkin').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
@@ -478,7 +478,7 @@ publicRouter.get('/:competition/:league/rounds', function (req, res, next) {
 
     competitiondb.round.find({
         competition: id,
-        league: new RegExp(".*" + league + ".*" , "i")
+        league: league
     }).lean().exec(function (err, data) {
         if (err) {
             logger.error(err)

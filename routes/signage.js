@@ -36,11 +36,30 @@ privateRouter.get('/display/:competitionid/run', function (req, res, next) {
   else res.render('access_denied', {user: req.user})
 })
 
-privateRouter.get('/display/:sigId/:group', function (req, res) {
-  const sigId = req.params.sigId
-  const group = req.params.group
-  
-  res.render('main_signage', {user: req.user, sigId: sigId,group: group})
+privateRouter.get('/display/:sigId/:group', function (req, res, next) {
+  const sigId = req.params.sigId;
+  const group = req.params.group;
+  if (!ObjectId.isValid(sigId)) {
+    return next()
+  }
+
+  res.render('main_signage', {user: req.user, sigId: sigId,group: group,competition:null})
+})
+
+privateRouter.get('/display/:sigId/:group/:competitionId', function (req, res, next) {
+  const sigId = req.params.sigId;
+  const group = req.params.group;
+  const competitionId = req.params.competitionId;
+
+  if (!ObjectId.isValid(sigId)) {
+    return next()
+  }
+  if (!ObjectId.isValid(competitionId)) {
+    return next()
+  }
+
+  if(auth.authCompetition(req.user,competitionId,ACCESSLEVELS.VIEW)) res.render('main_signage', {user: req.user, sigId: sigId,group: group,competition:competitionId});
+  else res.render('access_denied', {user: req.user});
 })
 
 privateRouter.get('/display/:competitionid/run/:sigId', function (req, res, next) {
@@ -74,10 +93,12 @@ privateRouter.get('/display/:competitionid/score/Maze', function (req, res, next
         })
       } else {
         let num = 20;
-        for(let i in data.ranking){
-          if(data.ranking[i].league == 'Maze'){
-            num = data.ranking[i].num;
-            break;
+        if(data){
+          for(let i in data.ranking){
+            if(data.ranking[i].league == 'Maze'){
+              num = data.ranking[i].num;
+              break;
+            }
           }
         }
         res.render('maze_score_signage', {id: id, user: req.user,league: league,num: num, get: req.query})
@@ -103,10 +124,12 @@ privateRouter.get('/display/:competitionid/score/:league', function (req, res, n
       })
     } else {
       let num = 20;
-      for(let i in data.ranking){
-        if(data.ranking[i].league == league){
-          num = data.ranking[i].num;
-          break;
+      if(data){
+        for(let i in data.ranking){
+          if(data.ranking[i].league == league){
+            num = data.ranking[i].num;
+            break;
+          }
         }
       }
       res.render('line_score_signage', {id: id, user: req.user,league: league,num: num, get: req.query})
@@ -149,6 +172,9 @@ privateRouter.get('/display/:competitionid/timetable/:league/:round', function (
   const league = req.params.league
   const round = req.params.round
   if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  if (!ObjectId.isValid(round)) {
     return next()
   }
 

@@ -7,7 +7,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
     $scope.sigGroup = '0';
     $scope.signageSrc = function(){
-        return "/signage/display/" + sigId + "/" + $scope.sigGroup;
+        return "/signage/display/" + sigId + "/" + $scope.sigGroup + "/" + competitionId;
     }
     $scope.selectfield = [];
     if(sigId){

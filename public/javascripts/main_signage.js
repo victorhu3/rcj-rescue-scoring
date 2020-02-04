@@ -82,7 +82,10 @@ function loadContent(data) {
     console.log(tmp);
     for(let tm of tmp){
         if(!tm.disable){
-            if(group == 0 || tm.group == 0 || tm.group == group) output.push(tm);
+            if(group == 0 || tm.group == 0 || tm.group == group) {
+                if(competition) tm.url = tm.url.replace(':competition',competition);
+                output.push(tm);
+            }
         }
     }
     contentList = output;

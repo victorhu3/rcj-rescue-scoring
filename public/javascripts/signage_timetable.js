@@ -7,7 +7,7 @@ app.controller("TimeTableController", function ($scope, $http, $sce) {
         window.location = path
     }
 
-    $scope.time = 15;
+    $scope.time = 6;
     $scope.nowI = 0;
 
 
@@ -23,7 +23,7 @@ app.controller("TimeTableController", function ($scope, $http, $sce) {
 
             //$scope.showTableData = $scope.table.data.slice(nowI,nowI+8);
             //console.log($scope.showTableData);
-            $scope.time = 15;
+            $scope.time = 6;
         }
         $scope.$apply();
     }
@@ -56,7 +56,7 @@ app.controller("TimeTableController", function ($scope, $http, $sce) {
     }
     $http.get("/api/teams/leagues/line/" + competitionId).then(function (response) {
         $scope.leagues = response.data
-        $http.get("/api/teams/leagues/line/" + competitionId).then(function (response) {
+        $http.get("/api/teams/leagues/maze/" + competitionId).then(function (response) {
             $scope.leagues = $scope.leagues.concat(response.data);
           });
         console.log($scope.leagues);
@@ -74,13 +74,8 @@ app.controller("TimeTableController", function ($scope, $http, $sce) {
 
         for(let run of runs){
             try{
-                var teamname = run.team.name.split(' ');
-                run.teamCode = teamname[0];
-                run.teamName = teamname[1];
-                for(let i = 2; i < teamname.length;i++){
-                    run.teamName = run.teamName + " " + teamname[i];
-                }
-
+                run.teamCode = run.team.teamCode;
+                run.teamName = run.team.name;
             }
             catch(e){
 
@@ -117,7 +112,7 @@ app.controller("TimeTableController", function ($scope, $http, $sce) {
               console.log(run);
               //console.log(run.field.league);
               //console.log($scope.team.league);
-              if (run.field.league == league && run.round.name == round) {
+              if (run.field.league == league && run.round._id == round) {
                   if (!array_exist($scope.fields, run.field.name)) $scope.fields.push(run.field);
                   if (!array_exist($scope.rounds, run.round.name)) $scope.rounds.push(run.round);
                   var round_i = table_exist_round($scope.table, run.round.name);
