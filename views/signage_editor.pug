@@ -82,7 +82,18 @@ block content
                             iframe(ng-src="{{iframeUrl(content.url)}}",ng-if="content.type=='iframe'",style="width:100%;height:100%;")
                         .col-md-8
                             .card-body
-                                h5.card-title No. {{$index+1}}
+                                .row
+                                    .col-6
+                                        h5.card-title No. {{$index+1}}
+                                    .col-6(style="text-align:right;")
+                                        h5
+                                            span.badge.badge-primary(ng-if="content.group == 0")  {{"signage.editor.all" | translate}}
+                                            span.badge.badge-secondary(ng-if="content.group == 1")  1
+                                            span.badge.badge-success(ng-if="content.group == 2")  2
+                                            span.badge.badge-danger(ng-if="content.group == 3")  3
+                                            span.badge.badge-warning(ng-if="content.group == 4")  4
+                                            span.badge.badge-info(ng-if="content.group == 5")  5
+
                                 .input-group(style="width:100%;margin: 10px;")
                                     .input-group-prepend
                                         span.input-group-text {{"signage.editor.type" | translate}}
