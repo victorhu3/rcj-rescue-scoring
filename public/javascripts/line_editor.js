@@ -4,6 +4,7 @@ var app = angular.module('LineEditor', ['ngTouch','lvl.services', 'ngAnimate', '
 // function referenced by the drop target
 app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', '$translate', function ($scope, $uibModal, $log, $http, $translate) {
 
+    $scope.tileSetLoading = 1;
     $scope.competitionId = competitionId;
     $scope.se_competition = competitionId;
     $translate('admin.lineMapEditor.import').then(function (val) {
@@ -25,6 +26,10 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         $scope.competitions = response.data
         //console.log($scope.competitions)
     })
+
+    $(window).on('load', function() {
+        $scope.tileSetLoading --;
+    });
 
 
     var tileCountDb={};
@@ -184,7 +189,6 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
     $scope.tileRemain = function(tile){
         return tile.count - getTileUsedCountOther(tile) - null2zero($scope.usedCount[tile.tileType._id]);
-
     }
 
     function getTileUsedCountOther(tile){
@@ -200,11 +204,13 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         if(mapId) mapi = mapId;
         let count = $.ajax({
             type: 'GET',
-            url: '/api/maps/line/tileCount/' + mapi + '/' + $scope.tileSet._id + '/' + tile.tileType._id,
+            url: '/api/maps/line/tileCount/' + mapi + '/' + $scope.tileSet._id,
             async: false,
             dataType: 'json'
         }).responseJSON;
-        tileCountDb[$scope.tileSet._id][tile.tileType._id] = count.usedCount;
+        for(let c of count){
+            tileCountDb[$scope.tileSet._id][c.tileId] = c.usedCount;
+        }
     }
 
     function null2zero(tmp){

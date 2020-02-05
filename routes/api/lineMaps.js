@@ -440,6 +440,37 @@ adminRouter.get('/tileCount/:expectMapId/:tileSetId/:tileId', async function(req
 
 });
 
+adminRouter.get('/tileCount/:expectMapId/:tileSetId', async function(req, res, next) {
+  //Count number of used tiles in the tile set you specified expect specified mapId
+  let expectMapId = req.params.expectMapId;
+  if (!ObjectId.isValid(expectMapId)) {
+    expectMapId = null;
+  }
+  const tileSetId = req.params.tileSetId;
+  if (!ObjectId.isValid(tileSetId)) {
+    return next()
+  }
+
+  let tset = await tileSet.findById(tileSetId).select("_id tiles");
+
+  let countList = [];
+  for(let t of tset.tiles){
+    let result = await lineMap.aggregate([
+      {$match: {_id: {$ne: ObjectId(expectMapId)}}},
+      {$match: {tileSet: ObjectId(tileSetId)}},
+      {$unwind: "$tiles"},
+      {$match: {"tiles.tileType": ObjectId(t.tileType)}}
+    ]);
+    let tmp = {
+      'tileId': t.tileType,
+      'usedCount': result.length
+    }
+    countList.push(tmp);
+  }
+  res.status(200).send(countList)
+
+});
+
 adminRouter.post('/tilesets', function (req, res, next) {
   const tileset = req.body
   let newset;
@@ -480,7 +511,6 @@ publicRouter.get('/tilesets/:tileset', function (req, res, next) {
   
   tileSet.findById(id)
     .select("_id name tiles")
-    .populate("tiles", "-_id")
     .populate("tiles.tileType", "-paths -__v")
     .lean()
     .exec((err, data) => {
