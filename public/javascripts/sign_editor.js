@@ -81,12 +81,79 @@ app.controller('SignEditorController', ['$scope', '$uibModal', '$log', '$http', 
     $scope.addContents = function (number){
         var content = {
             duration : 0,
-            type : "img",
+            type : "",
             url : "",
             group: "0",
             disable: false
         }
         $scope.contents.splice(number,0,content);
+    }
+
+    $scope.movieExist = function(url){
+
+    }
+
+    $scope.select = function (index){
+
+        if($scope.contents[index].type === 'iframe'){
+            return;
+        }
+
+        if($scope.contents[index].type === 'img'){
+            $http.get("/api/signage/contentList/img").then(async function (response) {
+                let list = response.data;
+                let listSelect = {};
+                for(let l of list){
+                    listSelect[l] = l;
+                }
+                const { value: url } = await Swal.fire({
+                    title: 'Select a image',
+                    confirmButtonText: 'OK &rarr;',
+                    input: 'select',
+                    inputOptions: listSelect,
+                    inputPlaceholder: 'Select a image',
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        return new Promise((resolve) => {
+                            if (value) {
+                                resolve()
+                            } else {
+                                resolve('You need to select a image')
+                            }
+                        })
+                    }
+                })
+                $scope.contents[index].url = "/signage_content/" + url;
+                $scope.$apply();
+            });
+        }else if($scope.contents[index].type === 'movie'){
+            $http.get("/api/signage/contentList/mov").then(async function (response) {
+                let list = response.data;
+                let listSelect = {};
+                for(let l of list){
+                    listSelect[l] = l;
+                }
+                const { value: url } = await Swal.fire({
+                    title: 'Select a movie',
+                    confirmButtonText: 'OK &rarr;',
+                    input: 'select',
+                    inputOptions: listSelect,
+                    inputPlaceholder: 'Select a movie',
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        return new Promise((resolve) => {
+                            if (value) {
+                                resolve()
+                            } else {
+                                resolve('You need to select a movie')
+                            }
+                        })
+                    }
+                })
+                $scope.contents[index].url = "/signage_content/" + url;
+                $scope.$apply();
+            });
+        }
     }
 
     $scope.addRanking = function (number,league){

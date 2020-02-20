@@ -62,7 +62,8 @@
                 "create_mes": "Successfully created new signage pattern.",
                 "sameName": "Same name!",
                 "sameName_mes": "You must have a new name when you duplicate the signage pattern!"
-            }
+            },
+            "select": "Select"
         }
     },
     "common": {

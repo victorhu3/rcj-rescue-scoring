@@ -20,6 +20,7 @@ const fs = require('fs')
 const auth = require('../../helper/authLevels')
 
 
+
 const LINE_LEAGUES = competitiondb.LINE_LEAGUES
 const MAZE_LEAGUES = competitiondb.MAZE_LEAGUES
 const LEAGUES = competitiondb.LEAGUES
@@ -47,6 +48,28 @@ privateRouter.get('/', function (req, res) {
         }
     })
 })
+
+adminRouter.get('/contentList/img', function (req, res, next) {
+  fs.readdir(process.cwd()+'/public/signage_content', function(err, files){
+    if (err) throw err;
+    let fileList = files.filter(function(file){
+      file = process.cwd()+'/public/signage_content/' + file;
+      return fs.statSync(file).isFile() && (/.*\.jpg$/.test(file) || /.*\.jpeg$/.test(file) || /.*\.png$/.test(file) || /.*\.gif$/.test(file));
+    });
+    res.status(200).send(fileList)
+  });
+});
+
+adminRouter.get('/contentList/mov', function (req, res, next) {
+  fs.readdir(process.cwd()+'/public/signage_content', function(err, files){
+    if (err) throw err;
+    let fileList = files.filter(function(file){
+      file = process.cwd()+'/public/signage_content/' + file;
+      return fs.statSync(file).isFile() && (/.*\.mov$/.test(file) || /.*\.mp4$/.test(file) || /.*\.wmv$/.test(file) || /.*\.webm$/.test(file));
+    });
+    res.status(200).send(fileList)
+  });
+});
 
 privateRouter.get('/:id', function (req, res, next) {
     var id = req.params.id

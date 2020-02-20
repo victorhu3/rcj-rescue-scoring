@@ -66,20 +66,16 @@ block content
                         span.sr-only Toggle Dropdown
                     .dropdown-menu
                         a.dropdown-item(href='#',ng-click="addTimeTable(0)") {{"signage.editor.timetable" | translate}}
-                        li.dropdown-submenu
-                            a.dropdown-item.dropdown-toggle(href='#') {{"signage.editor.score" | translate}}
-                            ul.dropdown-menu
-                                li(ng-repeat="league in leagues")
-                                    a.dropdown-item(href='#',ng-click="addRanking(0,league)") {{league}}
+                        .dropdown-divide
+                            h6.dropdown-header {{"signage.editor.score" | translate}}
+                            li(ng-repeat="league in leagues")
+                                a.dropdown-item(href='#',ng-click="addRanking(0,league)") {{league}}
 
             div(style="margin: 20px;" ng-repeat="content in contents track by $index")
                 .card.mb-3(style='width: 100%;',ng-style="{backgroundColor: content.disable ? '#ccc':'#fff'}")
                     .row.no-gutters
                         .col-md-4
-                            img(ng-src="{{content.url}}",ng-if="content.type=='img'")
-                            video(ng-if="content.type=='movie'",style="width:100%;",controls)
-                                source(ng-src="{{content.url}}")
-                            iframe(ng-src="{{iframeUrl(content.url)}}",ng-if="content.type=='iframe'",style="width:100%;height:100%;")
+                            iframe(ng-src="{{iframeUrl(content.url)}}",ng-if="content.type!=''",style="width:100%;height:100%;")
                         .col-md-8
                             .card-body
                                 .row
@@ -125,6 +121,8 @@ block content
                                     .input-group-prepend
                                         span.input-group-text URL
                                     input.form-control(type='text', ng-model='content.url')
+                                    .input-group-append(ng-show="content.type=='img' || content.type=='movie'")
+                                        button.btn.btn-outline-dark(type='button', ng-click='select($index)') {{"signage.editor.select" | translate}}
                                 div(style="text-align:center;")
                                     button.btn.btn-danger(type='button', ng-click='removeContents($index)')
                                         i.fas.fa-times {{"common.delete" | translate}}
@@ -140,11 +138,10 @@ block content
                             span.sr-only Toggle Dropdown
                         .dropdown-menu
                             a.dropdown-item(href='#',ng-click="addTimeTable($index+1)") {{"signage.editor.timetable" | translate}}
-                            li.dropdown-submenu
-                                a.dropdown-item.dropdown-toggle(href='#') {{"signage.editor.score" | translate}}
-                                ul.dropdown-menu
-                                    li(ng-repeat="league in leagues")
-                                        a.dropdown-item(href='#',ng-click="addRanking($index+1,league)") {{league}}
+                            .dropdown-divide
+                            h6.dropdown-header {{"signage.editor.score" | translate}}
+                            li(ng-repeat="league in leagues")
+                                a.dropdown-item(href='#',ng-click="addRanking($index+1,league)") {{league}}
             br
             br
             br
@@ -163,21 +160,3 @@ block content
                 div(style="text-align : center;margin:20px;")
                     button.btn.btn-success(type='button', ng-click='addNews($index+1)')
                         i.fas.fa-plus
-
-
-    script.
-      $('.dropdown-menu a.dropdown-toggle').on('click', function (e) {
-        if (!$(this).next().hasClass('show')) {
-          $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
-        }
-        var $subMenu = $(this).next(".dropdown-menu");
-        $subMenu.toggleClass('show');
-
-
-        $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function (e) {
-          $('.dropdown-submenu .show').removeClass("show");
-        });
-
-
-        return false;
-      });
