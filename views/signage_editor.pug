@@ -149,8 +149,8 @@ block content
             div(style="text-align : center;")
                 button.btn.btn-success(type='button', ng-click='addNews(0)')
                     i.fas.fa-plus
-            div(style="margin: 20px;" ng-repeat="new in news track by $index")
-                .input-group(style="width:1200px;margin 0 auto;")
+            div(style="margin: 20px;width:calc(100%-50px);" ng-repeat="new in news track by $index")
+                .input-group(style="margin 0 auto;")
                     .input-group-prepend
                         span.input-group-text {{$index+1}}
                     input.form-control(type='text', ng-model='new.txt' style="width:950px;")

@@ -123,8 +123,10 @@ app.controller('SignEditorController', ['$scope', '$uibModal', '$log', '$http', 
                         })
                     }
                 })
-                $scope.contents[index].url = "/signage_content/" + url;
-                $scope.$apply();
+                if(url){
+                    $scope.contents[index].url = "/signage_content/" + url;
+                    $scope.$apply();
+                }
             });
         }else if($scope.contents[index].type === 'movie'){
             $http.get("/api/signage/contentList/mov").then(async function (response) {
@@ -150,8 +152,10 @@ app.controller('SignEditorController', ['$scope', '$uibModal', '$log', '$http', 
                         })
                     }
                 })
-                $scope.contents[index].url = "/signage_content/" + url;
-                $scope.$apply();
+                if(url){
+                    $scope.contents[index].url = "/signage_content/" + url;
+                    $scope.$apply();
+                }
             });
         }
     }
