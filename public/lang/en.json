@@ -16,7 +16,7 @@
         "goScanner": "Manual input of score sheet"
     },
     "service_home": {
-        "about": "The RCJ Scoring System was designed for help the referees of RoboCup Junior Rescue Line / Maze.  In this system, it is very easy to do everything related to competition management, from course map creation to score calculation and ranking. From this page, you can create a Line/Maze field map and download it as an image without logging in to the system."
+        "about": "The RCJ Scoring System was designed to assist the RoboCup Junior Rescue Line/Maze referees. The system makes it very easy to do everything involved in running a competition, from creating course maps to calculating and ranking scores. From this page, you can create a field map of your line/maze and download it as an image without having to log into the system. You can also generate world files for the Erebus platform(simulation)."
     },
     "scanner": {
         "description": "Please scan the barcode / QR code on the score sheet",

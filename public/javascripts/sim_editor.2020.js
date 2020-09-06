@@ -728,7 +728,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 let humanType = 0; // 1 - harmed, 2 - unharmed, 3 - stable, 4 - thermal
                 let humanPlace = 0;
 
-                if(thisCell.tile.victims){
+                if(thisCell.tile && thisCell.tile.victims){
                     if(thisCell.tile.victims.top){
                         switch(thisCell.tile.victims.top){
                             case 'None':
@@ -821,7 +821,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     }
                 }
 
-                if(thisCell){
+                if(thisCell.tile){
                     walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle)]
                 }
                 
