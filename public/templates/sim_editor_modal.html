@@ -1,0 +1,70 @@
+<div class="modal-header">
+  <h3 class="modal-title">{{"admin.simMapEditor.item" | translate}}</h3>
+</div>
+<div class="modal-body">
+  <ul>
+    <li>
+      <input type="checkbox" ng-model="cell.tile.checkpoint" id="isCheckpoint"><label class="checkbox" for="isCheckpoint">{{"admin.simMapEditor.cp" | translate}}</label>
+    </li>
+    <li>
+      <input type="checkbox" ng-model="cell.tile.black" id="isBlack" ng-change="blackChanged()"><label class="checkbox" for="isBlack">{{"admin.simMapEditor.black" | translate}}</label>
+    </li>
+    <li>
+      <input type="checkbox" ng-model="cell.tile.swamp" id="isSwamp"><label class="checkbox" for="isSwamp">{{"admin.simMapEditor.swamp" | translate}}</label>
+    </li>
+    <li>
+      <input type="checkbox" ng-model="cell.tile.obstacle" id="isObstacle"><label class="checkbox" for="isObstacle">{{"admin.simMapEditor.obstacle" | translate}}</label>
+    </li>
+  </ul>
+
+  <input type="checkbox" ng-model="isStart" ng-disabled="isStart" ng-change="startChanged()" id="isStart"><label class="checkbox" for="isStart">{{"admin.simMapEditor.start" | translate}}</label>
+
+  <h5>{{"admin.simMapEditor.placement" | translate}}</h5>
+  <h5>{{"admin.simMapEditor.oneVictim" | translate}}</h5>
+  <table>
+    <tr>
+      <th width="20%">&nbsp;</th>
+      <th width="12%"><img src="/images/no_victims.png" alt="None" height="20"></th>
+      <th width="12%"><img src="/images/thermometer.png" alt="Heat" height="20"></th>
+      <th width="12%">H</th>
+      <th width="12%">S</th>
+      <th width="12%">U</th>
+    </tr>
+    <tr>
+      <th class="col">{{"admin.simMapEditor.top" | translate}}</th>
+      <td><input type="radio" ng-model="cell.tile.victims.top" value="None" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.top" value="Heated" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.top" value="H" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.top" value="S" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.top" value="U" style="display: block;"></td>
+    </tr>
+    <tr>
+      <th class="col">{{"admin.simMapEditor.bottom" | translate}}</th>
+      <td><input type="radio" ng-model="cell.tile.victims.bottom" value="None" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.bottom" value="Heated" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.bottom" value="H" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.bottom" value="S" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.bottom" value="U" style="display: block;"></td>
+    </tr>
+    <tr>
+      <th class="col">{{"admin.simMapEditor.left" | translate}}</th>
+      <td><input type="radio" ng-model="cell.tile.victims.left" value="None" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.left" value="Heated" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.left" value="H" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.left" value="S" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.left" value="U" style="display: block;"></td>
+    </tr>
+    <tr>
+      <th class="col">{{"admin.simMapEditor.right" | translate}}</th>
+      <td><input type="radio" ng-model="cell.tile.victims.right" value="None" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.right" value="Heated" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.right" value="H" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.right" value="S" style="display: block;"></td>
+      <td><input type="radio" ng-model="cell.tile.victims.right" value="U" style="display: block;"></td>
+    </tr>
+  </table>
+  
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+</div>

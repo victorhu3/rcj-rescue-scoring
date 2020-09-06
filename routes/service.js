@@ -16,6 +16,9 @@ router.get('/editor/maze/2020', async function (req, res, next) {
   res.render('maze_editor', {user: req.user,rule: 2020, pubService:true})
 })
 
+router.get('/editor/simulation/2020', async function (req, res, next) {
+  res.render('sim_editor', {user: req.user,rule: 2020, pubService:true})
+})
 
 router.get('/editor/line/2020', function (req, res, next) {
   res.render('line_editor', {user: req.user, pubService:true})

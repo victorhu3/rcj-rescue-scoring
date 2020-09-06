@@ -51,6 +51,10 @@ tr td:nth-child(even) {
     background-color: black;
 }
 
+.tile.swamp {
+    background-color: #CD853F;
+}
+
 .tile-image-container {
     position: relative;
     height: 40px;
