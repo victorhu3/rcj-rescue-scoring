@@ -82,7 +82,9 @@ const lineMapSchema = new Schema({
       default: false,
       required: true,
       set: v => v === '' ? false : v
-    }
+    },
+    evacEntrance: {type: Number, default: -1, set: v => v === '' ? -1 : v},
+    evacExit    : {type: Number, default: -1, set: v => v === '' ? -1 : v}
   }],
   startTile        : {
     x: {type: Number, integer: true, required: true, min: -1},

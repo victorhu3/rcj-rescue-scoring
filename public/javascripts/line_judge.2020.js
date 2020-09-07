@@ -1025,6 +1025,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         mtile: function () {
           return $scope.mtiles[x + ',' + y + ',' + z];
         },
+        mtiles: function () {
+          return $scope.mtiles;
+        },
         stiles: function () {
           return $scope.stiles;
         },
@@ -1078,7 +1081,11 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             nine[2] = $scope.mtiles[(x + 1) + ',' + (y + 1) + ',' + z];
           }
           return nine;
+        },
+        startTile2: function(){
+            return $scope.startTile2;
         }
+
       }
     }).closed.then(function (result) {
       console.log("Closed modal");
@@ -1310,15 +1317,52 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 // Please note that $uibModalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
 
-app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $timeout, mtile, stiles, nineTile, sRotate, startTile) {
+app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $timeout, mtile, mtiles, stiles, nineTile, sRotate, startTile, startTile2) {
   $scope.mtile = mtile;
   $scope.sRotate = sRotate;
   $scope.stiles = stiles;
   $scope.nineTile = nineTile;
   $scope.words = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"];
+  $scope.evacTapeRot = function (tile) {
+    let rot = 0;
+    if(tile.evacEntrance>=0){
+        rot = tile.evacEntrance;
+    }else if(tile.evacExit>=0){
+        rot = tile.evacExit;
+    }                
+    rot += $scope.$parent.sRotate;
+    return rot%360;
+  }
   $scope.next = [];
   for (var i = 0, d; d = mtile.next[i]; i++) {
     var sp = d.split(",");
+    if(sp[0] == startTile2.x && sp[1] == startTile2.y && sp[2] == startTile2.z){
+      let t = mtiles[(mtile.x-1)+','+(mtile.y)+','+mtile.z];
+      if(t.evacEntrance>=0){
+          sp[0] = t.x;
+          sp[1] = t.y;
+          sp[2] = t.z;
+      }
+      t = mtiles[(mtile.x+1)+','+(mtile.y)+','+mtile.z];
+      if(t.evacEntrance>=0){
+          sp[0] = t.x;
+          sp[1] = t.y;
+          sp[2] = t.z;
+      }
+      t = mtiles[(mtile.x)+','+(mtile.y-1)+','+mtile.z];
+      if(t.evacEntrance>=0){
+          sp[0] = t.x;
+          sp[1] = t.y;
+          sp[2] = t.z;
+      }
+      t = mtiles[(mtile.x)+','+(mtile.y+1)+','+mtile.z];
+      if(t.evacEntrance>=0){
+          sp[0] = t.x;
+          sp[1] = t.y;
+          sp[2] = t.z;
+      }
+
+  }
 
     if (mtile.x == Number(sp[0]) && mtile.y - 1 == Number(sp[1])) {
       //console.log("TOP");
@@ -1702,147 +1746,16 @@ app.directive('tile', function () {
           tile.z == $scope.$parent.startTile.z;
       }
 
-      $scope.entranceOrExit = function (tile) {
-        if(!tile) return false;
-        if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
-
-        if(tile.tileType._id == "58cfd6549792e9313b1610e1"){
-          //4side
-          let t;
-          //Top
-          t = $scope.$parent.mtiles[tile.x+","+(tile.y-1)+","+tile.z];
-          if(t){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-              //Not evacuation zone
-              if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-              else return "Entrance";
-            }
-          }
-          //Left
-          t = $scope.$parent.mtiles[(tile.x-1)+","+tile.y+","+tile.z];
-          if(t){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-              //Not evacuation zone
-              if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-              else return "Entrance";
-            }
-          }
-          //Right
-          t = $scope.$parent.mtiles[(tile.x+1)+","+tile.y+","+tile.z];
-          if(t){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-              //Not evacuation zone
-              if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-              else return "Entrance";
-            }
-          }
-          //Bottom
-          t = $scope.$parent.mtiles[tile.x+","+(tile.y+1)+","+tile.z];
-          if(t){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-              //Not evacuation zone
-              if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-              else return "Entrance";
-            }
-          }
-        }else{
-          //2 side
-          if(tile.rot == 0 || tile.rot == 180){
-            // left or right
-            let t;
-            //Left
-            t = $scope.$parent.mtiles[(tile.x-1)+","+tile.y+","+tile.z];
-            if(t){
-              if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-                else return "Entrance";
-              }
-            }
-            //Right
-            t = $scope.$parent.mtiles[(tile.x+1)+","+tile.y+","+tile.z];
-            if(t){
-              if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-                else return "Entrance";
-              }
-            }
-          }else{
-            // top or bottom
-            let t;
-            //Top
-            t = $scope.$parent.mtiles[tile.x+","+(tile.y-1)+","+tile.z];
-            if(t){
-              if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-                else return "Entrance";
-              }
-            }
-            //Bottom
-            t = $scope.$parent.mtiles[tile.x+","+(tile.y+1)+","+tile.z];
-            if(t){
-              if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                if(t.x == $scope.$parent.startTile2.x && t.y == $scope.$parent.startTile2.y && t.z == $scope.$parent.startTile2.z) return "Exit";
-                else return "Entrance";
-              }
-            }
-          }
-        }
-        return false;
-      }
-
       $scope.evacTapeRot = function (tile) {
-        console.log(tile)
         let rot = 0;
-        if(!tile) return false;
-        if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
-
-        let dirEv = [];
-        if(tile.tileType._id == "58cfd6549792e9313b1610e1"){ // ev1.png
-            dirEv = [0, 90, 180, 270];
-        }else{
-            let r = tile.rot;
-            dirEv = [(90+r)%360, (180+r)%360, (270+r)%360];
-        }
-        let t;
-        //Top
-        t = $scope.$parent.mtiles[tile.x+","+(tile.y-1)+","+tile.z];
-        if(t && dirEv.indexOf(0)>0){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                rot = 0;
-            }
-        }
-        //Left
-        t = $scope.$parent.mtiles[(tile.x-1)+","+tile.y+","+tile.z];
-        if(t && dirEv.indexOf(270)>0){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                rot = 270;
-            }
-        }
-        //Right
-        t = $scope.$parent.mtiles[(tile.x+1)+","+tile.y+","+tile.z];
-        if(t && dirEv.indexOf(90)>0){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                rot = 90;
-            }
-        }
-        //Bottom
-        t = $scope.$parent.mtiles[tile.x+","+(tile.y+1)+","+tile.z];
-        if(t && dirEv.indexOf(180)>0){
-            if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
-                //Not evacuation zone
-                rot = 180;
-            }
-        }
+        if(tile.evacEntrance>=0){
+            rot = tile.evacEntrance;
+        }else if(tile.evacExit>=0){
+            rot = tile.evacExit;
+        }                
         rot += $scope.$parent.sRotate;
         return rot%360;
-    }
+      }
 
       $scope.tileStatus = function (tile) {
         // If this is a non-existent tile

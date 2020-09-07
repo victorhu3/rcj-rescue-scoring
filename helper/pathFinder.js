@@ -49,6 +49,9 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
   }
   
   if (nextTile === undefined || evacTile(nextTile)) {
+    if(nextTile){
+      nextTile.evacEntrance = dir2num(flipDir(exitDir(curTile, entryDir)));
+    }
     let startTile2 = tiles[map.startTile2.x + ',' + map.startTile2.y + ',' +
     map.startTile2.z];
     if(!startTile2 || startTile2.index.length > 0){
@@ -56,17 +59,24 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
       map.indexCount = index + 1;
       return;
     }
+    curTile.next.push(map.startTile2.x + ',' + map.startTile2.y + ',' + map.startTile2.z);
 
     let startDir2 = "";
     let startPaths2 = startTile2.tileType.paths;
     Object.keys(startPaths2).forEach(function (dir, index) {
-      let nextTile2 = tiles[nextCoord(startTile2, rotateDir(dir, startTile2.rot))];
-      if (nextTile2 !== undefined && !evacTile(nextTile2)) {
-        startDir2 = rotateDir(dir, startTile2.rot);
-        next_Coord = nextCoord(startTile2, rotateDir(dir, startTile2.rot));
+      let entryDir2 = rotateDir(dir, startTile2.rot);
+      let nextTile2 = tiles[nextCoord(startTile2, entryDir2)];
+      if (nextTile2 !== undefined) {
+        if(!evacTile(nextTile2)){
+          startDir2 = entryDir;
+          next_Coord = nextCoord(startTile2, entryDir2);
+          
+        }else{
+          nextTile2.evacExit = dir2num(flipDir(exitDir(startTile2, entryDir2)));
+        }
       }
     });
-    curTile.next.push(next_Coord);
+
     map.EvacuationAreaLoPIndex = chpCount;
     traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
     return;
@@ -158,5 +168,18 @@ function flipDir(dir) {
       return "top";
     case "left":
       return "right";
+  }
+}
+
+function dir2num(dir){
+  switch (dir) {
+    case "top":
+      return 0;
+    case "right":
+      return 90;
+    case "bottom":
+      return 180;
+    case "left":
+      return 270;
   }
 }
