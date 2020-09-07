@@ -932,13 +932,22 @@ app.directive('tile', function () {
             }
 
             $scope.evacTapeRot = function (tile) {
+                console.log(tile)
                 let rot = 0;
                 if(!tile) return false;
                 if(tile.tileType._id != "58cfd6549792e9313b1610e1" && tile.tileType._id != "58cfd6549792e9313b1610e2") return false;
+
+                let dirEv = [];
+                if(tile.tileType._id == "58cfd6549792e9313b1610e1"){ // ev1.png
+                    dirEv = [0, 90, 180, 270];
+                }else{
+                    let r = tile.rot;
+                    dirEv = [(90+r)%360, (180+r)%360, (270+r)%360];
+                }
                 let t;
                 //Top
                 t = $scope.$parent.mtiles[tile.x+","+(tile.y-1)+","+tile.z];
-                if(t){
+                if(t && dirEv.indexOf(0)>0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 0;
@@ -946,7 +955,7 @@ app.directive('tile', function () {
                 }
                 //Left
                 t = $scope.$parent.mtiles[(tile.x-1)+","+tile.y+","+tile.z];
-                if(t){
+                if(t && dirEv.indexOf(270)>0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 270;
@@ -954,7 +963,7 @@ app.directive('tile', function () {
                 }
                 //Right
                 t = $scope.$parent.mtiles[(tile.x+1)+","+tile.y+","+tile.z];
-                if(t){
+                if(t && dirEv.indexOf(90)>0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 90;
@@ -962,15 +971,14 @@ app.directive('tile', function () {
                 }
                 //Bottom
                 t = $scope.$parent.mtiles[tile.x+","+(tile.y+1)+","+tile.z];
-                if(t){
+                if(t && dirEv.indexOf(180)>0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 180;
                     }
                 }
                 rot += $scope.$parent.sRotate;
-                if(rot >= 360) rot -= 360;
-                return rot;
+                return rot%360;
             }
 
             $scope.tileStatus = function (tile) {
