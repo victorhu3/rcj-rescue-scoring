@@ -24,6 +24,7 @@ const ObjectId = require('mongoose').Types.ObjectId
 const logger = require('../../config/logger').mainLogger
 const fs = require('fs')
 const auth = require('../../helper/authLevels')
+const { leagues } = require('../../leagues')
 
 
 const LINE_LEAGUES = competitiondb.LINE_LEAGUES
@@ -238,15 +239,24 @@ publicRouter.get('/:competition/:league/teams', function (req, res, next) {
         return next()
     }
 
-    if (LEAGUES.filter(function (elm){
+    let leagueArr = [];
+    if(league == "line"){
+        leagueArr = LINE_LEAGUES;
+    }else if(league == "maze"){
+        leagueArr = MAZE_LEAGUES;
+    }else if (LEAGUES.filter(function (elm){
       return elm.indexOf(league) != -1;
     }).length == 0){
       return next()
+    }else{
+        leagueArr.push(league)
     }
+    
+    
 
     competitiondb.team.find({
         competition: id,
-        league: league
+        league: { $in: leagueArr }
     },'_id name competition league inspected country checkin').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
@@ -372,15 +382,23 @@ publicRouter.get('/:competition/:league/fields', function (req, res, next) {
         return next()
     }
 
-    if (LEAGUES.filter(function (elm){
+    let leagueArr = [];
+    if(league == "line"){
+        leagueArr = LINE_LEAGUES;
+    }else if(league == "maze"){
+        leagueArr = MAZE_LEAGUES;
+    }else if (LEAGUES.filter(function (elm){
       return elm.indexOf(league) != -1;
     }).length == 0){
       return next()
+    }else{
+        leagueArr.push(league)
     }
+    
 
     competitiondb.field.find({
         competition: id,
-        league: new RegExp(".*" + league + ".*" , "i")
+        league: { $in: leagueArr }
     }).lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
@@ -470,15 +488,22 @@ publicRouter.get('/:competition/:league/rounds', function (req, res, next) {
         return next()
     }
 
-    if (LEAGUES.filter(function (elm){
+    let leagueArr = [];
+    if(league == "line"){
+        leagueArr = LINE_LEAGUES;
+    }else if(league == "maze"){
+        leagueArr = MAZE_LEAGUES;
+    }else if (LEAGUES.filter(function (elm){
       return elm.indexOf(league) != -1;
     }).length == 0){
       return next()
+    }else{
+        leagueArr.push(league)
     }
 
     competitiondb.round.find({
         competition: id,
-        league: league
+        league: { $in: leagueArr }
     }).lean().exec(function (err, data) {
         if (err) {
             logger.error(err)

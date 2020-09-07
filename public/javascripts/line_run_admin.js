@@ -48,17 +48,17 @@ var app = angular.module(
         })
 
         $http.get("/api/competitions/" + competitionId +
-            "/Line/teams").then(function (response) {
+            "/line/teams").then(function (response) {
             $scope.teams = response.data
         })
 
         $http.get("/api/competitions/" + competitionId +
-            "/Line/rounds").then(function (response) {
+            "/line/rounds").then(function (response) {
             $scope.rounds = response.data
         })
 
         $http.get("/api/competitions/" + competitionId +
-            "/Line/fields").then(function (response) {
+            "/line/fields").then(function (response) {
             $scope.fields = response.data
         })
 
