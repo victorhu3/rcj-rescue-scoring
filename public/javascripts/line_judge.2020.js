@@ -1330,7 +1330,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $timeou
     }else if(tile.evacExit>=0){
         rot = tile.evacExit;
     }                
-    rot += $scope.$parent.sRotate;
+    rot += sRotate;
     return rot%360;
   }
   $scope.next = [];
