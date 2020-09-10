@@ -93,6 +93,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
     $scope.victim_list = [];
     $scope.LoPs = [];
+    $scope.victimNL_G = 0;
+    $scope.vittimNL_S = 0;
+    $scope.misidentNL_C = 0;
 
     $scope.enableSign = [false,false,false];
     $scope.signData = [null,null,null];
@@ -135,6 +138,12 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
                 $scope.victim_list = data.rescueOrder;
 
+                if(data.nl){
+                    $scope.victimNL_G = data.nl.greenTape;
+                    $scope.victimNL_S = data.nl.silverTape;
+                    $scope.misidentNL_C = data.nl.misidentification;
+                }
+                
 
                 $scope.checkPointDistance = [];
                 let tmp = {
@@ -207,6 +216,13 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
 
             $scope.victim_list = response.data.rescueOrder;
+
+            if(response.data.nl){
+                $scope.victimNL_G = response.data.nl.greenTape;
+                $scope.victimNL_S = response.data.nl.silverTape;
+                $scope.misidentNL_C = response.data.nl.misidentification;
+            }
+            
 
             // Get the map
             $http.get("/api/maps/line/" + response.data.map +
@@ -314,6 +330,10 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         else multiplier = Math.max(multiplier - 50*lop,1000);
         return "x" + String(multiplier/1000);
     };
+
+    $scope.nlPoints = function(){
+        return 15 * $scope.victimNL_S + 30 * $scope.victimNL_G - 5 * $scope.misidentNL_C;
+    }
 
 
     $scope.LoPsCountPoint = function (n){

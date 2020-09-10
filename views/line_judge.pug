@@ -199,8 +199,8 @@ html(ng-app="ddApp")
                           .input-group-append
                             button.btn.btn-success(type='button', ng-click='increment($index,$last)')
                               i.fas.fa-plus(aria-hidden='true')
-                    div(ng-if="$index == EvacuationAreaLoPIndex")
-                      h3.card-header  {{'line.judge.rescue' | translate}}　
+                    div(ng-if="$index == EvacuationAreaLoPIndex && league != 'LineNL'", style="border: solid 3px #e74c3c;border-radius:calc(0.5rem - 1px);")
+                      h3.card-header(style="background-color: #e74c3c;color: #fff;border-radius:calc(0.2rem - 1px) calc(0.2rem - 1px) 0 0;margin-left:-1px;")  {{'line.judge.rescue' | translate}}
                         span.badge.badge-danger {{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}
                       .row
                         .col-4(ng-click="addVictimTmp('L')")
@@ -252,13 +252,56 @@ html(ng-app="ddApp")
                                 br
                                 span(ng-show='victim_list[j*5 + i]')
                                   | {{calc_victim_multipliers(victim_list[j*5 + i].type,victim_list[j*5 + i].effective)}}
+                    div(ng-if="$index == EvacuationAreaLoPIndex && league == 'LineNL'", style="border: solid 3px #e74c3c;border-radius:calc(0.5rem - 1px);")
+                      h3.card-header(style="background-color: #e74c3c;color: #fff;border-radius:calc(0.2rem - 1px) calc(0.2rem - 1px) 0 0;margin-left:-1px;")  {{'line.judge.rescue' | translate}} (NL)
+                      .row(style="margin-top:20px;")
+                        div(style='width:40%;font-size:10px;', align='center')
+                          img(src='/images/silverVictim.png', height='40px')
+                        div(style='width:60%;position: relative;')
+                          .input-group.mb-3(style='width:100%; height:40px;position:absolute;margin: auto;top: calc(50% - 20px);')
+                            .input-group-prepend
+                              button.btn.btn-danger(type='button', ng-click='victimNL("S",-1)')
+                                i.fas.fa-minus(aria-hidden='true')
+                            div(style='background-color: #F2F2F2; width:40%; text-align: center;')
+                              span.count {{victimNL_S}}
+                            .input-group-append
+                              button.btn.btn-success(type='button', ng-click='victimNL("S",1)')
+                                i.fas.fa-plus(aria-hidden='true')
+                      .row(style="margin-top:20px;")
+                        div(style='width:40%;font-size:10px;', align='center')
+                          img(src='/images/greenVictim.png', height='40px')
+                        div(style='width:60%;position: relative;')
+                          .input-group.mb-3(style='width:100%; height:40px;position:absolute;margin: auto;top: calc(50% - 20px);')
+                            .input-group-prepend
+                              button.btn.btn-danger(type='button', ng-click='victimNL("G",-1)')
+                                i.fas.fa-minus(aria-hidden='true')
+                            div(style='background-color: #F2F2F2; width:40%; text-align: center;')
+                              span.count {{victimNL_G}}
+                            .input-group-append
+                              button.btn.btn-success(type='button', ng-click='victimNL("G",1)')
+                                i.fas.fa-plus(aria-hidden='true')
+                      hr
+                      .row(style="margin-top:10px;padding-bottom:20px;")
+                        div(style='width:40%;font-size:10px;', align='center')
+                          img(src='/images/misidentNL.png', height='40px')
+                        div(style='width:60%;position: relative;')
+                          .input-group.mb-3(style='width:100%; height:40px;position:absolute;margin: auto;top: calc(50% - 20px);')
+                            .input-group-prepend
+                              button.btn.btn-danger(type='button', ng-click='misidentNL(-1)')
+                                i.fas.fa-minus(aria-hidden='true')
+                            div(style='background-color: #F2F2F2; width:40%; text-align: center;')
+                              span.count(style="color: #c0392b;") {{misidentNL_C}}
+                            .input-group-append
+                              button.btn.btn-success(type='button', ng-click='misidentNL(1)')
+                                i.fas.fa-plus(aria-hidden='true')
                     hr(ng-show='!$last')
                 h3.card-header
                   i.fas.fa-door-open(aria-hidden='true')
                   |  {{'line.judge.exit' | translate}}　
                 .card-body
                   .col-md-12(style='position: relative;', ng-click='changeExitBonus()')
-                    img.img-thumbnail(src='/images/line_bonus.png', width='186.3px', height='118px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}")
+                    img.img-thumbnail(src='/images/line_bonus.png', width='186.3px', height='118px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}", ng-if="league != 'LineNL'")
+                    img.img-thumbnail(src='/images/nl_bonus.png', width='186.3px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}", ng-if="league == 'LineNL'")
                     div(style='position:absolute; top:20px; left:65px;')
                       i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
                       i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus ', style='padding-top:4px; color:#e74c3c; opacity:0.9;')

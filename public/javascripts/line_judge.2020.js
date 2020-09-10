@@ -120,6 +120,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
   $scope.victim_list = [];
   $scope.victim_tmp = [];
   $scope.LoPs = [];
+  $scope.victimNL_G = 0;
+  $scope.vittimNL_S = 0;
+  $scope.misidentNL_C = 0;
 
   $scope.checkTeam = $scope.checkRound = $scope.checkMember = $scope.checkMachine = false;
   $scope.toggleCheckTeam = function () {
@@ -160,7 +163,12 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       kitLevel: $scope.kitLevel,
       exitBonus: $scope.exitBonus,
       showedUp: $scope.showedUp,
-      EvacuationAreaLoPIndex: $scope.EvacuationAreaLoPIndex
+      EvacuationAreaLoPIndex: $scope.EvacuationAreaLoPIndex,
+      nl: {
+        silverTape: $scope.victimNL_S,
+        greenTape:  $scope.victimNL_G,
+        misidentification: $scope.misidentNL_C
+      }
     };
     console.log(tmp);
     let calculated = line_calc_score(tmp);
@@ -243,12 +251,18 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       $scope.time = ($scope.minutes * 60 + $scope.seconds) * 1000;
       $scope.status = response.data.status;
 
+      if($scope.league == "LineNL") $scope.startedScoring = true;
+
 
       prevTime = $scope.time;
 
       var started = response.data.started;
 
       $scope.victim_list = response.data.rescueOrder;
+
+      $scope.victimNL_G = response.data.nl.greenTape;
+      $scope.victimNL_S = response.data.nl.silverTape;
+      $scope.misidentNL_C = response.data.nl.misidentification;
 
 
       // Scoring elements of the tiles
@@ -536,6 +550,34 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
       swal(txt_lops, txt_lops_mes, "info");
     }
 
+  };
+
+  $scope.victimNL = function (type, num) {
+    playSound(sClick);
+    if(type == "S"){
+      $scope.victimNL_S += num;
+      if($scope.victimNL_S < 0) $scope.victimNL_S = 0;
+    }else{
+      $scope.victimNL_G += num;
+      if($scope.victimNL_G < 0) $scope.victimNL_G = 0;
+    }
+    upload_run({
+      nl:{
+        silverTape: $scope.victimNL_S,
+        greenTape: $scope.victimNL_G
+      }
+    });
+  };
+
+  $scope.misidentNL = function (num) {
+    playSound(sClick);
+    $scope.misidentNL_C += num;
+    if($scope.misidentNL_C < 0) $scope.misidentNL_C = 0;
+    upload_run({
+      nl:{
+        misidentification: $scope.misidentNL_C
+      }
+    });
   };
 
 

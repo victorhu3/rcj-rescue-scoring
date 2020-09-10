@@ -94,7 +94,7 @@ html(ng-app="ddApp")
           br
           .alert.alert-primary(style='margin-bottom:50px;text-align:center;', role='alert')
             h2(style='text-align:center;')
-              | {{'common.stotal' | translate}} : {{raw_score - checkTotal() - exitBonusPoints()}} {{'common.point' |translate}}
+              | {{'common.stotal' | translate}} : {{raw_score - checkTotal() - exitBonusPoints() - nlPoints()}} {{'common.point' |translate}}
       hr
       h2 {{'line.sign.checkPointScore' | translate}}
       .row(　style='margin-bottom:50px;text-align:center;display: flex;flex-wrap: wrap;')
@@ -118,11 +118,51 @@ html(ng-app="ddApp")
               h3 {{'line.sign.checkpoint'|translate}} {{'common.stotal' | translate}}
             h1 {{checkTotal()}} {{'common.point' | translate}}
       hr
+      div(ng-if="league=='LineNL'")
+        h2 {{'line.sign.rescue' | translate}} (NL)
+        .row(style="display: flex;flex-wrap: wrap;")
+          .col-lg-8
+            .alert.alert-info(style='margin-bottom:50px;text-align:center;', role='alert')
+              .row
+                .col-3
+                  .victim_btn(style='width:100%;height:100%;position: relative; background-color: #E1FFFE;')
+                    img.img-thumbnail(src='/images/silverVictim.png', style="height:90px;")
+                    div(style="margin-top:10px;")
+                      span(style='font-size:1vw;color:#444;') 15 {{'common.point' | translate}} x 
+                        i.fas.fa-child &nbsp;{{victimNL_S}}
+                    span.badge.badge-success(style='margin-top:10px;')
+                      span(style='font-size:25px;') {{15 * victimNL_S}} {{'common.point' | translate}}
+                .col-1
+                  h1(style="text-align: center;line-height: 165px;") +
+                .col-3
+                  .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
+                    img.img-thumbnail(src='/images/greenVictim.png', style="height:90px;")
+                    div(style="margin-top:10px;")
+                      span(style='font-size:1vw;color:#444;') 30 {{'common.point' | translate}} x 
+                        i.fas.fa-child &nbsp;{{victimNL_G}}
+                    span.badge.badge-success(style='margin-top:10px;')
+                      span(style='font-size:25px;') {{30 * victimNL_G}} {{'common.point' | translate}}
+                .col-1
+                  h1(style="text-align: center;line-height: 165px;") -
+                .col-4
+                  .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
+                    img.img-thumbnail(src='/images/misidentNL.png', style="height:90px;")
+                    div(style="margin-top:10px;")
+                      span(style='font-size:1vw;color:#444;') 5 {{'common.point' | translate}} x 
+                        i.fas.fa-history &nbsp;{{misidentNL_C}}
+                    span.badge.badge-warning(style='margin-top:10px;')
+                      span(style='font-size:25px;') {{5 * misidentNL_C}} {{'common.point' | translate}}
+          .col-lg-4
+            .alert.alert-primary(style='margin-bottom:50px;text-align:center;', role='alert')
+              h2 {{'line.sign.rescue' | translate}} {{'common.stotal' | translate}}
+              h1 {{nlPoints()}} {{'common.point' | translate}}
+        hr
       h2 {{'line.sign.exitBonus' | translate}}
       .alert.alert-primary(style='margin-bottom:50px;text-align:center;', role='alert')
         .row
           .col-md-4
-            img.img-thumbnail(src='/images/line_bonus.png', width='186.3px', height='118px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}")
+            img.img-thumbnail(src='/images/line_bonus.png', width='186.3px', height='118px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}", ng-if="league != 'LineNL'")
+            img.img-thumbnail(src='/images/nl_bonus.png', width='186.3px', ng-style="{'background-color': exitBonus?'#2ecc71':'#D91E18'}", ng-if="league == 'LineNL'")
             div(style='position:absolute; top:20px; left:50%; margin-left:-2.5em;')
               i.fas.fa-check.fa-fw.fa-5x(ng-show='exitBonus', style='color:#27ae60; opacity:0.9;')
               i.fas.fa-times.fa-fw.fa-5x(ng-show='!exitBonus ', style='padding-top:4px; color:#e74c3c; opacity:0.9;')
@@ -149,112 +189,113 @@ html(ng-app="ddApp")
               .col-4
                 h1 {{exitBonusPoints()}} {{'common.point' | translate}}
       hr
-      h2 {{'common.stotal' | translate}}
-      .alert.alert-dark(style='margin-bottom:50px;text-align:center;', role='alert')
-        .row
-          .col-md-2
-            p(style='height:30px;') {{'line.sign.item' | translate}}
-            h1
-              | {{raw_score - checkTotal() - exitBonusPoints()}} {{'common.point' | translate}}
-          .col-md-1
-            p(style='height:30px;')
-            h1 +
-          .col-md-2
-            p(style='height:30px;') {{'line.sign.checkPointScore' | translate}}
-            h1 {{checkTotal()}} {{'common.point' | translate}}
-          .col-md-1
-            p(style='height:30px;')
-            h1 +
-          .col-md-2
-            p(style='text-align:center;height:30px;') {{'line.sign.exitBonus' | translate}}
-            h1 {{ exitBonusPoints()}} {{'common.point' | translate}}
-          .col-md-1
-            p(style='height:30px;')
-            h1 =
-          .col-md-3
-            p(style='height:30px;')
-            h1 {{raw_score}} {{'common.point' | translate}}
-      hr
-      h2 {{'line.sign.rescue' | translate}}&nbsp;/&nbsp;{{'line.sign.kit' | translate}}&nbsp;
-        span.badge.badge-danger {{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}
-      .row(style="display: flex;flex-wrap: wrap;")
-        .col-lg-8
-          .alert.alert-info(style='margin-bottom:50px;text-align:center;', role='alert')
-            .row
-              .col-md-6
-                .row
-                  .col-xl-6.col-lg-12.col-md-6.col-sm-6.col-6(style="margin-bottom:10px;")
-                    .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
-                      img.img-thumbnail(src='/images/liveVictim.png', width='60px')
-                      span &nbsp;
-                      img.img-thumbnail(src='/images/deadVictim.png', width='60px')
-                      br
-                      span(style='font-size:1vw;color:#444;')
-                        | {{calc_victim_multipliers("L",true,0)}}
-                        |  - ({{evacuationLevel-1?'x0.05':'x0.025'}} ×
-                        i.fas.fa-step-forward
-                        | {{LoPs[EvacuationAreaLoPIndex]}}
-                        span(style='font-size:10px;') times
-                        |  )
-                      br
-                      span.badge.badge-info(style='margin-top:10px;')
-                        span(style='font-size:25px;') {{calc_victim_multipliers("L",true)}}
-                        |  /victim
-                  .col-xl-6.col-lg-12.col-md-6.col-sm-6.col-6
-                    .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
-                      img.img-thumbnail(src='/images/rescuekit-1.png', width='60px', ng-if="kitLevel==1")
-                      img.img-thumbnail(src='/images/rescuekit-2.png', width='60px', ng-if="kitLevel==2")
-                      br
-                      span(style='font-size:1vw;color:#444;')
-                        | {{calc_victim_multipliers("K",true,0)}}
-                        |  - ({{evacuationLevel-1?'x0.05':'x0.025'}} ×
-                        i.fas.fa-step-forward
-                        | {{LoPs[EvacuationAreaLoPIndex]}}
-                        span(style='font-size:10px;') times
-                        |  )
-                      br
-                      span.badge.badge-info(style='margin-top:10px;')
-                        span(style='font-size:25px;') {{calc_victim_multipliers("K",true)}}
-                        |  /kit
-              .col-md-6
-                table(border='1', style='width:100%; text-align: center; margin-top: 10px;', ng-repeat='j in range(6)', ng-if='victim_list.length > j*4 || j == 0')
-                  tbody
-                    tr
-                      th(style='text-align:center;background-color:#fff;', ng-repeat='i in range(4)') {{j*4 + i+1}}
-                    tr
-                      td(ng-repeat='i in range(4)', ng-style="{'background-color': victim_list[j*4 + i].effective?'#BDF4CB':'#ccc'}")
-                        img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'L'")
-                        img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'D'")
-                        img(src='/images/rescuekit-1.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K' && kitLevel==1")
-                        img(src='/images/rescuekit-2.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K' && kitLevel==2")
-                        span(style='width:30px;', ng-hide='victim_list[j*4 + i]') ---
+      div(ng-if="league!='LineNL'")
+        h2 {{'common.stotal' | translate}}
+        .alert.alert-dark(style='margin-bottom:50px;text-align:center;', role='alert')
+          .row
+            .col-md-2
+              p(style='height:30px;') {{'line.sign.item' | translate}}
+              h1
+                | {{raw_score - checkTotal() - exitBonusPoints()}} {{'common.point' | translate}}
+            .col-md-1
+              p(style='height:30px;')
+              h1 +
+            .col-md-2
+              p(style='height:30px;') {{'line.sign.checkPointScore' | translate}}
+              h1 {{checkTotal()}} {{'common.point' | translate}}
+            .col-md-1
+              p(style='height:30px;')
+              h1 +
+            .col-md-2
+              p(style='text-align:center;height:30px;') {{'line.sign.exitBonus' | translate}}
+              h1 {{ exitBonusPoints()}} {{'common.point' | translate}}
+            .col-md-1
+              p(style='height:30px;')
+              h1 =
+            .col-md-3
+              p(style='height:30px;')
+              h1 {{raw_score}} {{'common.point' | translate}}
+        hr
+        h2 {{'line.sign.rescue' | translate}}&nbsp;/&nbsp;{{'line.sign.kit' | translate}}&nbsp;
+          span.badge.badge-danger {{evacuationLevel-1?'line.judge.high':'line.judge.low' | translate}}
+        .row(style="display: flex;flex-wrap: wrap;")
+          .col-lg-8
+            .alert.alert-info(style='margin-bottom:50px;text-align:center;', role='alert')
+              .row
+                .col-md-6
+                  .row
+                    .col-xl-6.col-lg-12.col-md-6.col-sm-6.col-6(style="margin-bottom:10px;")
+                      .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
+                        img.img-thumbnail(src='/images/liveVictim.png', width='60px')
+                        span &nbsp;
+                        img.img-thumbnail(src='/images/deadVictim.png', width='60px')
                         br
-                        span(ng-show='victim_list[j*4 + i]')
-                          | {{calc_victim_multipliers(victim_list[j*4 + i].type,victim_list[j*4 + i].effective)}}
-        .col-lg-4
-          .alert.alert-primary(style='margin-bottom:50px;text-align:center;', role='alert')
-            h2 {{'common.multipliers' | translate}}
-            h1 x{{multiplier}}
-      hr
-      h2 {{'line.sign.calc' | translate}}
-      .alert.alert-warning(style='margin-bottom:50px;text-align:center;', role='alert')
-        .row
-          .col-md-3
-            p(style="height:10px;") {{'common.stotal' | translate}}
-            h1 {{raw_score}} {{'common.point' | translate}}
-          .col-md-1
-            p(style="height:10px;")
-            h1 ×
-          .col-md-4
-            p(style="height:10px;") {{'common.multipliers' | translate}}
-            h1 {{multiplier}}
-          .col-md-1
-            p(style="height:10px;")
-            h1 =
-          .col-md-3
-            p(style="height:10px;") {{'common.score' | translate}}
-            h1 {{score}} {{'common.point' | translate}}
-      hr
+                        span(style='font-size:1vw;color:#444;')
+                          | {{calc_victim_multipliers("L",true,0)}}
+                          |  - ({{evacuationLevel-1?'x0.05':'x0.025'}} ×
+                          i.fas.fa-step-forward
+                          | {{LoPs[EvacuationAreaLoPIndex]}}
+                          span(style='font-size:10px;') times
+                          |  )
+                        br
+                        span.badge.badge-info(style='margin-top:10px;')
+                          span(style='font-size:25px;') {{calc_victim_multipliers("L",true)}}
+                          |  /victim
+                    .col-xl-6.col-lg-12.col-md-6.col-sm-6.col-6
+                      .victim_btn(style='width:100%;position: relative; background-color: #E1FFFE;')
+                        img.img-thumbnail(src='/images/rescuekit-1.png', width='60px', ng-if="kitLevel==1")
+                        img.img-thumbnail(src='/images/rescuekit-2.png', width='60px', ng-if="kitLevel==2")
+                        br
+                        span(style='font-size:1vw;color:#444;')
+                          | {{calc_victim_multipliers("K",true,0)}}
+                          |  - ({{evacuationLevel-1?'x0.05':'x0.025'}} ×
+                          i.fas.fa-step-forward
+                          | {{LoPs[EvacuationAreaLoPIndex]}}
+                          span(style='font-size:10px;') times
+                          |  )
+                        br
+                        span.badge.badge-info(style='margin-top:10px;')
+                          span(style='font-size:25px;') {{calc_victim_multipliers("K",true)}}
+                          |  /kit
+                .col-md-6
+                  table(border='1', style='width:100%; text-align: center; margin-top: 10px;', ng-repeat='j in range(6)', ng-if='victim_list.length > j*4 || j == 0')
+                    tbody
+                      tr
+                        th(style='text-align:center;background-color:#fff;', ng-repeat='i in range(4)') {{j*4 + i+1}}
+                      tr
+                        td(ng-repeat='i in range(4)', ng-style="{'background-color': victim_list[j*4 + i].effective?'#BDF4CB':'#ccc'}")
+                          img(src='/images/liveVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'L'")
+                          img(src='/images/deadVictim.png', width='30px', ng-if="victim_list[j*4 + i].type == 'D'")
+                          img(src='/images/rescuekit-1.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K' && kitLevel==1")
+                          img(src='/images/rescuekit-2.png', width='30px', ng-if="victim_list[j*4 + i].type == 'K' && kitLevel==2")
+                          span(style='width:30px;', ng-hide='victim_list[j*4 + i]') ---
+                          br
+                          span(ng-show='victim_list[j*4 + i]')
+                            | {{calc_victim_multipliers(victim_list[j*4 + i].type,victim_list[j*4 + i].effective)}}
+          .col-lg-4
+            .alert.alert-primary(style='margin-bottom:50px;text-align:center;', role='alert')
+              h2 {{'common.multipliers' | translate}}
+              h1 x{{multiplier}}
+        hr
+        h2 {{'line.sign.calc' | translate}}
+        .alert.alert-warning(style='margin-bottom:50px;text-align:center;', role='alert')
+          .row
+            .col-md-3
+              p(style="height:10px;") {{'common.stotal' | translate}}
+              h1 {{raw_score}} {{'common.point' | translate}}
+            .col-md-1
+              p(style="height:10px;")
+              h1 ×
+            .col-md-4
+              p(style="height:10px;") {{'common.multipliers' | translate}}
+              h1 {{multiplier}}
+            .col-md-1
+              p(style="height:10px;")
+              h1 =
+            .col-md-3
+              p(style="height:10px;") {{'common.score' | translate}}
+              h1 {{score}} {{'common.point' | translate}}
+        hr
       .alert.alert-success(role='alert')
         .row
           .col-md-6

@@ -92,6 +92,12 @@ module.exports.calculateLineScore = function (run) {
       multiplier /= error;
     }
 
+    if(run.nl){
+      score += 15 * run.nl.silverTape;
+      score += 30 * run.nl.greenTape;
+      score -= 5 * run.nl.misidentification;
+    }
+
 
     if (run.exitBonus) {
       score += Math.max(60 - (5*total_lops),0);

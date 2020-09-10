@@ -79,7 +79,7 @@ function getLineRuns(req, res) {
   if (req.query['minimum']) {
     query.select("competition round team field status started startTime sign")
   } else {
-    query.select("competition round team field map score raw_score multiplier time status started LoPs comment startTime sign rescueOrder group exitBonus evacuationLevel kitLevel")
+    query.select("competition round team field map score raw_score multiplier time status started LoPs comment startTime sign rescueOrder nl group exitBonus evacuationLevel kitLevel")
   }
 
 
@@ -202,7 +202,7 @@ privateRouter.get('/find/team_status/:competitionid/:teamid/:status', function (
     competition: id,
     team: teamId,
     status: status
-  }, "competition round team field map score time started LoPs startTime rescueOrder")
+  }, "competition round team field map score time started LoPs startTime rescueOrder nl")
   query.populate([
     {
       path: "competition",
@@ -429,6 +429,12 @@ privateRouter.put('/:runid', function (req, res, next) {
 
         if (run.rescueOrder != null) {
           dbRun.rescueOrder = run.rescueOrder;
+        }
+
+        if (run.nl != null) {
+          if (run.nl.silverTape != null) dbRun.nl.silverTape = run.nl.silverTape
+          if (run.nl.greenTape != null) dbRun.nl.greenTape = run.nl.greenTape
+          if (run.nl.misidentification != null) dbRun.nl.misidentification = run.nl.misidentification
         }
           
         if (run.status){

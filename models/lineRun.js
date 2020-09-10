@@ -83,6 +83,11 @@ const lineRunSchema = new Schema({
   comment           : {type: String, default: ""},
   startTime         : {type: Number, default: 0},
   test: {type: Boolean, default: false},
+  nl  : {
+    silverTape: {type: Number, min:0, default:0},
+    greenTape: {type: Number, min:0, default:0},
+    misidentification: {type: Number, min:0, default:0},
+  },
   manual  : {
     gap: {type: Number, default: 0},
     obstacle: {type: Number, default: 0},
