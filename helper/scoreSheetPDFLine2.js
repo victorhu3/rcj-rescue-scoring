@@ -1,6 +1,6 @@
 "use strict"
 const logger = require('../config/logger').mainLogger;
-const rule2020 = require('./scoreSheetPDFLine2-2020');
+const rule2021 = require('./scoreSheetPDFLine2-2021');
 
 module.exports.generateScoreSheet = function(res,runs){
   let rule;
@@ -8,8 +8,8 @@ module.exports.generateScoreSheet = function(res,runs){
     rule = runs[0].competition.rule;
   }
   switch(rule){
-    case '2020':
+    case '2021':
     default:
-      return rule2020.generateScoreSheet(res,runs);
+      return rule2021.generateScoreSheet(res,runs);
   }
 };

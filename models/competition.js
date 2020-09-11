@@ -20,7 +20,7 @@ for(let i in LEAGUES_JSON){
 logger.debug("Available line leagues : " + LINE_LEAGUES);
 logger.debug("Available maze leagues : " + MAZE_LEAGUES);
 
-const SUPPORT_RULES = ["2020"];
+const SUPPORT_RULES = ["2021"];
 
 const LEAGUES = [].concat(LINE_LEAGUES, MAZE_LEAGUES);
 
