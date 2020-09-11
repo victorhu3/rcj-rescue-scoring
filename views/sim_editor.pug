@@ -23,22 +23,16 @@ append css
 
 block location
     a.breadcrumb-item(ng-click="go('/home')") Home
-    if !pubService
-        a.breadcrumb-item(ng-click="go('/admin')") Admin
-        a.breadcrumb-item(ng-click="go('/admin/'+competitionId)") {{competition}}
-        a.breadcrumb-item(ng-click="go('/admin/'+competitionId + '/maze/maps')") Maze maps
-        span.breadcrumb-item.active Maze editor
-    else
-        a.breadcrumb-item(ng-click="go('/service')") Public services
-        span.breadcrumb-item.active Maze editor
+    a.breadcrumb-item(ng-click="go('/service')") Public services
+    span.breadcrumb-item.active Simulation world editor
 
 block content
     h1 {{"admin.simMapEditor.title" | translate}} 2020
-    p {{"admin.mazeMapEditor.desc" | translate}}
+    p {{"admin.simMapEditor.desc" | translate}}
     div(style='margin-top:50px;')
         .row
             .col-md-4
-                button.btn.btn-dark(type='button', ng-click='export()') {{"admin.mazeMapEditor.export" | translate}}
+                button.btn.btn-dark(type='button', ng-click='export()') {{"admin.simMapEditor.export" | translate}}
             .col-md-4
                 input#select(type='file', name='select')
         br
@@ -46,21 +40,21 @@ block content
             .col-md-12
                 .input-group.mb-3
                     .input-group-prepend
-                        span.input-group-text {{"admin.mazeMapEditor.name" | translate}}
+                        span.input-group-text {{"admin.simMapEditor.name" | translate}}
                     input.form-control(type='text', ng-model='name')
                     .input-group-append
                         button.btn.btn-warning(type='button', ng-click='exportW()') {{"admin.simMapEditor.exportW" | translate}}
                 hr
                 .input-group.mb-3
                     //.input-group-prepend
-                        span.input-group-text {{"admin.mazeMapEditor.height" | translate}}
+                        span.input-group-text {{"admin.simMapEditor.height" | translate}}
                     //input.form-control(type='number', ng-model='height', ng-change='sliderOptions.ceil = height - 1', min='1')
                     //.input-group-append
                     .input-group-prepend
-                        span.input-group-text {{"admin.mazeMapEditor.width" | translate}}
+                        span.input-group-text {{"admin.simMapEditor.width" | translate}}
                     input.form-control(type='number', ng-model='width', min='1')
                     .input-group-append
-                        span.input-group-text {{"admin.mazeMapEditor.length" | translate}}
+                        span.input-group-text {{"admin.simMapEditor.length" | translate}}
                     input.form-control(type='number', ng-model='length', min='1')
         .row
             .col-md-12
