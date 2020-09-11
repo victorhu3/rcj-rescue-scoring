@@ -12,16 +12,19 @@ router.get('/', function (req, res) {
   res.render('service_home', {user: req.user})
 })
 
-router.get('/editor/maze/2020', async function (req, res, next) {
-  res.render('maze_editor', {user: req.user,rule: 2020, pubService:true})
+router.get('/editor/maze/:rule', async function (req, res, next) {
+  const rule = req.params.rule;
+  res.render('maze_editor', {user: req.user,rule: rule, pubService:true})
 })
 
-router.get('/editor/simulation/2020', async function (req, res, next) {
-  res.render('sim_editor', {user: req.user,rule: 2020, pubService:true})
+router.get('/editor/simulation/:rule', async function (req, res, next) {
+  const rule = req.params.rule;
+  res.render('sim_editor', {user: req.user,rule: rule, pubService:true})
 })
 
-router.get('/editor/line/2020', function (req, res, next) {
-  res.render('line_editor', {user: req.user, pubService:true})
+router.get('/editor/line/2021', function (req, res, next) {
+  const rule = req.params.rule;
+  res.render('line_editor', {user: req.user,rule: rule, pubService:true})
 })
 
 
