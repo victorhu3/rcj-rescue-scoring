@@ -122,8 +122,13 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             if($scope.cells[x+','+y+','+z].reachable) return;
             $scope.cells[x+','+y+','+z].reachable = true;
         }else{
-            $scope.cells[x+','+y+','+z] = {};
-            $scope.cells[x+','+y+','+z].reachable = true;
+            $scope.cells[x+','+y+','+z] = {
+                isTile: true,
+                tile: {
+                    changeFloorTo: z
+                },
+                reachable: true
+            };
         }
 
         //Upper
@@ -1233,6 +1238,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 // It is not the same as the $uibModal service used above.
 
 app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, x, y, z) {
+    console.log($scope.cell)
     $scope.cell = $scope.$parent.cells[x + ',' + y + ',' + z];
     $scope.isStart = $scope.$parent.startTile.x == x &&
         $scope.$parent.startTile.y == y &&
