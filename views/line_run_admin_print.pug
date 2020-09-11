@@ -130,7 +130,7 @@ html(ng-app="RunAdmin")
               td(ng-bind='run.score' ng-if="showScore")
               td(ng-bind="run.time.minutes*60*1000+run.time.seconds*1000 | date:'mm:ss'"  ng-if="showTime")
               td(ng-bind='total(run.LoPs)' ng-if="showLoPs")
-              td(ng-if="showVictim")
+              td(ng-if="showVictim && run.team.league != 'LineNL'")
                 span.badge.badge-warning(ng-show='run.evacuationLevel == 1') Level 1
                 span.badge.badge-danger(ng-show='run.evacuationLevel == 2') Level 2
                 span(ng-repeat='victim in run.rescueOrder', style='margin-left:5px;')
@@ -138,6 +138,16 @@ html(ng-app="RunAdmin")
                   img(src='/images/deadVictim.png', width='20px', ng-if="victim.type == 'D'")
                   img(src='/images/rescuekit-1.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==1")
                   img(src='/images/rescuekit-2.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==2")
+              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}" ng-if="showVictim && run.team.league=='LineNL'")
+                .img-thumbnail(style="padding:0;display: inline-block;margin-right:5px;")
+                  img(src='/images/silverVictim.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.nl.silverTape}}
+                .img-thumbnail(style="padding:0;display: inline-block;margin-right:5px;")
+                  img(src='/images/greenVictim.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.nl.greenTape}}
+                .img-thumbnail(style="padding:0;display: inline-block;")
+                  img(src='/images/misidentNL.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.nl.misidentification}}        
               td(ng-if="showMultiplier")
                 span ×{{run.multiplier}}
               td(ng-if="showExit")
