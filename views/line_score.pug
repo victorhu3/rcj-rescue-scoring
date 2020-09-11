@@ -54,7 +54,17 @@ block content
               td.text-center(ng-bind='run.team.name' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
               td.text-center(ng-bind='run.score' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
               td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}") {{("00"+run.time.minutes).slice(-2)}}:{{("00"+run.time.seconds).slice(-2)}}
-              td.text-center(ng-bind='run.rescuedVictims' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
+              td.text-center(ng-bind='run.rescuedVictims' ng-style="run.isplaying && {'background-color': '#ffffa8'}" ng-if="run.team.league!='LineNL'")
+              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}" ng-if="run.team.league=='LineNL'")
+                .img-thumbnail(style="padding:0;display: inline-block;margin-right:5px;")
+                  img(src='/images/silverVictim.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.rescuedNLS}}
+                .img-thumbnail(style="padding:0;display: inline-block;margin-right:5px;")
+                  img(src='/images/greenVictim.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.rescuedNLG}}
+                .img-thumbnail(style="padding:0;display: inline-block;")
+                  img(src='/images/misidentNL.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.rescueNLMis}}
               td.text-center(ng-bind='run.LoPsNum' ng-style="run.isplaying && {'background-color': '#ffffa8'}")
     .row
       hr
@@ -74,7 +84,6 @@ block content
               th.text-center {{'common.score' | translate}}
               th.text-center {{'common.time' | translate}}
               th.text-center {{'common.rescued' | translate}}
-              th.text-center {{'common.multipliers' | translate}}
               th.text-center {{'common.lops' | translate}}
           tbody
             tr(ng-repeat='run in Runs | orderBy:sortOrder')
@@ -83,7 +92,7 @@ block content
               td.text-center(ng-bind='run.field.name'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
               td.text-center(ng-bind='run.score'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
               td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}") {{("00"+run.time.minutes).slice(-2)}}:{{("00"+run.time.seconds).slice(-2)}}
-              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}")
+              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}"  ng-if="run.team.league!='LineNL'")
                 span.badge.badge-warning(ng-show='run.evacuationLevel == 1') Level 1
                 span.badge.badge-danger(ng-show='run.evacuationLevel == 2') Level 2
                 span(ng-repeat='victim in run.rescueOrder', style='margin-left:5px;')
@@ -91,8 +100,17 @@ block content
                   img(src='/images/deadVictim.png', width='20px', ng-if="victim.type == 'D'")
                   img(src='/images/rescuekit-1.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==1")
                   img(src='/images/rescuekit-2.png', width='20px', ng-if="victim.type == 'K' && run.kitLevel==2")
-              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}")
-                span ×{{run.multiplier}}
+                span &nbsp;×{{run.multiplier}}
+              td.text-center(ng-style="run.isplaying && {'background-color': '#ffffa8'}" ng-if="run.team.league=='LineNL'")
+                .img-thumbnail(style="padding:0;display: inline-block;margin-right:5px;")
+                  img(src='/images/silverVictim.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.nl.silverTape}}
+                .img-thumbnail(style="padding:0;display: inline-block;margin-right:5px;")
+                  img(src='/images/greenVictim.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.nl.greenTape}}
+                .img-thumbnail(style="padding:0;display: inline-block;")
+                  img(src='/images/misidentNL.png', style="height:20px;")
+                  span(style="font-size:20px;") {{run.nl.misidentification}}                
               td.text-center(ng-bind='run.LoPsNum'  ng-style="run.isplaying && {'background-color': '#ffffa8'}")
     br
     br

@@ -7,7 +7,7 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
 
     $scope.showTeam = true;
 
-    $scope.sortOrder = ['-score','time.minutes*60+time.seconds','-rescueOrder.length','LoPsNum'];
+    $scope.sortOrder = ['-score','time.minutes*60+time.seconds','-rescueOrder.length', 'nl.silverTape+nl.greenTape','LoPsNum'];
     $scope.go = function (path) {
         window.location = path
     }
@@ -127,7 +127,8 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
                                     name: run.team.name,
                                     code: run.teamCode,
                                     name_only: run.teamName,
-                                    teamCode: run.team.teamCode
+                                    teamCode: run.team.teamCode,
+                                    league: run.team.league
                                 },
                                 runs: [run]
                             }
@@ -138,6 +139,9 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
                         TeamRuns[run.team._id].sumScore = sum.score
                         TeamRuns[run.team._id].sumTime = sum.time
                         TeamRuns[run.team._id].sumRescue = sum.rescued
+                        TeamRuns[run.team._id].sumRescueNLS = sum.rescuedNLS
+                        TeamRuns[run.team._id].sumRescueNLG = sum.rescuedNLG
+                        TeamRuns[run.team._id].sumRescueNLMis = sum.rescueNLMis
                         TeamRuns[run.team._id].sumLoPs = sum.lops
                         TeamRuns[run.team._id].retired = sum.retired
                         if (run.status == 2 || run.status == 3) {
@@ -159,6 +163,9 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
                     score: teamRun.sumScore,
                     time: teamRun.sumTime,
                     rescuedVictims: teamRun.sumRescue,
+                    rescuedNLS: teamRun.sumRescueNLS,
+                    rescuedNLG: teamRun.sumRescueNLG,
+                    rescueNLMis: teamRun.sumRescueNLMis,
                     LoPsNum: teamRun.sumLoPs,
                     retired: teamRun.retired,
                     isplaying: teamRun.isplaying,
@@ -166,6 +173,7 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
                 })
             }
             $scope.RunsTop.sort(sortRuns)
+
 
             if (callback != null && callback.constructor == Function) {
                 callback()
@@ -218,7 +226,10 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
                 score: runs[0].score,
                 time: runs[0].time,
                 rescued: (runs[0].rescueOrder.length - areKit(runs[0].rescueOrder)),
-                lops: runs[0].LoPsNum
+                lops: runs[0].LoPsNum,
+                rescuedNLS: runs[0].nl.silverTape,
+                rescuedNLG: runs[0].nl.greenTape,
+                rescueNLMis: runs[0].nl.misidentification
             }
         }
 
@@ -231,6 +242,9 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
                 seconds: 0
             },
             rescued: 0,
+            rescuedNLS: 0,
+            rescuedNLG: 0,
+            rescueNLMis: 0,
             lops: 0
         }
 
@@ -239,6 +253,9 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
             sum.time.minutes += runs[i].time.minutes
             sum.time.seconds += runs[i].time.seconds
             sum.rescued += (runs[i].rescueOrder.length - areKit(runs[i].rescueOrder));
+            sum.rescuedNLS += runs[i].nl.silverTape;
+            sum.rescuedNLG += runs[i].nl.greenTape;
+            sum.rescueNLMis += runs[i].nl.misidentification;
             sum.lops += runs[i].LoPsNum
         }
         sum.time.minutes += Math.floor(sum.time.seconds/60);
@@ -247,41 +264,6 @@ app.controller("LineScoreController", function ($scope, $http, $sce) {
         return sum
     }
 
-
-    function BestScore(runs) {
-        if (runs.length == 1) {
-            return runs[0]
-        }
-
-        runs.sort(sortRuns)
-        if (runs[0].score > runs[1].score) {
-            return runs[0]
-        } else if (runs[0].score < runs[1].score) {
-            return runs[1]
-        } else {
-            if (runs[0].time.minutes > runs[1].time.minutes) {
-                return runs[1]
-            } else if (runs[0].time.minutes == runs[1].time.minutes) {
-                if (runs[0].time.seconds > runs[1].time.seconds) {
-                    return runs[1]
-                } else {
-                    return runs[0]
-                }
-            } else {
-                return runs[0]
-            }
-        }
-
-
-        return {
-            score: runs[0].score + runs[1].score,
-            time: {
-                minutes: runs[0].time.minutes + runs[1].time.minutes +
-                    (runs[0].time.seconds + runs[1].time.seconds >= 60 ? 1 : 0),
-                seconds: (runs[0].time.seconds + runs[1].time.seconds) % 60
-            }
-        }
-    }
 
     function sortRuns(a, b) {
         //console.log(a);

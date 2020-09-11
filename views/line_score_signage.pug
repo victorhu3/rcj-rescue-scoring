@@ -48,7 +48,7 @@ block content
                       li.list-group-item(style="border:3px solid #636e72;padding:1vh;border-top:0px;color:#0abde3")
                         i.fas.fa-stopwatch.fa-fw &nbsp;&nbsp;&nbsp;{{("00"+run.time.minutes).slice(-2)}}:{{("00"+run.time.seconds).slice(-2)}}
                       li.list-group-item(style="border:3px solid #636e72;padding:1vh;border-top:0px;color:#ee5253")
-                        i.fas.fa-ambulance.fa-fw &nbsp;&nbsp;{{run.rescuedVictims}}&nbsp;体
+                        i.fas.fa-ambulance.fa-fw &nbsp;&nbsp;{{run.rescuedNLS + run.rescuedNLG}}&nbsp;体
                       li.list-group-item(style="border:3px solid #636e72;padding:1vh;border-top:0px;color:#222f3e")
                         i.fas.fa-step-forward.fa-fw &nbsp;&nbsp;&nbsp;{{run.LoPsNum}}&nbsp;回
             hr(color="#636e72" style="margin-top:1vh;margin-bottom:1vh;")
@@ -68,7 +68,7 @@ block content
                             .col-6
                                 ul.list-group(style="height:100%;font-size:4vh;")
                                     li.list-group-item(style="border:3px solid #636e72;padding:1vh;color:#ee5253")
-                                        i.fas.fa-ambulance.fa-fw &nbsp;&nbsp;{{RunsTop[nowR+(2*i)-1].rescuedVictims}}&nbsp;体
+                                        i.fas.fa-ambulance.fa-fw &nbsp;&nbsp;{{RunsTop[nowR+(2*i)-1].rescuedNLS + RunsTop[nowR+(2*i)-1].rescuedNLG}}&nbsp;体
                                     li.list-group-item(style="border:3px solid #636e72;padding:1vh;border-top:0px;color:#222f3e")
                                         i.fas.fa-step-forward.fa-fw &nbsp;&nbsp;&nbsp;{{RunsTop[nowR+(2*i)-1].LoPsNum}}&nbsp;回
                     .col-6(ng-show="RunsTop[nowR+(2*i)]")
@@ -85,7 +85,7 @@ block content
                             .col-6
                                 ul.list-group(style="height:100%;font-size:4vh;")
                                     li.list-group-item(style="border:3px solid #636e72;padding:1vh;color:#ee5253")
-                                        i.fas.fa-ambulance.fa-fw &nbsp;&nbsp;{{RunsTop[nowR+(2*i)].rescuedVictims}}&nbsp;体
+                                        i.fas.fa-ambulance.fa-fw &nbsp;&nbsp;{{RunsTop[nowR+(2*i)].rescuedNLS + RunsTop[nowR+(2*i)].rescuedNLG}}&nbsp;体
                                     li.list-group-item(style="border:3px solid #636e72;padding:1vh;border-top:0px;color:#222f3e")
                                         i.fas.fa-step-forward.fa-fw &nbsp;&nbsp;&nbsp;{{RunsTop[nowR+(2*i)].LoPsNum}}&nbsp;回
                     
