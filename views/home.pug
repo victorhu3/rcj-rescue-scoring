@@ -60,9 +60,11 @@ block content
       br
       if typeof(user) != "undefined"
         if user.admin
-            button(ng-click="go('/admin')" class='btn btn-outline-success btn-lg btn-block' ng-cloak) {{'home.management' | translate}}
+            button(ng-click="go('/admin')" class='btn btn-outline-success btn-lg btn-block' ng-cloak)
+              i.fas.fa-cog &nbsp;  {{'home.management' | translate}}
         else
-            button(class='btn btn-outline-success btn-lg btn-block' disabled ng-cloak) {{'home.management' | translate}}
+            button(class='btn btn-outline-success btn-lg btn-block' disabled ng-cloak)
+              i.fas.fa-cog &nbsp;  {{'home.management' | translate}}
             p(translate="home.access_level", translate-values='{account: "'+ user.username + '"}')
       br
       br
