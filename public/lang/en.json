@@ -458,7 +458,7 @@
             "tIn": "Tiles in {{setName}}",
             "export": "Export this tile set",
             "import": "Import from file",
-            "addAll": "All all types at once"
+            "addAll": "Add all types at once"
         },
         "users":{
             "title": "User management",
