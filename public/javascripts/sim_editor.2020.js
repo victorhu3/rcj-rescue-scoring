@@ -550,6 +550,15 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         link.click();
     }
 
+    function checkSRCorner(walls, xPos, yPos, wallDir){
+        let sr = null;
+        if(xPos > -1 && xPos < $scope.width && yPos > -1 && yPos < $scope.length){
+            sr = walls[yPos][xPos];
+            return sr[1][wallDir] && sr[1][(wallDir+1)%4];
+        }
+        return false;
+    }
+
     function checkForCorners(pos, walls){
         //Surrounding tile directions
         let around = [[0, -1], [1, 0], [0, 1], [-1, 0]];
@@ -560,7 +569,13 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 
         let thisWall = walls[pos[1]][pos[0]];
 
-        if(!thisWall[0]) return corners;
+        if(!thisWall[0]) {
+            corners[0] = thisWall[1][0] || thisWall[1][1] || checkSRCorner(walls, pos[0] + 1, pos[1] - 1, 2);
+            corners[1] = thisWall[1][1] || thisWall[1][2] || checkSRCorner(walls, pos[0] + 1, pos[1] + 1, 3);
+            corners[2] = thisWall[1][2] || thisWall[1][3] || checkSRCorner(walls, pos[0] - 1, pos[1] + 1, 0);
+            corners[3] = thisWall[1][3] || thisWall[1][0] || checkSRCorner(walls, pos[0] - 1, pos[1] - 1, 1);
+            return corners;
+        }
 
         //For each surrounding card
         for(let a of around){
@@ -606,7 +621,8 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             //If it is a valid positon
             if(xPos > -1 && xPos < $scope.width && yPos > -1 && yPos < $scope.length){
                 //Add the tiles present data
-                otherTiles[d] = walls[yPos][xPos][0];
+                if(!walls[yPos][xPos][0]) otherTiles[d] = walls[yPos][xPos][1][(d+2)%4];
+                else otherTiles[d] = true;
             }else{
                 //No tile present
                 otherTiles[d] = false;
