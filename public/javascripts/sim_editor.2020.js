@@ -26,7 +26,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
     $scope.dice = [];
     $scope.saveasname ="";
     $scope.finished = true;
-    
+
 
     $scope.range = function (n) {
         arr = [];
@@ -35,11 +35,11 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         }
         return arr;
     }
-    
+
     $scope.changeFloor = function (z){
         $scope.z = z;
     }
-    
+
     $scope.go = function (path) {
         window.location = path
     }
@@ -47,9 +47,9 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
     $scope.$watchCollection('startTile', function (newValue, oldValue) {
         $scope.recalculateLinear();
     });
-    
+
     $scope.$watchCollection('cells', function (newValue, oldValue) {
-        
+
         $scope.recalculateLinear();
     });
 
@@ -70,7 +70,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             $scope.cells[index].virtualWall = false;
             $scope.cells[index].reachable= false;
         }
-        
+
         // Set to virtual wall around the black tile
         /*for (var index in $scope.cells) {
             if($scope.cells[index].tile){
@@ -97,7 +97,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         //console.log($scope.virtualWall)
 
         // Start it will all 4 walls around the starting tile
-        
+
         recurs($scope.startTile.x - 1, $scope.startTile.y, $scope.startTile.z);
         recurs($scope.startTile.x + 1, $scope.startTile.y, $scope.startTile.z);
         recurs($scope.startTile.x, $scope.startTile.y - 1, $scope.startTile.z);
@@ -143,7 +143,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         //Left
         if($scope.cells[(x-1)+','+y+','+z]==null || !$scope.cells[(x-1)+','+y+','+z].isWall) reachable(x-2,y,z)
     }
-    
+
 
     function isOdd(num) {
         return num % 2;
@@ -155,14 +155,14 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         }
 
         var cell = $scope.cells[x + ',' + y + ',' + z];
-        
-        
 
-        
+
+
+
         // If this is a wall that doesn't exists
         if (!cell)
             return;
-        // Outside of the current maze size. 
+        // Outside of the current maze size.
         if (x > $scope.width * 2 + 1 || x < 0 ||
             y > $scope.length * 2 + 1 || y < 0 ||
             z > $scope.height || z < 0)
@@ -208,7 +208,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 recurs(x + 1, y - 1, z);
                 recurs(x + 1, y + 1, z);
             }
-            
+
         }
     }
 
@@ -519,8 +519,8 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             });
         }
     }
-    
-    
+
+
     $scope.export = function(){
         console.log($scope.cells)
         var map = {
@@ -589,7 +589,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             }else{
                 //Otherwise add a null value
                 surroundingTiles.push([false, [false, false, false, false], false, false, false]);
-            }   
+            }
         }
 
         //If top right is needed
@@ -621,13 +621,13 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             //If it is a valid positon
             if(xPos > -1 && xPos < $scope.width && yPos > -1 && yPos < $scope.length){
                 //Add the tiles present data
-                if(!walls[yPos][xPos][0]) otherTiles[d] = walls[yPos][xPos][1][(d+2)%4];
+                if(!walls[yPos][xPos][0]) otherTiles[d] = false;
                 else otherTiles[d] = true;
             }else{
                 //No tile present
                 otherTiles[d] = false;
             }
-                
+
             //Add one to direction counter
             d = d + 1
         }
@@ -687,7 +687,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             //Get the left and right tile positions to check
             let targetLeft = [pos[0] + notchAround[dire][0][0], pos[1] + notchAround[dire][0][1]];
             let targetRight = [pos[0] + notchAround[dire][1][0], pos[1] + notchAround[dire][1][1]];
-            
+
             //If the left tile is a valid target position
             if(targetLeft[0] < $scope.width && targetLeft[0] > -1 && targetLeft[1] < $scope.length && targetLeft[1] > -1){
                 //If there is no tile there
@@ -770,9 +770,9 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                                 humanType = 2;
                                 humanPlace = 0;
                                 break;
-                                
+
                         }
-                        
+
                     }else if(thisCell.tile.victims.right){
                         switch(thisCell.tile.victims.right){
                             case 'None':
@@ -793,7 +793,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                                 humanType = 2;
                                 humanPlace = 1;
                                 break;
-                                
+
                         }
                     }else if(thisCell.tile.victims.bottom){
                         switch(thisCell.tile.victims.bottom){
@@ -815,7 +815,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                                 humanType = 2;
                                 humanPlace = 2;
                                 break;
-                                
+
                         }
                     }else if(thisCell.tile.victims.left){
                         switch(thisCell.tile.victims.left){
@@ -837,7 +837,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                                 humanType = 2;
                                 humanPlace = 3;
                                 break;
-                                
+
                         }
                     }
                 }
@@ -845,7 +845,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 if(thisCell.tile){
                     walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle)]
                 }
-                
+
             }
         }
 
@@ -922,7 +922,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     translation ${xmax} ${y} ${zmax}
               }
             ]
-          }     
+          }
         `;
 
         const thermalHumanPart = ({x, z, rot, id, score}) => `
@@ -931,7 +931,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             rotation 0 1 0 ${rot}
             name "HeatVictim${id}"
             scoreWorth ${score}
-        }        
+        }
         `;
 
         const visualHumanPart = ({x, z, rot, id, type, score}) => `
@@ -941,7 +941,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             name "Victim${id}"
             type "${type}"
             scoreWorth ${score}
-        }        
+        }
         `;
 
         const obstaclePart = ({id, xSize, ySize, zSize, x, y, z, rot}) => `
@@ -965,7 +965,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 	    recognitionColors [
 			0.45 0.45 0.45
 		]
-        }  
+        }
         `;
 
         const groupPart = ({data, name}) => `
@@ -987,7 +987,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             controller "MainSupervisor"
             window "MainSupervisorWindow"
             showWindow TRUE
-          }          
+          }
         `;
 
         //Upper left corner to start placing tiles from
@@ -1116,7 +1116,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     console.log(r)
                     let xBounds = [-0.1 + r, 0.1 - r]
                     let zBounds = [-0.1 + r, 0.1 - r]
-                    
+
                     //Get the centre position of the tile
                     let tPos = [(x * 0.3 * tileScale[0]) + startX , (z * 0.3 * tileScale[2]) + startZ]
 
@@ -1125,7 +1125,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     //Offset with tile position
                     pos[0] = pos[0] + tPos[0]
                     pos[1] = pos[1] + tPos[1]
-                    
+
                     //Random rotation for obstacle
                     let rot = orgRound(getRandomArbitrary(0.00, 6.28), 0.001)
 
@@ -1149,7 +1149,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         return fileData
 
     }
-    
+
      // File APIに対応しているか確認
         if (window.File) {
             var select = document.getElementById('select');
@@ -1177,9 +1177,9 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     $scope.length = data.length;
                     $scope.name = data.name;
                     $scope.finished = data.finished;
-                    
+
                     if(data.startTile) $scope.cells[data.startTile.x + ',' + data.startTile.y + ',' + data.startTile.z].tile.checkpoint = false;
-                    
+
                     $scope.$apply();
                 }
 
@@ -1194,7 +1194,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         var cell = $scope.cells[x + ',' + y + ',' + z];
         console.log(cell)
 
-        // If wall 
+        // If wall
         if (isWall) {
             if (!cell) {
                 $scope.cells[x + ',' + y + ',' + z] = {
@@ -1270,7 +1270,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, x, y, z
             $scope.$parent.startTile.z = z;
         }
     }
-    
+
     $scope.blackChanged = function () {
         $scope.$parent.recalculateLinear();
     }
