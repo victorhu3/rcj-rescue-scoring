@@ -24,6 +24,8 @@ const SUPPORT_RULES = ["2021"];
 
 const LEAGUES = [].concat(LINE_LEAGUES, MAZE_LEAGUES);
 
+const QUESTION_TYPES = ['input', 'select', 'picture', 'movie', 'pdf'];
+
 module.exports.LINE_LEAGUES = LINE_LEAGUES;
 module.exports.MAZE_LEAGUES = MAZE_LEAGUES;
 module.exports.LEAGUES = LEAGUES;
@@ -42,8 +44,8 @@ module.exports.LEAGUES_JSON = LEAGUES_JSON;
 
 
 const competitionSchema = new Schema({
-  name: {type: String, required: true, unique: true},
-  rule: {type: String, enum: SUPPORT_RULES, required: true},
+  name: {type: String, unique: true},
+  rule: {type: String, enum: SUPPORT_RULES},
   logo: {type: String, default: ""},
   bkColor: {type: String, default: "#fff"},
   color: {type: String, default: "#000"},
@@ -52,7 +54,30 @@ const competitionSchema = new Schema({
   ranking: [{
     'league': {type: String, enum: LEAGUES},
     'num': {type: Number, default: 20}
-  }]
+  }],
+  documents: {
+    enable: {type: Boolean,  default: false},
+    deadline: {type: Number, default: 0},
+    league: {
+      'name': {type: String, enum: LEAGUES},
+      'questions': [{
+        'question': [{
+          'language' : {type: String, default: ''},
+          'content': {type: String, default: ''}
+        }],
+        'example': [{
+          'language' : {type: String, default: ''},
+          'content': {type: String, default: ''}
+        }],
+        'type': {type: String, enum: QUESTION_TYPES},
+        'required': {type: Boolean, default: true},
+        'options': [{
+          'value': {type: String, default: ''},
+          'content': {type: String, default: ''}
+        }]
+      }]
+    }
+  }
 })
 
 const signageSchema = new Schema({

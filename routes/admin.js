@@ -5,6 +5,8 @@ const router = express.Router()
 const auth = require('../helper/authLevels')
 const ACCESSLEVELS = require('../models/user').ACCESSLEVELS
 const ruleDetector = require('../helper/ruleDetector')
+const competitiondb = require('../models/competition')
+const LEAGUES = competitiondb.LEAGUES
 
 
 /* GET home page. */
@@ -89,6 +91,36 @@ router.get('/:competitionid/backup', function (req, res, next) {
   }
 
   if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('admin_competition_backup', {competition_id: id, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
+
+
+router.get('/:competitionid/documents', function (req, res, next) {
+  const id = req.params.competitionid
+  
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('documents_admin', {id: id, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
+
+router.get('/:competitionid/documents/:lid', function (req, res, next) {
+  const id = req.params.competitionid
+  const lid = req.params.lid;
+
+  if (LEAGUES.filter(function (elm){
+      return elm.indexOf(lid) != -1;
+  }).length == 0){
+      return next()
+  }
+  
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('documents_form_editor', {id: id, lid: lid, user: req.user})
   else res.render('access_denied', {user: req.user})
 })
 

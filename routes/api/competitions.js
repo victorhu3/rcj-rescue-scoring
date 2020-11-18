@@ -62,6 +62,10 @@ publicRouter.get('/rules', function (req, res) {
     res.send(competitiondb.competition.schema.path('rule').enumValues)
 })
 
+publicRouter.get('/leagues', async function (req, res, next) {
+    res.send(LEAGUES_JSON);
+})
+
 publicRouter.get('/leagues/:league', async function (req, res, next) {
     var league = req.params.league;
 
@@ -131,22 +135,29 @@ adminRouter.put('/:competitionid', function (req, res, next) {
                     err: err.message
                 })
             } else if (dbCompetition) {
-                dbCompetition.name = data.name;
-                dbCompetition.rule = data.rule;
-                dbCompetition.logo = data.logo;
-                dbCompetition.bkColor = data.bkColor;
-                dbCompetition.color = data.color;
-                dbCompetition.message = data.message;
-                dbCompetition.description = data.description;
+                if(data.name != null) dbCompetition.name = data.name;
+                if(data.rule != null) dbCompetition.rule = data.rule;
+                if(data.logo != null) dbCompetition.logo = data.logo;
+                if(data.bkColor != null) dbCompetition.bkColor = data.bkColor;
+                if(data.color != null) dbCompetition.color = data.color;
+                if(data.message != null) dbCompetition.message = data.message;
+                if(data.description != null) dbCompetition.description = data.description;
 
-                dbCompetition.ranking = [];
-                for(let i in data.ranking){
-                    let tmp = {
-                        'league': data.ranking[i].id,
-                        'num': data.ranking[i].count
+
+                if(data.ranking != null){
+                    dbCompetition.ranking = [];
+                    for(let i in data.ranking){
+                        let tmp = {
+                            'league': data.ranking[i].id,
+                            'num': data.ranking[i].count
+                        }
+                        dbCompetition.ranking.push(tmp);
                     }
-                    dbCompetition.ranking.push(tmp);
                 }
+
+                if(data.documents.enable != null) dbCompetition.documents.enable = data.documents.enable;
+                if(data.documents.deadline != null) dbCompetition.documents.deadline = data.documents.deadline;
+
 
                 dbCompetition.save(function (err) {
                     if (err) {

@@ -1,0 +1,46 @@
+//- -*- tab-width: 2 -*-
+extends includes/layout
+
+block vars
+  - var ngAppDef = 'DocumentsAdmin'
+
+append scripts
+  script.
+    var competitionId = "#{id}"
+  script(src='/javascripts/documents_admin.js')
+
+block location
+    a.breadcrumb-item(ng-click="go('/home')") Home
+    a.breadcrumb-item(ng-click="go('/admin')") Admin
+    a.breadcrumb-item(ng-click="go('/admin/' + competitionId)") {{competition.name}}
+    span.breadcrumb-item.active Document settings
+
+
+block content
+  .row
+    .col-md-1
+    .col-md-10
+      h1 ドキュメント設定 - {{competition.name}}
+      hr
+      h3 基本設定
+      .row
+        .col-md-4
+          .input-group(style="width:100%;margin 0 auto;")
+            .input-group-prepend
+              span.input-group-text 提出システム有効化:
+            select.custom-select(ng-model='docSystemEnabled')
+              option(ng-value='true') 有効
+              option(ng-value='false') 無効
+        .col-md-6
+          .input-group(style="width:100%;margin 0 auto;")
+            .input-group-prepend
+              span.input-group-text 提出期限
+            input.form-control(type='datetime-local', ng-model='defaultDeadline' style="")
+        .col-md-2(style="text-align:right;")
+          button.btn.btn-success(type='button', ng-click='set()')
+            i.fas.fa-check &nbsp;{{"admin.settings.set" | translate}}
+      hr
+      h3 質問設定
+      div(ng-repeat="league in leagues")
+          button(ng-click="go('/admin/' + competitionId + '/documents/' + league.id)" class='btn btn-outline-danger btn-lg btn-block' style="margin-bottom:20px;")
+            i.fas.fa-question-circle(aria-hidden='true') &nbsp; {{league.name}}
