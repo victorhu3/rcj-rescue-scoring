@@ -58,25 +58,39 @@ const competitionSchema = new Schema({
   documents: {
     enable: {type: Boolean,  default: false},
     deadline: {type: Number, default: 0},
-    league: {
-      'name': {type: String, enum: LEAGUES},
-      'questions': [{
-        'question': [{
+    leagues: [{
+      'league': {type: String, enum: LEAGUES},
+      'informations':[{
+        'i18n':[{
           'language' : {type: String, default: ''},
-          'content': {type: String, default: ''}
-        }],
-        'example': [{
+          'title' : {type: String, default: ''},
+          'color' : {type: String, default: '#d35400'},
+          'description' : {type: String, default: ''}
+        }]
+      }],
+      'blocks': [{
+        'i18n':[{
           'language' : {type: String, default: ''},
-          'content': {type: String, default: ''}
+          'title': {type: String, default: ''},
         }],
-        'type': {type: String, enum: QUESTION_TYPES},
-        'required': {type: Boolean, default: true},
-        'options': [{
-          'value': {type: String, default: ''},
-          'content': {type: String, default: ''}
+        'color': {type: String, default: '#2980b9'},
+        'questions': [{
+          'i18n':[{
+            'language' : {type: String, default: ''},
+            'question': {type: String, default: ''},
+            'description': {type: String, default: ''},
+            'example': {type: String, default: ''},
+            'options': [{
+              'value': {type: String, default: ''},
+              'text': {type: String, default: ''}
+            }],
+          }],
+          'type': {type: String, enum: QUESTION_TYPES},
+          'required': {type: Boolean, default: true},
+          'fileName': {type: String, default: ''}
         }]
       }]
-    }
+    }]
   }
 })
 

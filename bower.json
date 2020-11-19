@@ -48,7 +48,11 @@
     "angular-color-picker": "angularjs-color-picker#^3.4.8",
     "angular-sanitize": "^1.7.9",
     "html2canvas": "https://html2canvas.hertzen.com/dist/html2canvas.min.js",
-    "popper.js": "^1.16.0"
+    "popper.js": "^1.16.0",
+    "ngQuill": "ng-quill#^4.5.3",
+    "quill": "https://cdn.quilljs.com/1.3.7/quill.js",
+    "quill.snow": "https://cdn.quilljs.com/1.3.6/quill.snow.css",
+    "quill-image-resize-module": "https://github.com/kensnyder/quill-image-resize-module.git"
   },
   "description": "",
   "main": "",
