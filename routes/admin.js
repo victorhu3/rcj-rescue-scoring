@@ -124,6 +124,25 @@ router.get('/:competitionid/documents/:lid', function (req, res, next) {
   else res.render('access_denied', {user: req.user})
 })
 
+router.get('/:competitionid/documents/:lid/preview', function (req, res, next) {
+  const id = req.params.competitionid
+  const lid = req.params.lid;
+
+  if (LEAGUES.filter(function (elm){
+      return elm.indexOf(lid) != -1;
+  }).length == 0){
+      return next()
+  }
+  
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('documents_form_preview', {id: id, lid: lid, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
+
+
 router.get('/handover', function (req, res, next) {  
   
   res.render('runs_handover', {user: req.user})

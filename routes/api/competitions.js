@@ -52,7 +52,9 @@ publicRouter.get('/', function (req, res) {
                 if(!data[i].message) data[i].message = "";
                 if(!data[i].description) data[i].description = "";
                 if(!data[i].logo) data[i].logo = "/images/NoImage.png";
+                if(data[i].documents) delete data[i].documents.leagues;
             }
+            
             res.status(200).send(data)
         }
     })

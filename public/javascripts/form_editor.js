@@ -277,6 +277,9 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
         }
     }
     
+    $scope.preview = function () {
+        window.open("/admin/" + competitionId + '/documents/' + leagueId + '/preview', "Preview");
+    }
     
 
     $scope.export = function () {

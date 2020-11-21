@@ -744,7 +744,8 @@
             "title": "Document Form Editor",
             "export": "Export this form to Json file",
             "import": "Import form from json file",
-            "save": "Save"
+            "save": "Save",
+            "preview": "Preview"
         }
     }
 }

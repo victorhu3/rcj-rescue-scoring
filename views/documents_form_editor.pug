@@ -57,13 +57,16 @@ block location
 
 block content
       .row
-        .col-md-10
+        .col-md-8
             h1 {{"admin.formEditor.title" | translate}}
             h3(style="margin-left:40px;") {{league.name}}
-        .col-md-2(style="text-align:right;")
-          button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()')
-            i.fas.fa-save &nbsp;
-            | {{"admin.formEditor.save" | translate}}
+        .col-md-4(style="text-align:right;")
+            button.btn.btn-lg.btn-outline-info(type='button', ng-click='preview()', style="margin-right:10px;")
+                i.fas.fa-eye &nbsp;
+                | {{"admin.formEditor.preview" | translate}}
+            button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()')
+                i.fas.fa-save &nbsp;
+                | {{"admin.formEditor.save" | translate}}
       .row
         .col-md-6
             button.btn.btn-dark(type='button', ng-click='export()')

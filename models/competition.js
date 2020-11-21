@@ -179,7 +179,13 @@ const teamSchema = new Schema({
   docPublic  : {type: Boolean, default: false},
   country    : {type: String, default: ""},
   checkin    : {type: Boolean, default: false},
-  teamCode   : {type: String, default: ""}
+  teamCode   : {type: String, default: ""},
+  email      : [{type: String, default: '', select: false}],
+  document   : {
+    deadline : {type: String, default: null, select: false},
+    token    : {type: String, default: '', select: false},
+    answers  : [[{type: String, default: null}]]
+  }
 })
 
 teamSchema.pre('save', function (next) {
