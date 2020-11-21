@@ -108,7 +108,39 @@ publicRouter.get('/:competition', function (req, res, next) {
             if(!data.message) data.message = "";
             if(!data.description) data.description = "";
             if(!data.logo) data.logo = "/images/noLogo.png";
+            delete data.documents.leagues;
             res.status(200).send(data)
+        }
+    })
+})
+
+publicRouter.get('/:competition/documents/:leagueId', function (req, res, next) {
+    const id = req.params.competition;
+    const lid = req.params.leagueId;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (LEAGUES.filter(function (elm){
+        return elm.indexOf(lid) != -1;
+    }).length == 0){
+        return next()
+    }
+
+    competitiondb.competition.aggregate([
+        {$match: {_id: ObjectId(id)}},
+        {$unwind: "$documents.leagues"},
+        {$match: { 'documents.leagues.league': lid}}
+      ]).exec(function (err, data) {
+        if (err || !data) {
+            logger.error(err);
+            res.status(400).send({
+                msg: "Could not get competition"
+            })
+        } else {
+            if(data[0]) res.status(200).send(data[0].documents.leagues)
+            else res.status(200).send(data)
         }
     })
 })
@@ -157,6 +189,27 @@ adminRouter.put('/:competitionid', function (req, res, next) {
 
                 if(data.documents.enable != null) dbCompetition.documents.enable = data.documents.enable;
                 if(data.documents.deadline != null) dbCompetition.documents.deadline = data.documents.deadline;
+
+                if(data.documents.league != null){
+                    let updated = false;
+                    for(let l of dbCompetition.documents.leagues){
+                        if(l.league == data.documents.league){
+                            l.notifications = data.documents.notifications;
+                            l.blocks = data.documents.blocks;
+                            l.languages = data.documents.languages;
+                            updated = true;
+                        }
+                    }
+                    if(!updated){
+                        let tmp = {
+                            league: data.documents.league,
+                            notifications: data.documents.notifications,
+                            blocks: data.documents.blocks,
+                            languages: data.documents.languages
+                        }
+                        dbCompetition.documents.leagues.push(tmp);
+                    }
+                }
 
 
                 dbCompetition.save(function (err) {

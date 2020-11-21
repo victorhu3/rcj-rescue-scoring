@@ -24,7 +24,7 @@ const SUPPORT_RULES = ["2021"];
 
 const LEAGUES = [].concat(LINE_LEAGUES, MAZE_LEAGUES);
 
-const QUESTION_TYPES = ['input', 'select', 'picture', 'movie', 'pdf'];
+const QUESTION_TYPES = ['input', 'select', 'picture', 'movie', 'pdf', 'zip'];
 
 module.exports.LINE_LEAGUES = LINE_LEAGUES;
 module.exports.MAZE_LEAGUES = MAZE_LEAGUES;
@@ -59,12 +59,17 @@ const competitionSchema = new Schema({
     enable: {type: Boolean,  default: false},
     deadline: {type: Number, default: 0},
     leagues: [{
-      'league': {type: String, enum: LEAGUES},
-      'informations':[{
+      'league': {type: String, enum: LEAGUES, unique: true},
+      'languages': [{
+        'language': {type: String, default: ''},
+        'enable': {type: Boolean, default: true}
+      }],
+      'notifications':[{
+        'color' : {type: String, default: '273c75'},
+        'bkColor' : {type: String, default: 'ccffff'},
         'i18n':[{
           'language' : {type: String, default: ''},
           'title' : {type: String, default: ''},
-          'color' : {type: String, default: '#d35400'},
           'description' : {type: String, default: ''}
         }]
       }],
@@ -73,7 +78,7 @@ const competitionSchema = new Schema({
           'language' : {type: String, default: ''},
           'title': {type: String, default: ''},
         }],
-        'color': {type: String, default: '#2980b9'},
+        'color': {type: String, default: '2980b9'},
         'questions': [{
           'i18n':[{
             'language' : {type: String, default: ''},

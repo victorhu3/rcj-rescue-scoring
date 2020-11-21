@@ -9,14 +9,17 @@ append scripts
     var competitionId = "#{id}"
     var leagueId = "#{lid}"
   script(src="/javascripts/form_editor.js")
-  link(rel='stylesheet', href='/components/angular-color-picker/dist/angularjs-color-picker.min.css')
-  //link(rel='stylesheet', href='/components/angular-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css')
   script(src='/components/tinycolor/dist/tinycolor-min.js')
   script(src='/components/angular-color-picker/dist/angularjs-color-picker.min.js')
-  link(rel='stylesheet', href='/components/quill.snow/index.css')
   script(src='/components/quill/index.js')
   script(src='/components/ngQuill/src/ng-quill.js')
   script(src='/components/quill-image-resize-module/image-resize.min.js')
+  script(src='/components/angular-toastr/dist/angular-toastr.tpls.min.js')
+  script(src='/components/quill-image-drop-and-paste/quill-image-drop-and-paste.min.js')
+  script(src="/components/bootstrap-fileinput/js/fileinput.min.js")
+  script(src="/components/bootstrap-fileinput/themes/fa/theme.min.js")
+  script(src="/components/bootstrap-fileinput/js/locales/ja.js")
+
 
 append css
     style.
@@ -37,6 +40,12 @@ append css
             margin-left: .1rem;
             margin-right: .1rem;
         }
+    link(rel='stylesheet', href='/components/angular-color-picker/dist/angularjs-color-picker.min.css')
+    link(rel='stylesheet', href='/components/quill.snow/index.css')
+    link(rel='stylesheet', href='/components/angular-toastr/dist/angular-toastr.min.css')
+    link(href="/components/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet")
+
+
   
 block location
     a.breadcrumb-item(ng-click="go('/home')") Home
@@ -49,23 +58,87 @@ block location
 block content
       .row
         .col-md-10
-            h1 フォームエディター
+            h1 {{"admin.formEditor.title" | translate}}
+            h3(style="margin-left:40px;") {{league.name}}
         .col-md-2(style="text-align:right;")
-          button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()') {{"signage.editor.save" | translate}}
-      br
+          button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()')
+            i.fas.fa-save &nbsp;
+            | {{"admin.formEditor.save" | translate}}
       .row
+        .col-md-6
+            button.btn.btn-dark(type='button', ng-click='export()')
+                i.fas.fa-file-export &nbsp;
+                | {{"admin.formEditor.export" | translate}}
+        .col-md-6
+            input#select(type='file', name='select')
+      hr
+      .row
+        .col-md-12
+            h3 言語設定
+            .input-group(style="width:100%;margin: 10px auto;", ng-repeat="lang in languages")
+                .input-group-prepend
+                    span.input-group-text {{lang.language}}
+                select.custom-select(ng-model='lang.enable', ng-blur="save()")
+                    option(ng-value='true') 有効
+                    option(ng-value='false') 無効
+      hr
+      .row
+        .col-md-12
+            h3 お知らせ
+            div(style="text-align : center;")
+                .btn-group
+                    button.btn.btn-success(type='button',ng-click='addNotice(0)')
+                        i.fas.fa-plus &nbsp;ここに新規お知らせを追加
+            div(style="margin: 20px;" ng-repeat="notification in notifications track by $index")
+                .alert(role="alert", ng-style="{color: '#'+ notification.color, backgroundColor: '#'+ notification.bkColor, borderColor: '#'+ notification.color}")
+                    .row
+                        .col-md-4
+                            .input-group(style="width:100%;margin 0 auto;")
+                                span 文字色:
+                                color-picker(ng-model='notification.color' options="{'format':'HEX'}" ng-blur="save()")
+                        .col-md-4
+                            .input-group(style="width:100%;margin 0 auto;")
+                                span 背景色:
+                                color-picker(ng-model='notification.bkColor' options="{'format':'HEX'}" ng-blur="save()")
+                        .col-md-4
+                            button.btn.btn-danger(type='button', ng-click='removeNotice($index)', style="float:right;margin-left:5px;")
+                                i.fas.fa-trash-alt
+                            button.btn.btn-info(type='button', ng-click='moveNotice($index,$index+1)', ng-disabled="$last", style="float:right;margin-left:5px;")
+                                i.fas.fa-chevron-down
+                            button.btn.btn-info(type='button', ng-click='moveNotice($index,$index-1)', ng-disabled="$first", style="float:right;margin-left:5px;")
+                                i.fas.fa-chevron-up
+                        .col-md-12
+                            ul.nav.nav-tabs.mb-3(role='tablist')
+                                i.fas.fa-globe.fa-2x &nbsp;
+                                li.nav-item(ng-repeat="i18n in notification.i18n track by $index", style="margin-right:5px;")
+                                    a.nav-link(ng-class="{active:$first}",ng-attr-id="{{'notification' + $parent.$index + '_lang'+ $index + '_tab'}}", data-toggle='pill',ng-href="{{'#notification' + $parent.$index + '_lang'+ $index}}", role='tab', aria-controls="{{'notification' + $parent.$index + '_lang'+ $index}}", aria-selected='true') {{i18n.language}}
+                            .tab-content(style="margin-bottom:10px;")
+                                .tab-pane.fade.show(ng-class="{active:$first}", ng-attr-id="{{'notification' + $parent.$index + '_lang'+ $index}}", role='tabpanel', aria-labelledby="'notification' + $parent.$index + '_lang'+ $index + '_tab'", ng-repeat="i18n in notification.i18n track by $index")
+                                    .input-group(style="margin 0 auto;")
+                                        .input-group-prepend
+                                            span.input-group-text タイトル
+                                        input.form-control(type='text', ng-model='i18n.title', ng-blur="save()")
+                                    br
+                                    span(style="margin-top:10px;") 内容
+                                    ng-quill-editor(ng-model="i18n.description", ng-blur="save()")
+                div(style="text-align : center;")
+                    .btn-group
+                        button.btn.btn-success(type='button',ng-click='addNotice($index+1)')
+                            i.fas.fa-plus &nbsp;ここに新規お知らせを追加
+                    
+
         .col-md-12
             h3 質問内容
             div(style="text-align : center;")
                 .btn-group
                     button.btn.btn-success(type='button',ng-click='addBlock(0)')
-                        i.fas.fa-plus &nbsp;ここに新規ブロックを追加
+                        i.fas.fa-plus &nbsp;ここに新規質問ブロックを追加
 
             div(style="margin: 20px;" ng-repeat="block in blocks track by $index")
                 .card(ng-style="{border: '3px solid #' + block.color}")
                     h5.card-header 質問ブロック
                         button.btn.btn-danger(type='button', ng-click='removeBlock($index)', style="float:right;margin-left:5px;")
-                            i.fas.fa-times
+                            i.fas.fa-trash-alt
                         button.btn.btn-info(type='button', ng-click='moveBlock($index,$index+1)', ng-disabled="$last", style="float:right;margin-left:5px;")
                             i.fas.fa-chevron-down
                         button.btn.btn-info(type='button', ng-click='moveBlock($index,$index-1)', ng-disabled="$first", style="float:right;margin-left:5px;")
@@ -80,24 +153,15 @@ block content
                                 .input-group(style="margin 0 auto;")
                                     .input-group-prepend
                                         span.input-group-text ブロックタイトル
-                                    input.form-control(type='text', ng-model='i18n.title')
+                                    input.form-control(type='text', ng-model='i18n.title', ng-blur="save()")
                         .input-group(style="width:100%;margin 0 auto;")
                             span ブロックカラー:
-                            color-picker(ng-model='block.color' options="{'format':'HEX'}")
+                            color-picker(ng-model='block.color', options="{'format':'HEX'}", ng-blur="save()")
                         hr
                         div(style="text-align : center;")
                             .btn-group                                
-                                button.btn.btn-success.dropdown-toggle.dropdown-toggle-split(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-                                    i.fas.fa-plus &nbsp;ここに新規質問を追加&nbsp;
-                                    span.sr-only Toggle Dropdown
-                                .dropdown-menu
-                                    a.dropdown-item(href='#',ng-click="addQuestion($index,0,'input')") 記述式設問
-                                    a.dropdown-item(href='#',ng-click="addQuestion($index,0,'select')") 選択式設問
-                                    .dropdown-divide
-                                        h6.dropdown-header ファイルアップロード
-                                            a.dropdown-item(href='#',ng-click="addQuestion($index,0,'pdf')") PDFファイル
-                                            a.dropdown-item(href='#',ng-click="addQuestion($index,0,'picture')") 画像ファイル
-                                            a.dropdown-item(href='#',ng-click="addQuestion($index,0,'movie')") 動画ファイル
+                                button.btn.btn-success(type='button',ng-click="addQuestion($index,0,'input')")
+                                    i.fas.fa-plus &nbsp;ここに新規質問を追加  
                         div(ng-repeat="question in block.questions track by $index")
                             hr(ng-style="{borderTop: '3px solid #' + block.color}")
                             .row(style="margin:10px 0px;")
@@ -105,22 +169,23 @@ block content
                                     .input-group(style="width:100%;margin 0 auto;")
                                         .input-group-prepend
                                             span.input-group-text 設問タイプ:
-                                        select.custom-select(ng-model='question.type')
+                                        select.custom-select(ng-model='question.type', ng-blur="save()")
                                             option(value='input') 記述式設問
                                             option(value='select') 選択式設問
                                             option(value='pdf') PDFファイル
                                             option(value='picture') 画像ファイル
                                             option(value='movie') 動画ファイル
+                                            option(value='zip') 圧縮ファイル
                                 .col-md-4
                                     .input-group(style="width:100%;margin 0 auto;")
                                         .input-group-prepend
                                             span.input-group-text 必須項目:
-                                        select.custom-select(ng-model='question.required')
+                                        select.custom-select(ng-model='question.required', ng-blur="save()")
                                             option(ng-value='true') 必須
                                             option(ng-value='false') 任意
                                 .col-md-4
                                     button.btn.btn-danger(type='button', ng-click='removeQuestion($parent.$index,$index)', style="float:right;margin-left:5px;")
-                                        i.fas.fa-times
+                                        i.fas.fa-trash-alt
                                     button.btn.btn-info(type='button', ng-click='moveQuestion($parent.$index,$index,$index+1)', ng-disabled="$last", style="float:right;margin-left:5px;")
                                         i.fas.fa-chevron-down
                                     button.btn.btn-info(type='button', ng-click='moveQuestion($parent.$index,$index,$index-1)', ng-disabled="$first", style="float:right;margin-left:5px;")
@@ -133,14 +198,14 @@ block content
                                 .tab-pane.fade.show(ng-class="{active:$first}", ng-attr-id="{{'block' + $parent.$parent.$index + '_question' + $parent.$index + '_lang'+ $index}}", role='tabpanel', aria-labelledby="'block' + $parent.$parent.$index + '_question' + $parent.$index + '_lang'+ $index + '_tab'", ng-repeat="i18n in question.i18n track by $index")
                                     .input-group(style="margin 0 auto;")
                                         .input-group-prepend
-                                            span.input-group-text 質問文
-                                        input.form-control(type='text', ng-model='i18n.question')
+                                            span.input-group-text 質問のタイトル
+                                        input.form-control(type='text', ng-model='i18n.question', ng-blur="save()")
                                     br
-                                    span(style="margin-top:10px;") 詳細説明
-                                    ng-quill-editor(ng-model="i18n.description")
+                                    span(style="margin-top:10px;") 質問文
+                                    ng-quill-editor(ng-model="i18n.description", ng-blur="save()")
                                     div(ng-if="question.type == 'input'", style="margin-top:10px;")
-                                        span 回答例
-                                        ng-quill-editor(ng-model="i18n.example")
+                                        span ヒント
+                                        ng-quill-editor(ng-model="i18n.example", ng-blur="save()")
                                     div(ng-if="question.type == 'select'", style="margin-top:10px;")
                                         span 選択肢
                                         br
@@ -148,7 +213,7 @@ block content
                                             .input-group(style="margin 0 auto;")
                                                 .input-group-prepend
                                                     span.input-group-text {{option.value}}
-                                                input.form-control(type='text', ng-model='option.text' style="width:950px;")
+                                                input.form-control(type='text', ng-model='option.text' style="width:950px;", ng-blur="save()")
                                                 .input-group-append
                                                     button.btn.btn-info(type='button', ng-disabled="$first", ng-click='moveOption($parent.$parent.$parent.$parent.$index, $parent.$parent.$parent.$index, $parent.$index, $index, $index-1)')
                                                         i.fas.fa-chevron-up
@@ -157,50 +222,26 @@ block content
                                                         i.fas.fa-chevron-down
                                                 .input-group-append
                                                     button.btn.btn-danger(type='button', ng-click='removeOption($parent.$parent.$parent.$parent.$index, $parent.$parent.$parent.$index, $parent.$index, $index)')
-                                                        i.fas.fa-times
+                                                        i.fas.fa-trash-alt
                                         div(style="text-align : center;margin:20px;")
                                             button.btn.btn-success(type='button', ng-click='addOption($parent.$parent.$parent.$index, $parent.$parent.$index, $parent.$index)')
                                                 i.fas.fa-plus
-                                    div(ng-if="question.type == 'pdf' || question.type == 'picture' || question.type == 'movie'", style="margin-top:10px;")
+                                    div(ng-if="question.type == 'pdf' || question.type == 'picture' || question.type == 'movie' || question.type == 'zip'", style="margin-top:10px;")
                                         .input-group(style="margin 0 auto;")
                                             .input-group-prepend
                                                 span.input-group-text ファイル名
-                                            input.form-control(type='text', ng-model='question.fileName')
+                                            input.form-control(type='text', ng-model='question.fileName', ng-blur="save()")
+                                        span 拡張子は自働付加されますので，含めないでください．
 
                             hr(ng-style="{borderTop: '3px solid #' + block.color}")
                             div(style="text-align : center;")
-                                .btn-group                                
-                                    button.btn.btn-success.dropdown-toggle.dropdown-toggle-split(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-                                        i.fas.fa-plus &nbsp;ここに新規質問を追加&nbsp;
-                                        span.sr-only Toggle Dropdown
-                                    .dropdown-menu
-                                        a.dropdown-item(href='#',ng-click="addQuestion($parent.$index,$index+1,'input')") 記述式設問
-                                        a.dropdown-item(href='#',ng-click="addQuestion($parent.$index,$index+1,'select')") 選択式設問
-                                        .dropdown-divide
-                                            h6.dropdown-header ファイルアップロード
-                                                a.dropdown-item(href='#',ng-click="addQuestion($parent.$index,$index+1,'pdf')") PDFファイル
-                                                a.dropdown-item(href='#',ng-click="addQuestion($parent.$index,$index+1,'picture')") 画像ファイル
-                                                a.dropdown-item(href='#',ng-click="addQuestion($parent.$index,$index+1,'movie')") 動画ファイル
+                                .btn-group    
+                                    button.btn.btn-success(type='button',ng-click="addQuestion($parent.$index,$index+1,'input')")
+                                        i.fas.fa-plus &nbsp;ここに新規質問を追加                          
+                                    
 
                 div(style="text-align : center;margin-top:20px;")
                     .btn-group
                         button.btn.btn-success(type='button',ng-click='addBlock($index+1)')
-                            i.fas.fa-plus &nbsp;ここに新規ブロックを追加
+                            i.fas.fa-plus &nbsp;ここに新規質問ブロックを追加
             br
-            br
-            br
-            h3 {{"signage.editor.news" | translate}}
-            div(style="text-align : center;")
-                button.btn.btn-success(type='button', ng-click='addNews(0)')
-                    i.fas.fa-plus
-            div(style="margin: 20px;width:calc(100%-50px);" ng-repeat="new in news track by $index")
-                .input-group(style="margin 0 auto;")
-                    .input-group-prepend
-                        span.input-group-text {{$index+1}}
-                    input.form-control(type='text', ng-model='new.txt' style="width:950px;")
-                    .input-group-append
-                        button.btn.btn-danger(type='button', ng-click='removeNews($index)')
-                            i.fas.fa-times
-                div(style="text-align : center;margin:20px;")
-                    button.btn.btn-success(type='button', ng-click='addNews($index+1)')
-                        i.fas.fa-plus
