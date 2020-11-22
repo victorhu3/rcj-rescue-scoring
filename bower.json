@@ -68,7 +68,8 @@
     "angular-translate-storage-cookie": "^2.18.1",
     "jquery": "^3.4.1",
     "popper.js": "^1.10.8",
-    "video.js": "e-tag:e373309b8"
+    "video.js": "e-tag:e373309b8",
+    "quill": "e-tag:03c7675b1"
   },
   "version": "19.1.0"
 }
