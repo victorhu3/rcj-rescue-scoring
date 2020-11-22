@@ -12,10 +12,11 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
         console.log($scope.leagues)
     })
 
-    $scope.teamCode = [];
+    $scope.teamCode = "";
 
     $scope.addTeam = function () {
         var team = {
+            teamCode: $scope.teamCode,
             name: $scope.teamName,
             league: $scope.teamLeague,
             competition: competitionId,

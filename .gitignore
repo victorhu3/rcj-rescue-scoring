@@ -5,6 +5,7 @@ logs/*
 public/components/*
 node_modules/*
 fonts/*
+documents/*
 
 .idea/
 

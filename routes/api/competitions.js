@@ -660,13 +660,17 @@ adminRouter.delete('/:competitionid', function (req, res, next) {
         if (err) {
             logger.error(err)
             res.status(400).send({
-                msg: "Could not remove run",
+                msg: "Could not remove competition",
                 err: err.message
             })
         } else {
             res.status(200).send({
-                msg: "Run has been removed!"
+                msg: "Competition has been removed!"
             })
+            let path = __dirname + "/../../documents/" + id;
+            fs.rmdir(path, { recursive: true },(err) => {
+                if (err) throw err;
+            });
         }
     })
 

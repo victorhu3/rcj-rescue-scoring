@@ -25,12 +25,15 @@ block content
       table.custom
         thead
             tr
+                th {{"common.teamCode" | translate}}
                 th {{"common.team" | translate}}
                 th {{"common.region" | translate}}
                 th {{"common.league" | translate}}
                 th {{"common.operation" | translate}}
         tbody
             tr
+                td
+                    input(ng-model='teamCode' style="width:100%;")
                 td
                     input(ng-model='teamName' style="width:100%;")
                 td

@@ -49,6 +49,7 @@ var signageRoute = require('./routes/signage')
 var shortRoute = require('./routes/shortURL')
 var kioskRoute = require('./routes/kiosk')
 var serviceRoute = require('./routes/service')
+var documentRoute = require('./routes/document')
 
 
 //========================================================================
@@ -69,6 +70,7 @@ var apiSignageRoute = require('./routes/api/signage')
 var apiKioskRoute = require('./routes/api/kiosk')
 var apiBackupRoute = require('./routes/api/backup')
 var apiShortURL = require('./routes/api/shortURL')
+var apiDocumentRoute = require('./routes/api/document')
 
 //========================================================================
 //                          Configuration
@@ -154,6 +156,7 @@ app.use('/api/signage', [pass.ensureLoginApi, apiSignageRoute.private, pass.ensu
 app.use('/api/kiosk', [pass.ensureAdminApi, apiKioskRoute.admin])
 app.use('/api/backup', [pass.ensureAdminApi, apiBackupRoute.admin])
 app.use('/api/short', [pass.ensureSuperApi , apiShortURL.super])
+app.use('/api/document', [apiDocumentRoute.public, pass.ensureLoginApi, apiDocumentRoute.private, pass.ensureAdminApi, apiDocumentRoute.admin])
 
 //========================================================================
 //                          Website static pages(ish)
@@ -175,6 +178,7 @@ app.use('/interview', [interviewRoute.public, pass.ensureAuthenticated, intervie
 app.use('/signage', [pass.ensureAuthenticated, signageRoute.private, pass.ensureAdmin, signageRoute.admin])
 app.use('/admin', pass.ensureAdmin, adminRoute)
 app.use('/kiosk', [kioskRoute.public, pass.ensureAuthenticated, kioskRoute.private])
+app.use('/document', [documentRoute.public, pass.ensureAuthenticated, documentRoute.private, pass.ensureAdmin, documentRoute.admin])
 
 //========================================================================
 //                          Custom routes
