@@ -160,6 +160,11 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
           })
     }
     
+    $scope.changeLocale = function(){
+        $scope.save();
+        $scope.go('/locales');
+    }
+
     $scope.go = function (path) {
         window.location = path
     }
