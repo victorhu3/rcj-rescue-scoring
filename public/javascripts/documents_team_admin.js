@@ -20,8 +20,14 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
 
 
     $scope.save = function(data){
-        let tmp = { ...data };
-        tmp.document.deadline = Math.round( data.document.deadline.getTime() / 1000 );
+        let tmp = {
+            _id: data._id,
+            competition: data.competition,
+            document:{
+                deadline: Math.round( data.document.deadline.getTime() / 1000 ),
+                enabled: data.document.enabled
+            }
+        };
 
         $http.put("/api/competitions/" + competitionId + "/teams/documents", tmp).then(function (response) {
             $toastr.success('Successfully saved!');
