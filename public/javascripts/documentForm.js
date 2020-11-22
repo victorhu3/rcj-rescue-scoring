@@ -191,6 +191,7 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
             $toastr.error(question.errFile.$error + ' : ' + question.errFile.$errorParam, 'Error');
         }
         if (file) {
+            question.uploading = true;
             file.upload = Upload.upload({
                 url: '/api/document/files/' + $scope.team._id + '/' + token + '/' + question.fileName,
                 data: {file: file}
@@ -200,9 +201,8 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
                 $timeout(function () {
                     $scope.updateUploaded();
                     if(question.type == "movie"){
-                        $scope.videoRefresh = true;
                         setTimeout((function() {
-                            $scope.videoRefresh = false;
+                            question.uploading = false;
                             
                         }),1);
                     }

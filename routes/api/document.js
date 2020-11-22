@@ -234,9 +234,9 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                                             });
                                         }
 
-                                        fs.rmdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", { recursive: true },(err) => {
+                                        /*fs.rmdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", { recursive: true },(err) => {
                                             if(err) logger.error(err.message);
-                                        });
+                                        });*/
                                     })
                                 }
 

@@ -740,7 +740,9 @@ adminRouter.delete('/:competitionid', function (req, res, next) {
             })
             let path = __dirname + "/../../documents/" + id;
             fs.rmdir(path, { recursive: true },(err) => {
-                if (err) throw err;
+                if (err) {
+                    logger.error(err.message);
+                }
             });
         }
     })

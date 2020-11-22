@@ -153,12 +153,12 @@ block content
                                 div(style="color:#e74c3c;margin-top:10px;", ng-if="question.errorMsg")
                                     span {{question.errorMsg}}
                     div(ng-if="question.type=='movie'")
-                        .row(ng-if="checkUploaded(question.fileName) && !videoRefresh", style="width:100%;")
+                        .row(ng-if="checkUploaded(question.fileName) && !question.uploading", style="width:100%;")
                             .col-12
                                 strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
                                 br
                                 div(style="text-align:center;margin:10px 0px;")
-                                    video(style="max-width:100%;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
+                                    video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                         source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
 
                         if editable  
