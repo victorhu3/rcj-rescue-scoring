@@ -140,18 +140,18 @@ block content
                             div(style="color:#e74c3c;margin-top:10px;", ng-if="question.errorMsg")
                                 span {{question.errorMsg}}
                     div(ng-if="question.type=='movie'")
-                        .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                        .row(ng-if="checkUploaded(question.fileName) && !videoRefresh", style="width:100%;")
                             .col-12
                                 strong(style="color:#e74c3c;") ファイルが既にアップロードされています．新しいファイルをアップロードすると，古いものを上書きします．
                                 br
                                 div(style="text-align:center;margin:10px 0px;")
-                                    video(controls)
+                                    video(style="max-width:100%;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                         source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
 
                                 
                         .d-sm-flex.flex-row
                             div
-                                button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='50MB')
+                                button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='5000MB')
                                     i.far.fa-folder-open
                                     | ファイルを選ぶ
                             div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")

@@ -22,6 +22,8 @@ const mime = require('mime')
 const filetype = require('file-type')
 const ACCESSLEVELS = require('../../models/user').ACCESSLEVELS
 var crypto = require('crypto');
+const glob = require("glob");
+const ffmpeg = require('fluent-ffmpeg');
 const { time } = require('console')
 const LEAGUES_JSON = competitiondb.LEAGUES_JSON;
 
@@ -145,24 +147,85 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                     let timestamp = Math.floor(now.getTime()/1000);
 
                     if(deadline >= timestamp){
-                        var storage = multer.diskStorage({
-                            destination: function (req, file, callback) {
-                                callback(null, __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId)
-                            },
-                            filename: function (req, file, callback) {
-                                callback(null, fileName + path.extname(file.originalname))
+                        glob.glob(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/" + fileName + '.*', function (er, files) {
+                            let i = files.length;
+                            if(i == 0){
+                                upload_process();
+                                return;
                             }
-                        })
-    
-                        var upload = multer({
-                            storage: storage
-                        }).single('file')
-    
-                        upload(req, res, function (err) {
-                            res.status(200).send({
-                                msg: 'File is uploaded'
-                            })
-                        })
+                            fs.mkdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", (err) => {
+                                files.forEach(function(file){
+                                    fs.rename(file, path.dirname(file) + '/trash/' + (new Date().getTime())/1000  + path.extname(file), function (err) {
+                                        if(err) logger.error(err.message);
+                                        i--;
+                                        if(i <= 0){
+                                            upload_process();
+                                            return;
+                                        }
+                                    });
+                                });
+                            });
+                            
+
+                            function upload_process(){
+                                let originalname = '';
+                                var storage = multer.diskStorage({
+                                    destination: function (req, file, callback) {
+                                        callback(null, __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId)
+                                    },
+                                    filename: function (req, file, callback) {
+                                        originalname = file.originalname;
+                                        callback(null, fileName + path.extname(originalname))
+                                        
+                                    }
+                                })
+            
+                                var upload = multer({
+                                    storage: storage
+                                }).single('file')
+            
+                                upload(req, res, function (err) {
+                                    res.status(200).send({
+                                        msg: 'File is uploaded'
+                                    })
+                                    const ft = mime.getType(originalname);
+                                    
+                                    if(ft.includes('video')){
+                                        const filepath = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/" + fileName;
+                                        fs.unlink(filepath + '-thumbnail.png', function(err){
+                                            try{
+                                                const original = ffmpeg(filepath + path.extname(originalname));
+                                            
+                                                original.screenshots({
+                                                    count: 1,
+                                                    folder: __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId,
+                                                    filename: fileName + '-thumbnail.png',
+                                                    size: '640x?'
+                                                }).on('error', function(err) {
+                                                    console.log('an error happened: ' + err.message);
+                                                });
+                                                
+                                                if(ft != "video/mp4"){
+                                                    original.output(filepath + '.mp4').on('error', function(err) {
+                                                        console.log('an error happened: ' + err.message);
+                                                    });
+                                                }
+                                            }catch(err){
+
+                                            }
+                                            
+                                        });
+                                    }
+
+                                    fs.rmdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", { recursive: true },(err) => {
+                                        if(err) logger.error(err.message);
+                                    });
+                                })
+                            }
+
+                        });
+
+                        
                     }else{
                         res.status(400).send({
                             msg: "The deadline has passed."
@@ -258,38 +321,46 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
 
                         // Streaming Video
                         if(mime.getType(path).includes('video')){
-                            const fileSize = stat.size
-                            const range = req.headers.range
-                        
-                            if (range) {
-                        
-                                const parts = range.replace(/bytes=/, "").split("-");
-                        
-                                const start = parseInt(parts[0], 10);
-                                const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
-                                
-                                const chunksize = (end-start)+1;
-                                const file = fs.createReadStream(path, {start, end});
-                                const head = {
-                                    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-                                    'Accept-Ranges': 'bytes',
-                                    'Content-Length': chunksize,
-                                    'Content-Type': mime.getType(path),
+                            try{
+                                const fileSize = stat.size
+                                const range = req.headers.range
+                            
+                                if (range) {
+                            
+                                    const parts = range.replace(/bytes=/, "").split("-");
+                            
+                                    const start = parseInt(parts[0], 10);
+                                    const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
+                                    
+                                    const chunksize = (end-start)+1;
+                                    const file = fs.createReadStream(path, {start, end});
+                                    file.on('error', function(err) {
+                                        logger.error(err.message);
+                                    });
+                                    const head = {
+                                        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                                        'Accept-Ranges': 'bytes',
+                                        'Content-Length': chunksize,
+                                        'Content-Type': mime.getType(path),
+                                    }
+                                    
+                                    res.writeHead(206, head);
+                                    file.pipe(res);
+                                    return;
+                                } else {
+                                    const head = {
+                                        'Content-Length': fileSize,
+                                        'Content-Type': mime.getType(path),
+                                    }
+                            
+                                    res.writeHead(200, head);
+                                    fs.createReadStream(path).pipe(res);
+                                    return;
                                 }
-                                
-                                res.writeHead(206, head);
-                                file.pipe(res);
-                                return;
-                            } else {
-                                const head = {
-                                    'Content-Length': fileSize,
-                                    'Content-Type': mime.getType(path),
-                                }
-                        
-                                res.writeHead(200, head);
-                                fs.createReadStream(path).pipe(res);
-                                return;
+                            }catch(err){
+                                logger.error(err.message);
                             }
+                            
                         }else{
                             fs.readFile(path, function (err, data) {
                                 res.writeHead(200, {

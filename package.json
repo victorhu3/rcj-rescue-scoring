@@ -24,6 +24,7 @@
     "express-session": "^1.17.0",
     "extract-zip": "^1.6.7",
     "file-type": "^13.1.1",
+    "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "guesslanguage": "^0.2.0",

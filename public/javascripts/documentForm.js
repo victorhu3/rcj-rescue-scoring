@@ -64,6 +64,8 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
     
     $scope.updateTime = new Date().getTime()/1000;
 
+    $scope.videoRefresh = false;
+
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
     })
@@ -176,10 +178,17 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
 
             file.upload.then(function (response) {
                 $timeout(function () {
+                    $scope.updateUploaded();
+                    if(question.type == "movie"){
+                        $scope.videoRefresh = true;
+                        setTimeout((function() {
+                            $scope.videoRefresh = false;
+                            
+                        }),1);
+                    }
                     file.result = response.data;
                     $toastr.success('Successfully uploaded!');
                     delete question.f;
-                    $scope.updateUploaded();
                 });
             }, function (response) {
                 if (response.status > 0){
@@ -224,8 +233,7 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
     }
 
     $scope.getThumbnailLink = function(name){
-        if($scope.checkUploaded(name+'-thumbnail')) return("/api/document/files/" + $scope.team._id + "/" + token + "/" + $scope.nameUploaded(name+'-thumbnail') + '?v=' + $scope.updateTime);
-        return('');
+        return("/api/document/files/" + $scope.team._id + "/" + token + "/" + $scope.nameUploaded(name+'-thumbnail') + '?v=' + $scope.updateTime);
     }
 
 }]);
