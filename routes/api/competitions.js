@@ -110,7 +110,7 @@ publicRouter.get('/:competition', function (req, res, next) {
             if(!data.message) data.message = "";
             if(!data.description) data.description = "";
             if(!data.logo) data.logo = "/images/noLogo.png";
-            delete data.documents.leagues;
+            if(data.documents) delete data.documents.leagues;
             res.status(200).send(data)
         }
     })
