@@ -123,7 +123,9 @@
         "duplicate": "Duplication",
         "print": "Print",
         "printPage": "Print page",
-        "refine": "Refine your search"
+        "refine": "Refine your search",
+        "enable": "Enable",
+        "disable": "Disable"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -740,13 +742,78 @@
             "exportW": "Export this map as a world file for Erebus",
             "oneVictim": "Only one victim can be placed.",
             "obstacle": "Obstacle"
-        },
-        "formEditor": {
-            "title": "Document Form Editor",
-            "export": "Export this form to Json file",
-            "import": "Import form from json file",
-            "save": "Save",
-            "preview": "Preview"
         }
+    },
+    "document": {
+        "deadline": "Submission deadline",
+        "saved": "Saved successfully",
+        "admin":{
+            "title": "Document submission system settings",
+            "overall": "General settings",
+            "access": "Access Activation",
+            "team": "Team setting",
+            "question": "Question Setting"
+        },
+        "teamAdmin":{
+            "title": "Individual team settings",
+            "access": "Accessible"
+            
+        },
+        "editor": {
+            "title": "Document Form Editor",
+            "export": "Export this forms to Json file",
+            "import": "Importing forms from Json files",
+            "preview": "Preview",
+            "language": "Language settings",
+            "notification": "Announcements",
+            "question": "Questions",
+            "addNotification": "Add a new announcement here",
+            "letterColour": "Letter colour",
+            "backgroundColour": "Background colour",
+            "cTitle": "Title",
+            "content": "Contents",
+            "addBlock": "Add a new question block here",
+            "addQuestion": "Add a new question here",
+            "block": "Question Block",
+            "blockTitle": "Block title",
+            "blockColour": "Block colour",
+            "questionType": "Question type",
+            "writing": "Descriptive Formula",
+            "select": "Selectable",
+            "picture": "Picture",
+            "video": "Video",
+            "pdf": "PDF file",
+            "archive": "Compressed file",
+            "requiredOrNot": "Item type",
+            "required": "Required",
+            "optional": "Optional",
+            "questionTitle": "Title of the question",
+            "description": "Description",
+            "hints": "Hints",
+            "choices": "Options",
+            "fileName": "File name",
+            "extension": "The extension will automatically added by the system, so do not specify it here."
+        },
+        "form":{
+            "languageError": "This form is not available in your language, so it will be displayed in an alternative language.",
+            "editDeadline": "You can edit this form as many times as you wish until the submission deadline above.",
+            "basicInformation": "Basic Team Information",
+            "teamName": "Team Code / Team Name",
+            "required": "@:document.editor.required",
+            "optional": "@:document.editor.optional",
+            "max5": "The maximum size is 5MB.",
+            "max10": "The maximum size is 10MB.",
+            "max50": "The maximum size is 50MB.",
+            "pdfOnly": "Only PDF format is accepted.",
+            "zipOnly": "Only ZIP format is accepted.",
+            "hints": "@:document.editor.hints",
+            "selectFile": "Select a file",
+            "overwrite": "A file has already been uploaded. When you upload a new file, it will overwrite the old one.",
+            "uploaded": "Uploaded files"
+        }
+    },
+    "language": {
+        "ja": "Japanese",
+        "en": "English"
     }
 }

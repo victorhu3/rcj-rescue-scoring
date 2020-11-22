@@ -1,6 +1,13 @@
 var app = angular.module("TeamAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'toastr']);
 app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr', function ($scope, $uibModal, $log, $http, $translate, $toastr) {
 
+    let saved_mes;
+    $translate('document.saved').then(function (val) {
+        saved_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
     $scope.competitionId = competitionId;
     updateTeamList();
 
@@ -30,7 +37,7 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         };
 
         $http.put("/api/competitions/" + competitionId + "/teams/documents", tmp).then(function (response) {
-            $toastr.success('Successfully saved!');
+            $toastr.success(saved_mes);
         }, function (response) {
             $toastr.error(response.data.msg, "Error: " + response.statusText);
         });

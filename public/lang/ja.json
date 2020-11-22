@@ -122,7 +122,9 @@
         "teamCode": "チームコード",
         "duplicate": "複製",
         "print": "印刷",
-        "refine": "絞り込み検索"
+        "refine": "絞り込み検索",
+        "enable": "有効",
+        "disable": "無効"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -737,13 +739,78 @@
             "exportW": "このマップをErebus用ワールドファイルにエクスポート",
             "oneVictim": "１体の被災者のみ配置できます",
             "obstacle": "障害物"
+        }
+    },
+    "document": {
+        "deadline": "提出期限",
+        "saved": "正常に保存しました",
+        "admin":{
+            "title": "ドキュメント提出システム設定",
+            "overall": "全般設定",
+            "access": "アクセス有効化",
+            "team": "チーム設定",
+            "question": "質問設定"
         },
-        "formEditor": {
+        "teamAdmin":{
+            "title": "チーム個別設定",
+            "access": "アクセス可否"
+            
+        },
+        "editor": {
             "title": "ドキュメント　フォームエディタ",
             "export": "このフォームをJsonファイルにエクスポート",
             "import": "フォームをJsonファイルからインポート",
-            "save": "保存",
-            "preview": "プレビュー"
+            "preview": "プレビュー",
+            "language": "言語設定",
+            "notification": "お知らせ",
+            "question": "質問内容",
+            "addNotification": "ここに新規お知らせを追加",
+            "letterColour": "文字色",
+            "backgroundColour": "背景色",
+            "cTitle": "タイトル",
+            "content": "内容",
+            "addBlock": "ここに新規質問ブロックを追加",
+            "addQuestion": "ここに新規質問を追加",
+            "block": "質問ブロック",
+            "blockTitle": "ブロックタイトル",
+            "blockColour": "ブロックカラー",
+            "questionType": "設問タイプ",
+            "writing": "記述式",
+            "select": "選択式",
+            "picture": "画像",
+            "video": "動画",
+            "pdf": "PDFファイル",
+            "archive": "圧縮ファイル",
+            "requiredOrNot": "項目種別",
+            "required": "必須",
+            "optional": "任意",
+            "questionTitle": "質問のタイトル",
+            "description": "質問文",
+            "hints": "ヒント",
+            "choices": "選択肢",
+            "fileName": "ファイル名",
+            "extension": "拡張子はシステムによって自働付加されますので，ここで指定しないでください．"
+        },
+        "form":{
+            "languageError": "このフォームは，お使いの言語に対応していませんので，代替言語で表示します．",
+            "editDeadline": "このフォームは，上の提出期限まで何度でも編集可能です．",
+            "basicInformation": "チーム基本情報",
+            "teamName": "チームコード・チーム名",
+            "required": "@:document.editor.required",
+            "optional": "@:document.editor.optional",
+            "max5": "最大サイズは5MBです．",
+            "max10": "最大サイズは10MBです．",
+            "max50": "最大サイズは50MBです．",
+            "pdfOnly": "PDF形式のみ受け付けます．",
+            "zipOnly": "ZIP形式のみ受け付けます．",
+            "hints": "@:document.editor.hints",
+            "selectFile": "ファイルを選ぶ",
+            "overwrite": "ファイルが既にアップロードされています．新しいファイルをアップロードすると，古いものを上書きします．",
+            "uploaded": "アップロード済ファイル"
         }
+    },
+    "language": {
+        "ja": "日本語",
+        "en": "英語"
     }
 }

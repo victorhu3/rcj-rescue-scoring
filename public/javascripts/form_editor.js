@@ -52,7 +52,15 @@ app.constant('NG_QUILL_CONFIG', {
 // function referenced by the drop target
 app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr', function ($scope, $uibModal, $log, $http, $translate, $toastr) {
 
-    $translate('admin.formEditor.import').then(function (val) {
+    let saved_mes;
+    $translate('document.saved').then(function (val) {
+        saved_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+    
+
+    $translate('document.editor.import').then(function (val) {
         $("#select").fileinput({
             'showUpload': false,
             'showPreview': false,
@@ -261,7 +269,7 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
         }
       
         $http.put("/api/competitions/" + competitionId, data).then(function (response) {
-            $toastr.success('Successfully saved!');
+            $toastr.success(saved_mes);
         }, function (response) {
             $toastr.error(response.data.msg, "Error: " + response.statusText);
         });

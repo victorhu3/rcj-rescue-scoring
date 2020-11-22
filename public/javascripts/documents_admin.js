@@ -1,6 +1,14 @@
 var app = angular.module("DocumentsAdmin", ['ngTouch','ngAnimate', 'pascalprecht.translate', 'ngCookies', 'toastr']);
 
 app.controller("DocumentsAdminController", ['$scope', '$http', '$translate', 'toastr', function ($scope, $http, $translate, $toastr) {
+    
+    let saved_mes;
+    $translate('document.saved').then(function (val) {
+        saved_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+    
     $scope.competitionId = competitionId
 
     $scope.go = function (path) {
@@ -25,7 +33,7 @@ app.controller("DocumentsAdminController", ['$scope', '$http', '$translate', 'to
         }
       
         $http.put("/api/competitions/" + $scope.competitionId, data).then(function (response) {
-            $toastr.success('Successfully saved!');
+            $toastr.success(saved_mes);
         }, function (response) {
             $toastr.error(response.data.msg, "Error: " + response.statusText);
         });

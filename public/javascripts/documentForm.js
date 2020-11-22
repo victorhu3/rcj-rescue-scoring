@@ -52,6 +52,21 @@ app.constant('NG_QUILL_CONFIG', {
 // function referenced by the drop target
 app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $toastr, $sce, Upload, $timeout) {
 
+    let saved_mes;
+    $translate('document.saved').then(function (val) {
+        saved_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let hints_mes;
+    $translate('document.form.hints').then(function (val) {
+        hints_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+
     const currentLang = $translate.proposedLanguage() || $translate.use();
     const availableLangs =  $translate.getAvailableLanguageKeys();
 
@@ -119,7 +134,7 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
 
     $scope.save = function () {
         $http.put("/api/document/answer/" + $scope.team._id + "/" + token, $scope.answers).then(function (response) {
-            $toastr.success('Successfully saved!');
+            $toastr.success(saved_mes);
         }, function (response) {
             $toastr.error(response.data.msg, "Error: " + response.statusText);
         });
@@ -152,7 +167,7 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
 
     $scope.hints = function(content){
         Swal.fire({
-            title: 'ヒント',
+            title: hints_mes,
             html: '<div style="text-align:initial;">' + content + '</div>',
             showCloseButton: true,
             showCancelButton: false,

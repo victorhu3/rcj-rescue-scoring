@@ -36,8 +36,11 @@ block navbar
                 i.fas.fa-file-alt &nbsp;
                 | {{competition.name}} - RCJ Document
         .col-sm-6(style="text-align:right;")
-            button.btn.btn-info(type='button', onclick="location.href='/locales'")
-                i.fas.fa-language
+            button.btn.btn-primary(type='button', ng-click="changeLocale()", style="padding:2px 5px 0px 3px;margin-right:10px;")
+                i.fas.fa-language(style="font-size:30px;")
+            button.btn.btn-lg.btn-success(type='button', ng-click='save()',style="padding:1px 5px 0px 5px;font-size:22px;")
+                i.fas.fa-save &nbsp;
+                | {{"common.save" | translate}}
 
 block bread
     br
@@ -45,12 +48,12 @@ block bread
 
 block content
     .alert.alert-danger(role='alert',style="margin-bottom: 20px;", ng-if="currentLang != displayLang")
-        span このフォームは，お使いの言語に対応していませんので，代替言語で表示します．
+        span {{"document.form.languageError" | translate}}
 
     .alert.alert-info(role='alert')
-        h4.alert-heading 提出期限: 
+        h4.alert-heading {{"document.deadline" | translate}}: 
             strong(ng-bind="deadline()")
-        span このフォームは，上の提出期限まで何度でも編集可能です．
+        span {{"document.form.editDeadline" | translate}}
 
     //Notifications
     div(style="margin-top: 20px;" ng-repeat="notification in notifications track by $index")
@@ -61,32 +64,32 @@ block content
     div(style="text-align:center;margin-bottom:10px;")
         button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()')
             i.fas.fa-save &nbsp;
-            | {{"admin.formEditor.save" | translate}}
+            | {{"common.save" | translate}}
     //Team basic information
     .card
         .card-header
             i.fas.fa-user-friends &nbsp;
-            | チーム基本情報
+            | {{"document.form.basicInformation" | translate}}
         .card-body
             div(style="margin-bottom:10px;")
-                strong チームコード・チーム名
+                strong {{"document.form.teamName" | translate}}
             div(style="font-size:20px;")
                 p Amalgam
             hr
             div(style="margin-bottom:10px;")
-                strong リーグ
+                strong {{"common.league" | translate}}
             div(style="font-size:20px;")
                 p(ng-bind="league.name")
             hr
             div(style="margin-bottom:10px;")
-                strong 国・地域
+                strong {{"common.region" | translate}}
             div(style="font-size:20px;")
                 p Japan
     
     div(style="text-align:center;margin:10px 0px;")
         button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()')
             i.fas.fa-save &nbsp;
-            | {{"admin.formEditor.save" | translate}}
+            | {{"common.save" | translate}}
 
     div(ng-repeat="(blockIndex, block) in blocks track by $index")
         .card(ng-style="{border: '3px solid #' + block.color}")
@@ -99,18 +102,18 @@ block content
                         i.fas.fa-file-pdf(ng-if="question.type=='pdf'") &nbsp;
                         i.fas.fa-file-archive(ng-if="question.type=='zip'") &nbsp;
                         strong(ng-bind="langContent(question.i18n, 'question')")
-                        span.badge.badge-danger(ng-show="question.required", style="float:right;margin-left:5px;") 必須
-                        span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") 任意
+                        span.badge.badge-danger(ng-show="question.required", style="float:right;margin-left:5px;") {{"document.form.required" | translate}}
+                        span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") {{"document.form.optional" | translate}}
                     div(style="font-size:15px;")
                         p(ng-bind-html="langContent(question.i18n, 'description')")
-                        p(ng-if="question.type=='picture'") 最大サイズは5MBです．
-                        p(ng-if="question.type=='movie'") 最大サイズは50MBです．
-                        p(ng-if="question.type=='pdf'") PDF形式のみ受け付けます．最大サイズは10MBです．
-                        p(ng-if="question.type=='zip'") ZIP形式のみ受け付けます．最大サイズは50MBです．
+                        p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
+                        p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
+                        p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
+                        p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
                     div(style="text-align:center;margin:10px 0px;")
                         button.btn.btn-sm.btn-outline-primary(type='button', ng-click="hints(langContent(question.i18n, 'example'))", ng-if="langContent(question.i18n, 'example')")
                             i.fas.fa-lightbulb &nbsp;
-                            | ヒント
+                            | {{"document.form.hints" | translate}}
                     div(ng-if="question.type=='input'")
                         ng-quill-editor(ng-model="answers[blockIndex][questionIndex]")
                     div(ng-if="question.type=='select'")
@@ -119,7 +122,7 @@ block content
                         div
                             button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='image/*' ngf-max-size='5MB')
                                 i.far.fa-folder-open
-                                | ファイルを選ぶ
+                                | {{"document.form.selectFile" | translate}}
                         div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
                             span ERROR: {{question.errFile.$error}}
                         .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
@@ -131,7 +134,7 @@ block content
                         div
                             button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='50MB')
                                 i.far.fa-folder-open
-                                | ファイルを選ぶ
+                                | {{"document.form.selectFile" | translate}}
                         div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
                             span ERROR: {{question.errFile.$error}}
                         .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
@@ -143,7 +146,7 @@ block content
                         div
                             button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='application/pdf' ngf-max-size='10MB')
                                 i.far.fa-folder-open
-                                | ファイルを選ぶ
+                                | {{"document.form.selectFile" | translate}}
                         div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
                             span ERROR: {{question.errFile.$error}}
                         .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
@@ -155,7 +158,7 @@ block content
                         div
                             button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='application/zip' ngf-max-size='50MB')
                                 i.far.fa-folder-open
-                                | ファイルを選ぶ
+                                | {{"document.form.selectFile" | translate}}
                         div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
                             span ERROR: {{question.errFile.$error}}
                         .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")

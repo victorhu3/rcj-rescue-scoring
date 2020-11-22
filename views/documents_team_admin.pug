@@ -25,7 +25,7 @@ block location
 block content
   .row
     .col-12
-      h1 チーム個別設定 - {{competition.name}}
+      h1 {{'document.teamAdmin.title' | translate}} - {{competition.name}}
       .refine
         .card.border-dark.mb-3(style='width:100%;')
           .card-header.bg-transparent.border-dark.fa-2x
@@ -67,8 +67,8 @@ block content
               th {{"common.team" | translate}}
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
-              th アクセス
-              th 提出期限
+              th {{'document.teamAdmin.access' | translate}}
+              th {{'document.deadline' | translate}}
         tbody
             tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
               td(ng-bind='team.teamCode')
@@ -77,8 +77,8 @@ block content
               td(ng-bind='team.league')
               td
                 select.custom-select(ng-model='team.document.enabled', ng-change="save(team)")
-                  option(ng-value='true') 有効
-                  option(ng-value='false') 無効
+                  option(ng-value='true') {{'common.enable' | translate}}
+                  option(ng-value='false') {{'common.disable' | translate}}
               td
                 input.form-control(type='datetime-local', ng-model='team.document.deadline',style="", ng-blur="save(team)")
                 

@@ -25,31 +25,31 @@ block content
   .row
     .col-md-1
     .col-md-10
-      h1 ドキュメント設定 - {{competition.name}}
+      h1 {{"document.admin.title" | translate}} - {{competition.name}}
       hr
-      h3 基本設定
+      h3 {{"document.admin.overall" | translate}}
       .row
         .col-md-4
           .input-group(style="width:100%;margin 0 auto;")
             .input-group-prepend
-              span.input-group-text 提出システム有効化:
+              span.input-group-text {{"document.admin.access" | translate}}
             select.custom-select(ng-model='docSystemEnabled')
-              option(ng-value='true') 有効
-              option(ng-value='false') 無効
+              option(ng-value='true') {{"common.enable" | translate}}
+              option(ng-value='false') {{"common.disable" | translate}}
         .col-md-6
           .input-group(style="width:100%;margin 0 auto;")
             .input-group-prepend
-              span.input-group-text 提出期限
+              span.input-group-text {{"document.deadline" | translate}}
             input.form-control(type='datetime-local', ng-model='defaultDeadline' style="")
         .col-md-2(style="text-align:right;")
           button.btn.btn-success(type='button', ng-click='set()')
             i.fas.fa-check &nbsp;{{"admin.settings.set" | translate}}
       hr
-      h3 チーム設定
+      h3 {{"document.admin.team" | translate}}
       button(ng-click="go('/admin/' + competitionId + '/documents/teams')" class='btn btn-outline-primary btn-lg btn-block' style="margin-bottom:20px;")
-            i.fas.fa-user(aria-hidden='true') &nbsp; チーム個別設定
+            i.fas.fa-user(aria-hidden='true') &nbsp; {{"document.teamAdmin.title" | translate}}
       hr
-      h3 質問設定
+      h3 {{"document.admin.question" | translate}}
       div(ng-repeat="league in leagues")
           button(ng-click="go('/admin/' + competitionId + '/documents/' + league.id)" class='btn btn-outline-danger btn-lg btn-block' style="margin-bottom:20px;")
             i.fas.fa-question-circle(aria-hidden='true') &nbsp; {{league.name}}
