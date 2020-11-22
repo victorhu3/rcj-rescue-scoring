@@ -21,7 +21,7 @@ privateRouter.get('/:teamId', function (req, res, next) {
 
   competitiondb.team.findById(teamId)
   .populate('competition')
-  .select("competition document.deadline document.token")
+  .select("competition document.deadline document.token document.enabled")
   .exec(function (err, dbTeam) {
           if (err || dbTeam == null) {
               if(!err) err = {message: 'No team found'};
@@ -31,14 +31,18 @@ privateRouter.get('/:teamId', function (req, res, next) {
               })
           } else if (dbTeam) {
             if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.VIEW)){
-              let teamDeadline = dbTeam.document.deadline;
-              let deadline = dbTeam.competition.documents.deadline;
-              if(teamDeadline != null) deadline = teamDeadline;
+              if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
+                let teamDeadline = dbTeam.document.deadline;
+                let deadline = dbTeam.competition.documents.deadline;
+                if(teamDeadline != null) deadline = teamDeadline;
 
-              let now = new Date();
-              let timestamp = Math.floor(now.getTime()/1000);
+                let now = new Date();
+                let timestamp = Math.floor(now.getTime()/1000);
 
-              res.render('document_form', {deadline: deadline, editable: deadline >= timestamp, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
+                res.render('document_form', {deadline: deadline, editable: deadline >= timestamp, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
+              }else{
+                res.render('access_denied', {user: req.user})
+              }
             }else{
               res.render('access_denied', {user: req.user})
             }
@@ -58,7 +62,7 @@ publicRouter.get('/:teamId/:token', function (req, res, next) {
 
   competitiondb.team.findById(teamId)
   .populate('competition')
-  .select("competition document.deadline document.token")
+  .select("competition document.deadline document.token document.enabled")
   .exec(function (err, dbTeam) {
           if (err || dbTeam == null) {
               if(!err) err = {message: 'No team found'};
@@ -68,14 +72,19 @@ publicRouter.get('/:teamId/:token', function (req, res, next) {
               })
           } else if (dbTeam) {
             if(dbTeam.document.token == token){
-              let teamDeadline = dbTeam.document.deadline;
-              let deadline = dbTeam.competition.documents.deadline;
-              if(teamDeadline != null) deadline = teamDeadline;
+              if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
+                let teamDeadline = dbTeam.document.deadline;
+                let deadline = dbTeam.competition.documents.deadline;
+                if(teamDeadline != null) deadline = teamDeadline;
 
-              let now = new Date();
-              let timestamp = Math.floor(now.getTime()/1000);
+                let now = new Date();
+                let timestamp = Math.floor(now.getTime()/1000);
 
-              res.render('document_form', {deadline: deadline, editable: deadline >= timestamp, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
+                res.render('document_form', {deadline: deadline, editable: deadline >= timestamp, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
+              }else{
+                res.render('access_denied', {user: req.user})
+              }
+              
             }else{
               res.render('access_denied', {user: req.user})
             }
