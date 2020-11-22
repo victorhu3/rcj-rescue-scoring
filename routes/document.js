@@ -18,13 +18,11 @@ privateRouter.get('/:teamId', function (req, res, next) {
     return next()
   }
 
-  console.log(teamId);
 
   competitiondb.team.findById(teamId)
   .populate('competition')
   .select("competition document.deadline document.token")
   .exec(function (err, dbTeam) {
-    console.log(dbTeam);
           if (err || dbTeam == null) {
               if(!err) err = {message: 'No team found'};
               res.status(400).send({
@@ -32,7 +30,6 @@ privateRouter.get('/:teamId', function (req, res, next) {
                   err: err.message
               })
           } else if (dbTeam) {
-            console.log(dbTeam);
             if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.VIEW)){
               let teamDeadline = dbTeam.document.deadline;
               let deadline = dbTeam.competition.documents.deadline;
@@ -70,7 +67,6 @@ publicRouter.get('/:teamId/:token', function (req, res, next) {
                   err: err.message
               })
           } else if (dbTeam) {
-            console.log(dbTeam)
             if(dbTeam.document.token == token){
               let teamDeadline = dbTeam.document.deadline;
               let deadline = dbTeam.competition.documents.deadline;
