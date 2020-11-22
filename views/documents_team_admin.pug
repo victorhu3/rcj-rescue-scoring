@@ -1,0 +1,84 @@
+//- -*- tab-width: 2 -*-
+extends includes/layout
+
+block vars
+  - var ngAppDef = 'TeamAdmin'
+
+append scripts
+  script.
+    var competitionId = "#{id}"
+  script(src='/javascripts/documents_team_admin.js')
+  script(src='/components/angular-toastr/dist/angular-toastr.tpls.min.js')
+
+append css
+  link(rel='stylesheet', href='/components/angular-toastr/dist/angular-toastr.min.css')
+
+block location
+    a.breadcrumb-item(ng-click="go('/home')") Home
+    a.breadcrumb-item(ng-click="go('/admin')") Admin
+    a.breadcrumb-item(ng-click="go('/admin/' + competition._id)") {{competition.name}}
+    a.breadcrumb-item(ng-click="go('/admin/' + competition._id + '/documents')") Document settings
+    span.breadcrumb-item.active Team settings
+
+
+
+block content
+  .row
+    .col-12
+      .refine
+        .card.border-dark.mb-3(style='width:100%;')
+          .card-header.bg-transparent.border-dark.fa-2x
+            i.fas.fa-search(aria-hidden='true') &nbsp;
+            | {{'common.refine' | translate}}
+          .card-body.text-dark
+            h6.card-title {{"common.teamCode" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-list-ol(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.teamCode" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineCode')
+            hr
+            h6.card-title {{"common.team" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-users(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.team" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineRegion')
+            hr
+            h6.card-title {{"common.region" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-globe-asia(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.region" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineName')
+            hr
+            h6.card-title {{"common.league" | translate}}
+            span(ng-repeat='(key, value) in Rleagues track by key')
+              input(type='checkbox' ng-model='Rleagues[key]' id="checkL_{{key}}")
+              label.checkbox(for="checkL_{{key}}") {{key}}
+            
+      
+      
+      table.custom(style="margin-bottom:20px;")
+        thead
+            tr
+              th {{"common.teamCode" | translate}}
+              th {{"common.team" | translate}}
+              th {{"common.region" | translate}}
+              th {{"common.league" | translate}}
+              th アクセス
+              th 提出期限
+        tbody
+            tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
+              td(ng-bind='team.teamCode')
+              td(ng-bind='team.name')
+              td(ng-bind='team.country')
+              td(ng-bind='team.league')
+              td
+                select.custom-select(ng-model='team.document.enabled', ng-change="save(team)")
+                  option(ng-value='true') 有効
+                  option(ng-value='false') 無効
+              td
+                input.form-control(type='datetime-local', ng-model='team.document.deadline',style="", ng-blur="save(team)")
+                
+      

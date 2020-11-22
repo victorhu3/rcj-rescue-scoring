@@ -183,8 +183,9 @@ const teamSchema = new Schema({
   email      : [{type: String, default: '', select: false}],
   document   : {
     deadline : {type: String, default: null, select: false},
+    enabled  : {type: Boolean, default: true, select: false},
     token    : {type: String, default: '', select: false},
-    answers  : [[{type: String, default: null}]]
+    answers  : [[{type: String, default: null, select: false}]]
   }
 })
 

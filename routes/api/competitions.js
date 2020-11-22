@@ -234,6 +234,75 @@ adminRouter.put('/:competitionid', function (req, res, next) {
       );
 })
 
+adminRouter.get('/:competition/teams/documents', function (req, res, next) {
+    const id = req.params.competition;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
+        return res.status(401).send({
+            msg: "You have no authority to access this api"
+        })
+    }
+
+    competitiondb.team.find({
+        competition: id
+    }).select("_id name competition league country teamCode document.deadline document.enabled").lean().exec(function (err, data) {
+        if (err) {
+            logger.error(err)
+            res.status(400).send({
+                msg: "Could not get teams",
+                err: err.message
+            })
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
+
+adminRouter.put('/:competition/teams/documents', function (req, res, next) {
+    const id = req.params.competition;
+    const team = req.body;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (!auth.authCompetition(req.user, team.competition, ACCESSLEVELS.ADMIN)) {
+        return res.status(401).send({
+            msg: "You have no authority to access this api"
+        })
+    }
+
+    competitiondb.team.findById(team._id).exec(function (err, dbTeam) {
+        if (err) {
+            logger.error(err)
+            res.status(400).send({
+                msg: "Could not get teams",
+                err: err.message
+            })
+        } else {
+            dbTeam.document.deadline = team.document.deadline;
+            dbTeam.document.enabled = team.document.enabled;
+            dbTeam.save(function (err) {
+                if (err) {
+                    logger.error(err)
+                    return res.status(400).send({
+                        err: err.message,
+                        msg: "Could not save changes"
+                    })
+                } else {
+                    return res.status(200).send({
+                        msg: "Saved changes"
+                    })
+                }
+            })
+        }
+    })
+})
+
 publicRouter.get('/:competition/teams', function (req, res, next) {
     const id = req.params.competition;
 
@@ -263,6 +332,8 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
         }
     })
 })
+
+
 
 
 
