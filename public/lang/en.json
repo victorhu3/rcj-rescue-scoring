@@ -122,7 +122,8 @@
         "teamCode": "Team code",
         "duplicate": "Duplication",
         "print": "Print",
-        "printPage": "Print page"
+        "printPage": "Print page",
+        "refine": "Refine your search"
     },
     "accessDenied":{
         "title" : "Access denied",

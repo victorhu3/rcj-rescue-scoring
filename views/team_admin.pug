@@ -45,28 +45,58 @@ block content
       a(ng-href='/admin/{{competitionId}}/teams/bulk') {{"admin.teams.bulk" | translate}}
       br
       br
+      .refine
+        .card.border-dark.mb-3(style='width:100%;')
+          .card-header.bg-transparent.border-dark.fa-2x
+            i.fas.fa-search(aria-hidden='true') &nbsp;
+            | {{'common.refine' | translate}}
+          .card-body.text-dark
+            h6.card-title {{"common.teamCode" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-list-ol(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.teamCode" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineCode')
+            hr
+            h6.card-title {{"common.team" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-users(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.team" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineRegion')
+            hr
+            h6.card-title {{"common.region" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-globe-asia(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.region" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineName')
+            hr
+            h6.card-title {{"common.league" | translate}}
+            span(ng-repeat='(key, value) in Rleagues track by key')
+              input(type='checkbox' ng-model='Rleagues[key]' id="checkL_{{key}}")
+              label.checkbox(for="checkL_{{key}}") {{key}}
+            
+      
       div
           button(ng-click="selectAll()" class='btn btn-primary' style="margin: 5px 5px 5px 5px;") {{"common.selectAll" | translate}}
           button(ng-click="removeSelectedTeam()" class='btn btn-danger' style="margin: 5px 5px 5px 5px;") {{"common.delS" | translate}}
           button(ng-click="reset_kiosk()" class='btn btn-secondary' style="margin: 5px 5px 5px 5px; text-align:right;") Reset Kiosk
-          button(ng-click="showMd5=!showMd5" data-toggle="button" aria-pressed="false" autocomplete="off" class='btn btn-secondary' style="margin: 5px 5px 5px 5px; text-align:right;") Show hashed info
-      table.custom
+      table.custom(style="margin-bottom:20px;")
         thead
             tr
               th
               th(ng-if="showCode") {{"common.teamCode" | translate}}
               th {{"common.team" | translate}}
-              th(ng-if="showMd5") Hashed team name
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
               th {{"common.operation" | translate}}
         tbody
-            tr(ng-repeat='team in teams | orderBy:"[name]"')
+            tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
               td
                 input(type='checkbox' ng-model='team.checked' style="display:initial;")
               td(ng-bind='team.teamCode' ng-if="showCode")
               td(ng-bind='team.name')
-              td(ng-bind='md5(team.name)' ng-if="showMd5")
               td(ng-bind='team.country')
               td(ng-bind='team.league')
               td

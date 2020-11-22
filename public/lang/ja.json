@@ -122,7 +122,7 @@
         "teamCode": "チームコード",
         "duplicate": "複製",
         "print": "印刷",
-        "printPage": "印刷画面"
+        "refine": "絞り込み検索"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
