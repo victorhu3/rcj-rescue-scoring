@@ -70,7 +70,7 @@ publicRouter.put('/answer/:teamId/:token', function (req, res, next) {
 
     competitiondb.team.findById(teamId)
     .populate('competition')
-    .select("competition document.answers document.token")
+    .select("competition document.answers document.token document.deadline")
     .exec(function (err, dbTeam) {
             if (err || dbTeam == null) {
                 if(!err) err = {message: 'No team found'};
