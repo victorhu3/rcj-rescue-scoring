@@ -82,4 +82,21 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
     $scope.list_filter = function (value, index, array) {
         return (showAllLeagues || $scope.Rleagues[value.league])  && (~value.name.indexOf($scope.refineName)) && (~value.teamCode.indexOf($scope.refineCode)) && (~value.country.indexOf($scope.refineRegion))
     }
+
+    $scope.openLog = function(team){
+        let logUrl = "/api/document/files/" + team._id + "/" + team.document.token + "/log.txt";
+        $http.get(logUrl).then(function (response) {
+            let log = response.data.split(/\r?\n/g);
+            log = log.reverse().join('<br>');
+            
+            Swal.fire({
+                title: 'Log',
+                html: "<div style='text-align:left;'>" + log + "</div>",
+                width: "100%",
+                height: "100%",
+                showCloseButton: true, 
+            })
+        })
+        
+    }
 }]);

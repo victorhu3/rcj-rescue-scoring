@@ -756,8 +756,8 @@
         },
         "teamAdmin":{
             "title": "Individual team settings",
-            "access": "Accessible"
-            
+            "access": "Accessible",
+            "log": "Log"
         },
         "editor": {
             "title": "Document Form Editor",

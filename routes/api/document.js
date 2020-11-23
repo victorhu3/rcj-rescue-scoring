@@ -2,16 +2,16 @@
 //                          Libraries
 //========================================================================
 
-var express = require('express')
-var publicRouter = express.Router()
-var privateRouter = express.Router()
-var adminRouter = express.Router()
-var competitiondb = require('../../models/competition')
-var query = require('../../helper/query-helper')
-var validator = require('validator')
-var async = require('async')
-var ObjectId = require('mongoose').Types.ObjectId
-var logger = require('../../config/logger').mainLogger
+const express = require('express')
+const publicRouter = express.Router()
+const privateRouter = express.Router()
+const adminRouter = express.Router()
+const competitiondb = require('../../models/competition')
+const query = require('../../helper/query-helper')
+const validator = require('validator')
+const async = require('async')
+const ObjectId = require('mongoose').Types.ObjectId
+const logger = require('../../config/logger').mainLogger
 const multer = require('multer');
 const path = require('path')
 const mkdirp = require('mkdirp');
@@ -21,14 +21,38 @@ const fs = require('fs')
 const mime = require('mime')
 const filetype = require('file-type')
 const ACCESSLEVELS = require('../../models/user').ACCESSLEVELS
-var crypto = require('crypto');
+const crypto = require('crypto');
 const glob = require("glob");
 const ffmpeg = require('fluent-ffmpeg');
 const { time } = require('console')
 const LEAGUES_JSON = competitiondb.LEAGUES_JSON;
+const dateformat = require('dateformat');
 
 const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 const N=32
+
+function getIP(req) {
+    if (req.headers['x-forwarded-for']) {
+        return req.headers['x-forwarded-for'];
+    }
+    if (req.connection && req.connection.remoteAddress) {
+        return req.connection.remoteAddress;
+    }
+    if (req.connection.socket && req.connection.socket.remoteAddress) {
+        return req.connection.socket.remoteAddress;
+    }
+    if (req.socket && req.socket.remoteAddress) {
+        return req.socket.remoteAddress;
+    }
+    return '0.0.0.0';
+};
+  
+function writeLog(req, competitionId, teamId, message){
+    let output = "[" + dateformat(new Date(), 'mm/dd/yy HH:MM:ss') + "] " + getIP(req) + " : " + message + "\n";
+    fs.appendFile(__dirname + "/../../documents/" + competitionId + "/" + teamId + "/log.txt" , output, (err) => {
+        if (err) logger.error(err.message);
+    });
+}
 
 publicRouter.get('/answer/:teamId/:token', function (req, res, next) {
     const teamId = req.params.teamId;
@@ -102,22 +126,26 @@ publicRouter.put('/answer/:teamId/:token', function (req, res, next) {
                             dbTeam.save(function (err) {
                                 if (err) {
                                     logger.error(err)
+                                    writeLog(req, dbTeam.competition._id, dbTeam._id, "ERROR: " + err.message);
                                     return res.status(400).send({
                                         err: err.message,
                                         msg: "Could not save changes"
                                     })
                                 } else {
+                                    writeLog(req, dbTeam.competition._id, dbTeam._id, "Submissions have been updated");
                                     return res.status(200).send({
                                         msg: "Saved changes"
-                                    })
+                                    }); 
                                 }
                             })
                         }else{
+                            writeLog(req, dbTeam.competition._id, dbTeam._id, "They  have attempted to update the submission, but it has expired the deadline.");
                             res.status(400).send({
                                 msg: "The deadline has passed."
                             })
                         }
                     }else{
+                        writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to update the submission, but this operation is not allowed.");
                         res.status(401).send({
                             msg: "Operation not permited"
                         })
@@ -237,6 +265,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                                         /*fs.rmdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", { recursive: true },(err) => {
                                             if(err) logger.error(err.message);
                                         });*/
+                                        writeLog(req, dbTeam.competition._id, dbTeam._id, "File uploaded! : " + fileName);
                                     })
                                 }
 
@@ -247,11 +276,13 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                             res.status(400).send({
                                 msg: "The deadline has passed."
                             })
+                            writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but it has expired the deadline.");
                         }
                     }else{
                         res.status(401).send({
                             msg: "Operation not permited"
                         })
+                        writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but this operation is not allowed.");
                     }
                     
                     

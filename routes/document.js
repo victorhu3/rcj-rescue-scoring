@@ -1,13 +1,39 @@
 // -*- tab-width: 2 -*-
-var express = require('express')
-var publicRouter = express.Router()
-var privateRouter = express.Router()
-var adminRouter = express.Router()
-var competitiondb = require('../models/competition')
+const express = require('express')
+const publicRouter = express.Router()
+const privateRouter = express.Router()
+const adminRouter = express.Router()
+const competitiondb = require('../models/competition')
 const logger = require('../config/logger').mainLogger
-var ObjectId = require('mongoose').Types.ObjectId
+const ObjectId = require('mongoose').Types.ObjectId
 const auth = require('../helper/authLevels')
 const ACCESSLEVELS = require('../models/user').ACCESSLEVELS
+const dateformat = require('dateformat');
+const fs = require('fs')
+
+
+function getIP(req) {
+  if (req.headers['x-forwarded-for']) {
+    return req.headers['x-forwarded-for'];
+  }
+  if (req.connection && req.connection.remoteAddress) {
+    return req.connection.remoteAddress;
+  }
+  if (req.connection.socket && req.connection.socket.remoteAddress) {
+    return req.connection.socket.remoteAddress;
+  }
+  if (req.socket && req.socket.remoteAddress) {
+    return req.socket.remoteAddress;
+  }
+  return '0.0.0.0';
+};
+
+function writeLog(req, competitionId, teamId, message){
+  let output = "[" + dateformat(new Date(), 'mm/dd/yy HH:MM:ss') + "] " + getIP(req) + " : " + message + "\n";
+  fs.appendFile(__dirname + "/../documents/" + competitionId + "/" + teamId + "/log.txt", output, (err) => {
+    if (err) logger.error(err.message);
+  });
+}
 
 /* GET home page. */
 
@@ -81,8 +107,10 @@ publicRouter.get('/:teamId/:token', function (req, res, next) {
                 let timestamp = Math.floor(now.getTime()/1000);
 
                 res.render('document_form', {deadline: deadline, editable: deadline >= timestamp, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
+                writeLog(req, dbTeam.competition._id, dbTeam._id, "Accessed the document submission page.");
               }else{
                 res.render('access_denied', {user: req.user})
+                writeLog(req, dbTeam.competition._id, dbTeam._id, "Tried to access the document submission page, but they are not allowed to do so.");
               }
               
             }else{

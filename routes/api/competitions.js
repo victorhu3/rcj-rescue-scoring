@@ -249,7 +249,7 @@ adminRouter.get('/:competition/teams/documents', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id
-    }).select("_id name competition league country teamCode document.deadline document.enabled").lean().exec(function (err, data) {
+    }).select("_id name competition league country teamCode document.deadline document.enabled document.token").lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({

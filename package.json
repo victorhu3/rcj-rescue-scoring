@@ -17,6 +17,7 @@
     "connect-redis": "^4.0.3",
     "cookie-parser": "~1.4.4",
     "cron": "^1.8.1",
+    "dateformat": "^4.0.0",
     "debug": "~4.1.1",
     "expect": "^24.9.0",
     "expect.js": "^0.3.1",
