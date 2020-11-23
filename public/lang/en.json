@@ -747,6 +747,7 @@
     "document": {
         "deadline": "Submission deadline",
         "saved": "Saved successfully",
+        "uploaded": "Successfully uploaded!",
         "admin":{
             "title": "Document submission system settings",
             "overall": "General settings",

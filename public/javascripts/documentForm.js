@@ -1,5 +1,5 @@
 // register the directive with your app module
-var app = angular.module('DocumentForm', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'toastr', 'ngSanitize', 'ngFileUpload']);
+var app = angular.module('DocumentForm', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize', 'ngFileUpload']);
 
 app.constant('NG_QUILL_CONFIG', {
     /*
@@ -50,11 +50,25 @@ app.constant('NG_QUILL_CONFIG', {
   ])
 
 // function referenced by the drop target
-app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $toastr, $sce, Upload, $timeout) {
+app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http', '$translate','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $sce, Upload, $timeout) {
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
 
     let saved_mes;
     $translate('document.saved').then(function (val) {
         saved_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let upload_mes;
+    $translate('document.uploaded').then(function (val) {
+        upload_mes = val;
     }, function (translationId) {
     // = translationId;
     });
@@ -134,9 +148,16 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
 
     $scope.save = function () {
         $http.put("/api/document/answer/" + $scope.team._id + "/" + token, $scope.answers).then(function (response) {
-            $toastr.success(saved_mes);
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
         }, function (response) {
-            $toastr.error(response.data.msg, "Error: " + response.statusText);
+            Toast.fire({
+                type: 'error',
+                title: "Error: " + response.statusText,
+                html: response.data.msg
+            })
         });
     }
 
@@ -188,7 +209,11 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
         question.f = file;
         question.errFile = errFiles && errFiles[0];
         if(question.errFile){
-            $toastr.error(question.errFile.$error + ' : ' + question.errFile.$errorParam, 'Error');
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: question.errFile.$error + ' : ' + question.errFile.$errorParam
+            })
         }
         if (file) {
             question.uploading = true;
@@ -207,13 +232,20 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
                         }),1);
                     }
                     file.result = response.data;
-                    $toastr.success('Successfully uploaded!');
+                    Toast.fire({
+                        type: 'success',
+                        title: upload_mes
+                    })
                     delete question.f;
                 });
             }, function (response) {
                 if (response.status > 0){
                      question.errorMsg = response.status + ': ' + response.data.msg;
-                     $toastr.error(response.data.msg, "Error: " + response.statusText);
+                     Toast.fire({
+                        type: 'error',
+                        title: "Error: " + response.statusText,
+                        html: response.data.msg
+                    })
                 }
             }, function (evt) {
                 file.progress = Math.min(100, parseInt(100.0 * 

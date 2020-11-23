@@ -744,6 +744,7 @@
     "document": {
         "deadline": "提出期限",
         "saved": "正常に保存しました",
+        "uploaded": "正常にアップロードに成功しました",
         "admin":{
             "title": "ドキュメント提出システム設定",
             "overall": "全般設定",

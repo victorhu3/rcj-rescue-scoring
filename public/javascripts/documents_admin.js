@@ -1,6 +1,12 @@
-var app = angular.module("DocumentsAdmin", ['ngTouch','ngAnimate', 'pascalprecht.translate', 'ngCookies', 'toastr']);
+var app = angular.module("DocumentsAdmin", ['ngTouch','ngAnimate', 'pascalprecht.translate', 'ngCookies']);
 
-app.controller("DocumentsAdminController", ['$scope', '$http', '$translate', 'toastr', function ($scope, $http, $translate, $toastr) {
+app.controller("DocumentsAdminController", ['$scope', '$http', '$translate', function ($scope, $http, $translate) {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
     
     let saved_mes;
     $translate('document.saved').then(function (val) {
@@ -33,9 +39,16 @@ app.controller("DocumentsAdminController", ['$scope', '$http', '$translate', 'to
         }
       
         $http.put("/api/competitions/" + $scope.competitionId, data).then(function (response) {
-            $toastr.success(saved_mes);
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
         }, function (response) {
-            $toastr.error(response.data.msg, "Error: " + response.statusText);
+            Toast.fire({
+                type: 'error',
+                title: "Error: " + response.statusText,
+                html: response.data.msg
+            })
         });
     }
 

@@ -1,6 +1,13 @@
-var app = angular.module("TeamAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'toastr']);
-app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr', function ($scope, $uibModal, $log, $http, $translate, $toastr) {
+var app = angular.module("TeamAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
+app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '$translate', function ($scope, $uibModal, $log, $http, $translate) {
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+      
     let saved_mes;
     $translate('document.saved').then(function (val) {
         saved_mes = val;
@@ -37,9 +44,16 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         };
 
         $http.put("/api/competitions/" + competitionId + "/teams/documents", tmp).then(function (response) {
-            $toastr.success(saved_mes);
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
         }, function (response) {
-            $toastr.error(response.data.msg, "Error: " + response.statusText);
+            Toast.fire({
+                type: 'error',
+                title: "Error: " + response.statusText,
+                html: response.data.msg
+            })
         });
     }
 
@@ -47,7 +61,6 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         $http.get("/api/competitions/" + competitionId +
             "/teams/documents").then(function (response) {
             $scope.teams = response.data;
-            console.log($scope.teams)
 
             $scope.showCode = false;
             for(let t of $scope.teams){
