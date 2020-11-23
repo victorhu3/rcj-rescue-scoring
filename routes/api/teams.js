@@ -205,6 +205,14 @@ privateRouter.put('/:competitionid/:teamid', function (req, res, next) {
                     if (team.checkin != null) dbTeam.checkin = team.checkin;
                     if (team.code != null) dbTeam.teamCode = team.code;
 
+                    if(auth.authCompetition(req.user, competitionid, ACCESSLEVELS.ADMIN)){
+                        if(team.name != null) dbTeam.name = team.name;
+                        if(team.teamCode != null) dbTeam.teamCode = team.teamCode;
+                        if(team.league != null) dbTeam.league = team.league;
+                        if(team.country != null) dbTeam.country = team.country;
+                        if(team.email != null) dbTeam.email = team.email;
+                    }
+
                     dbTeam.save(function (err) {
                         if (err) {
                             logger.error(err)
@@ -318,9 +326,9 @@ adminRouter.post('/', function (req, res) {
                     document: {
                         token: Array.from(crypto.randomFillSync(new Uint8Array(N))).map((n)=>S[n%S.length]).join(''),
                         answers: []
-                    }
+                    },
+                    email: team.email
                 });
-                console.log(newTeam)
 
                 newTeam.save(function (err, data) {
                     if (err) {

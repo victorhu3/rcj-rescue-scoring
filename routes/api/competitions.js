@@ -303,6 +303,33 @@ adminRouter.put('/:competition/teams/documents', function (req, res, next) {
     })
 })
 
+adminRouter.get('/:competition/adminTeams', function (req, res, next) {
+    const id = req.params.competition;
+
+    if (!ObjectId.isValid(id)) {
+        return next();
+    }
+
+    if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
+        return next();
+    }
+
+    competitiondb.team.find({
+        competition: id
+    },'_id name competition league country teamCode email').lean().exec(function (err, data) {
+        if (err) {
+            logger.error(err)
+            res.status(400).send({
+                msg: "Could not get teams",
+                err: err.message
+            })
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
+
+
 publicRouter.get('/:competition/teams', function (req, res, next) {
     const id = req.params.competition;
 

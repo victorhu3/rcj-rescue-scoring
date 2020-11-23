@@ -1,9 +1,16 @@
-var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamAdminController", function ($scope, $http) {
+var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamAdminController", function ($scope, $http, $translate) {
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000
+    });
+    
+    let saved_mes;
+    $translate('document.saved').then(function (val) {
+        saved_mes = val;
+    }, function (translationId) {
+    // = translationId;
     });
     
     $scope.competitionId = competitionId;
@@ -38,13 +45,26 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
         $http.post("/api/teams", team).then(function (response) {
             console.log(response)
             updateTeamList()
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
         }, function (error) {
             console.log(error)
+            Toast.fire({
+                type: 'error',
+                title: "ERROR",
+                html: error.data.msg
+            })
         })
     };
 
     $scope.addEmail = function(){
         $scope.email.push("");
+    }
+
+    $scope.addTeamEmail = function(team){
+        team.email.push("");
     }
 
 
@@ -53,8 +73,25 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
     }
 
     $scope.update = function (team) {
-
-        team.edit = false;
+        for(let m in team.email){
+            console.log(team.email[m])
+            if(!team.email[m]) team.email.splice(m,1);
+        }
+        $http.put("/api/teams/" + team.competition + "/" + team._id, team).then(function (response) {
+            updateTeamList()
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
+            team.edit = false;
+        }, function (error) {
+            console.log(error)
+            Toast.fire({
+                type: 'error',
+                title: "ERROR",
+                html: error.data.message
+            })
+        })   
     }
 
     $scope.selectAll = function () {

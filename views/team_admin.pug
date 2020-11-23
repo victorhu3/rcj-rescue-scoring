@@ -29,17 +29,23 @@ block content
                 th {{"common.team" | translate}}
                 th {{"common.region" | translate}}
                 th {{"common.league" | translate}}
+                th {{"common.email" | translate}}
                 th {{"common.operation" | translate}}
         tbody
             tr
                 td
-                    input(ng-model='teamCode' style="width:100%;")
+                  input(ng-model='teamCode' style="width:100%;")
                 td
-                    input(ng-model='teamName' style="width:100%;")
+                  input(ng-model='teamName' style="width:100%;")
                 td
-                    input(ng-model='country' style="width:100%;")
+                  input(ng-model='country' style="width:100%;")
                 td
-                    select(ng-model='teamLeague' ng-options='league for league in leagues' style="width:100%;")
+                  select(ng-model='teamLeague' ng-options='league for league in leagues' style="width:100%;")
+                td
+                  div(ng-repeat="em in email track by $index")
+                    input(type="email", ng-model='email[$index]' style="width:100%;margin-bottom:5px;")
+                    button.btn.btn-success(type='button', ng-click='addEmail()', style="padding:0px 6px;margin: 5px;", ng-if="$last && email[$index]")
+                        i.fas.fa-plus
                 td
                     button(ng-click='addTeam()' style="width:100%;") {{"admin.teams.add" | translate}}
       a(ng-href='/admin/{{competitionId}}/teams/bulk') {{"admin.teams.bulk" | translate}}
@@ -82,28 +88,51 @@ block content
           button(ng-click="selectAll()" class='btn btn-primary' style="margin: 5px 5px 5px 5px;") {{"common.selectAll" | translate}}
           button(ng-click="removeSelectedTeam()" class='btn btn-danger' style="margin: 5px 5px 5px 5px;") {{"common.delS" | translate}}
           button(ng-click="reset_kiosk()" class='btn btn-secondary' style="margin: 5px 5px 5px 5px; text-align:right;") Reset Kiosk
-      table.custom(style="margin-bottom:20px;")
+      table.custom(style="margin-bottom:60px;")
         thead
             tr
               th
-              th(ng-if="showCode") {{"common.teamCode" | translate}}
+              th {{"common.teamCode" | translate}}
               th {{"common.team" | translate}}
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
+              th {{"common.email" | translate}}
               th {{"common.operation" | translate}}
         tbody
             tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
               td
                 input(type='checkbox' ng-model='team.checked' style="display:initial;")
-              td(ng-bind='team.teamCode' ng-if="showCode")
-              td(ng-bind='team.name')
-              td(ng-bind='team.country')
-              td(ng-bind='team.league')
               td
+                span(ng-bind='team.teamCode', ng-hide="team.edit")
+                input(ng-model="team.teamCode", ng-show="team.edit",style="width:100%;")
+              td
+                span(ng-bind='team.name', ng-hide="team.edit")
+                input(ng-model="team.name", ng-show="team.edit",style="width:100%;")
+              td
+                span(ng-bind='team.country', ng-hide="team.edit")
+                input(ng-model="team.country", ng-show="team.edit",style="width:100%;")
+              td
+                span(ng-bind='team.league', ng-hide="team.edit")
+                select(ng-model='team.league' ng-options='league for league in leagues' style="width:100%;", ng-show="team.edit")
+              td
+                div(ng-repeat="em in team.email track by $index", ng-hide="team.edit")
+                  span(ng-bind="em")
+                  br
+                did(ng-show="team.edit")
+                  div(ng-repeat="em in team.email track by $index")
+                    input(type="email", ng-model='team.email[$index]' style="width:100%;margin-bottom:5px;")
+                    button.btn.btn-success(type='button', ng-click='addTeamEmail(team)', style="padding:0px 6px;margin: 5px;", ng-if="$last && team.email[$index]")
+                        i.fas.fa-plus
+              td
+                div(ng-hide="team.edit")
                   .dropdown
                   button#dropdownMenu.btn.btn-secondary.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') {{"common.action" | translate}}
                   .dropdown-menu(aria-labelledby='dropdownMenu')
-                      button.dropdown-item(type='button' ng-click="updateCode(team)") {{"admin.teams.updateCode" | translate}}
+                      button.dropdown-item(type='button' ng-click="edit(team)") {{"common.edit" | translate}}
                       .dropdown-divider
                       button.dropdown-item(type='button' ng-click='removeTeam(team._id)') {{"common.delete" | translate}}
+                
+                div(ng-show="team.edit")
+                  button(ng-click="update(team)" class='btn btn-success') {{"common.save" | translate}}
+
       
