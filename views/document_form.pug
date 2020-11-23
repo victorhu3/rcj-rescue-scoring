@@ -64,14 +64,9 @@ block content
             h4.alert-heading(ng-bind="langContent(notification.i18n, 'title')")
             span(ng-bind-html="langContent(notification.i18n, 'description')")
     
-    if editable
-        div(style="text-align:center;margin-bottom:10px;")
-            button.btn.btn-lg.btn-outline-success(type='button', ng-click='save()')
-                i.fas.fa-save &nbsp;
-                | {{"common.save" | translate}}
     //Team basic information
     .card(style="margin-bottom:20px;")
-        .card-header
+        h5.card-header
             i.fas.fa-user-friends &nbsp;
             | {{"document.form.basicInformation" | translate}}
         .card-body
