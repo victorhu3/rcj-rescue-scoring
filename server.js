@@ -24,11 +24,23 @@
  *
  */
 
-var cluster = require('cluster')
-var logger = require('./config/logger').mainLogger
-var env = require('node-env-file')
-var numCPUs = require('os').cpus().length;
-env('process.env')
+const cluster = require('cluster')
+const logger = require('./config/logger').mainLogger
+const env = require('node-env-file')
+const numCPUs = require('os').cpus().length;
+const fs = require("fs");
+env('process.env');
+
+function isExistFile(file) {
+  try {
+    fs.statSync(file);
+    return true
+  } catch(err) {
+    if(err.code === 'ENOENT') return false
+  }
+}
+
+if(isExistFile("mail.env")) env('mail.env');
 
 /*
 if (cluster.isMaster) {
@@ -45,22 +57,21 @@ if (cluster.isMaster) {
 }
 
 else {*/
-  var app = require('./app')
-  var http = require('http')
-  var fs = require('fs')
+  const app = require('./app')
+  const http = require('http')
 
   /**
    * Get port from environment and store in Express.
    */
 
   // XXX: Is this used anywhere?
-  var port = (parseInt(process.env.WEB_HOSTPORT, 10) || 80) + parseInt(process.env.NODE_APP_INSTANCE || 0);
+  const port = (parseInt(process.env.WEB_HOSTPORT, 10) || 80) + parseInt(process.env.NODE_APP_INSTANCE || 0);
   app.set('port', port)
 
   /**
    * Create HTTP server.
    */
-  var server = http.createServer(app)
+  const server = http.createServer(app)
 
    //https conf
 
