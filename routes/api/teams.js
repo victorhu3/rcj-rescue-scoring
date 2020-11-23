@@ -296,7 +296,6 @@ adminRouter.delete('/:teamid', function (req, res, next) {
                     })
                     for(let id of ids){
                         let path = __dirname + "/../../documents/" + dbTeam.competition + "/" + id;
-                        console.log(path)
                         fs.rmdir(path, { recursive: true },(err) => {
                             if (err) throw err;
                         });
@@ -346,7 +345,6 @@ adminRouter.post('/', function (req, res) {
                         let path = __dirname + "/../../documents/" + dbComp._id + "/" + data._id;
                         mkdirp(path, function (err) {
                             if (err) logger.error(err);
-                            else logger.info(path);
                         });
                     }
                 })
@@ -355,13 +353,70 @@ adminRouter.post('/', function (req, res) {
         }
 
       )
+})
 
+adminRouter.post('/bulk', function (req, res) {
+    var teams = req.body;
 
+    competitiondb.competition.findOne({
+        _id: teams[0].competition
+    })
+      .exec(function (err, dbComp) {
+            if (err) {
+                logger.error(err)
+            } else if (dbComp) {
+                let count = teams.length;
+                let responseSent = false;
+                for(let team of teams){
+                    let newTeam = new competitiondb.team({
+                        name: team.name,
+                        league: team.league,
+                        competition: team.competition,
+                        teamCode: team.teamCode,
+                        country: team.country,
+                        document: {
+                            token: Array.from(crypto.randomFillSync(new Uint8Array(N))).map((n)=>S[n%S.length]).join(''),
+                            answers: []
+                        },
+                        email: team.email
+                    });
+    
+                    newTeam.save(function (err, data) {
+                        if (err) {
+                            logger.error(err)
+                            if(!responseSent){
+                                responseSent = true;
+                                res.status(400).send({
+                                    message: "Error saving team",
+                                    error: err.message
+                                })
+                            }
+                            
+                        } else {
+                            let path = __dirname + "/../../documents/" + dbComp._id + "/" + data._id;
+                            mkdirp(path, function (err) {
+                                if (err) logger.error(err);
+                            });
+                            count --;
+                            if(count <= 0){
+                                if(!responseSent){
+                                    responseSent = true;
+                                    res.location("/api/teams/" + data._id)
+                                    res.status(201).send({
+                                        message: "New teams have been saved"
+                                    })
+                                }
+                            }
+                            
+                        }
+                    })
 
+                   
+                }
+            }
+        }
 
-
-
-
+      )
 })
 
 function isExistFile(file) {

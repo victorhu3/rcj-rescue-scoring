@@ -125,7 +125,9 @@
         "printPage": "Print page",
         "refine": "Refine your search",
         "enable": "Enable",
-        "disable": "Disable"
+        "disable": "Disable",
+        "email": "Email",
+        "edit": "Edit"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -486,7 +488,8 @@
             "maze": "Maze",
             "maps": "Maps(Field layout)",
             "runs": "Runs",
-            "backup": "Backup"
+            "backup": "Backup",
+            "tools": "Tools"
         },
         "teams": {
             "title": "Teams",
@@ -586,7 +589,8 @@
             "s3D": "After selecting the file, please check the contents displayed below.",
             "exe": "Execution",
             "inpro": "Registration in progress ...",
-            "complete": "Registration completed"
+            "complete": "Registration completed",
+            "headerError": "There is a problem in specifying the data type."
         },
         "mazeMapAdmin": {
             "title": "Maze Map(Field layout)",
