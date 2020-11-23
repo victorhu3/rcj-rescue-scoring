@@ -103,11 +103,17 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
             log = log.reverse().join('<br>');
             
             Swal.fire({
-                title: 'Log',
-                html: "<div style='text-align:left;'>" + log + "</div>",
+                title: 'Log Viewer',
+                html: "<div style='text-align:left;max-height:calc(100vh - 200px);overflow:auto;'>" + log + "</div>",
                 width: "100%",
                 height: "100%",
                 showCloseButton: true, 
+            })
+        }, function (response) {
+            Toast.fire({
+                type: 'error',
+                title: "Error: " + response.statusText,
+                html: response.data.msg
             })
         })
         
