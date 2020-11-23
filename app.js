@@ -232,8 +232,8 @@ app.use(function (err, req, res, next) {
         var stringSplit = req.originalUrl.split("/")
         //res.status(err.status || 500)
         if (stringSplit[1] !== undefined && stringSplit[1] === "api") {
-            res.send({
-                error: "Error 404"
+            res.status(404).send({
+                message: "404 Not found"
             })
         } else {
 
