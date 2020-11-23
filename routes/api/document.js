@@ -265,7 +265,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                                         /*fs.rmdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", { recursive: true },(err) => {
                                             if(err) logger.error(err.message);
                                         });*/
-                                        writeLog(req, dbTeam.competition._id, dbTeam._id, "File uploaded! : " + fileName);
+                                        writeLog(req, dbTeam.competition._id, dbTeam._id, "File uploaded! File name: " + fileName);
                                     })
                                 }
 
@@ -276,13 +276,13 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                             res.status(400).send({
                                 msg: "The deadline has passed."
                             })
-                            writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but it has expired the deadline.");
+                            writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but it has expired the deadline. File name: " + fileName);
                         }
                     }else{
                         res.status(401).send({
                             msg: "Operation not permited"
                         })
-                        writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but this operation is not allowed.");
+                        writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but this operation is not allowed. File name: " + fileName);
                     }
                     
                     
@@ -370,7 +370,7 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
                 })
             } else if (dbTeam) {
                 if(dbTeam.document.token == token){
-                    if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
+                    if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || fileName == "log.txt"){
                         let path = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + '/' + fileName;
                         fs.stat(path, (err, stat) => {
 
