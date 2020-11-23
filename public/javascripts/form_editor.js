@@ -1,5 +1,5 @@
 // register the directive with your app module
-var app = angular.module('FormEditor', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'color.picker', 'ngQuill', 'toastr']);
+var app = angular.module('FormEditor', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'color.picker', 'ngQuill']);
 
 app.constant('NG_QUILL_CONFIG', {
     /*
@@ -50,7 +50,14 @@ app.constant('NG_QUILL_CONFIG', {
   ])
 
 // function referenced by the drop target
-app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr', function ($scope, $uibModal, $log, $http, $translate, $toastr) {
+app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', '$translate', function ($scope, $uibModal, $log, $http, $translate) {
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
 
     let saved_mes;
     $translate('document.saved').then(function (val) {
@@ -269,9 +276,16 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
         }
       
         $http.put("/api/competitions/" + competitionId, data).then(function (response) {
-            $toastr.success(saved_mes);
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
         }, function (response) {
-            $toastr.error(response.data.msg, "Error: " + response.statusText);
+            Toast.fire({
+                type: 'error',
+                title: "Error: " + response.statusText,
+                html: response.data.msg
+            })
         });
     }
 

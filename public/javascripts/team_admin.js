@@ -1,6 +1,13 @@
 var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCookies']).controller("TeamAdminController", function ($scope, $http) {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+    
     $scope.competitionId = competitionId;
-    $scope.showCode = false;
+    $scope.email = [""];
     updateTeamList();
 
     $http.get("/api/competitions/" + competitionId).then(function (response) {
@@ -24,7 +31,8 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
             name: $scope.teamName,
             league: $scope.teamLeague,
             competition: competitionId,
-            country: $scope.country
+            country: $scope.country,
+            email : $scope.email
         };
 
         $http.post("/api/teams", team).then(function (response) {
@@ -35,30 +43,18 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
         })
     };
 
-
-    $scope.updateCode = async function (team) {
-        const {
-            value: operation
-        } = await swal({
-            title: "Update team code",
-            text: "Update team code from '" + team.teamCode + "'",
-            type: "info",
-            showCancelButton: true,
-            confirmButtonText: "Update",
-            confirmButtonColor: "#3bacec",
-            input: 'text',
-            inputPlaceholder: 'Enter NEW team code here'
-        });
-
-        if (operation) {
-            $http.get("/api/teams/set/" + team._id + "/" + operation).then(function (response) {
-                updateTeamList()
-            }, function (error) {
-                console.log(error)
-            })
-        }
+    $scope.addEmail = function(){
+        $scope.email.push("");
+    }
 
 
+    $scope.edit = function (team) {
+        team.edit = true;
+    }
+
+    $scope.update = function (team) {
+
+        team.edit = false;
     }
 
     $scope.selectAll = function () {
@@ -108,7 +104,7 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
 
     function updateTeamList() {
         $http.get("/api/competitions/" + competitionId +
-            "/teams").then(function (response) {
+            "/adminTeams").then(function (response) {
             $scope.teams = response.data;
 
             $scope.showCode = false;

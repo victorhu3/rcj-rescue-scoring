@@ -1,5 +1,5 @@
 // register the directive with your app module
-var app = angular.module('FormPreview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'toastr', 'ngSanitize', 'ngFileUpload']);
+var app = angular.module('FormPreview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize', 'ngFileUpload']);
 
 app.constant('NG_QUILL_CONFIG', {
     /*
@@ -50,8 +50,15 @@ app.constant('NG_QUILL_CONFIG', {
   ])
 
 // function referenced by the drop target
-app.controller('FormPreviewController', ['$scope', '$uibModal', '$log', '$http', '$translate', 'toastr','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $toastr, $sce, Upload, $timeout) {
+app.controller('FormPreviewController', ['$scope', '$uibModal', '$log', '$http', '$translate','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $sce, Upload, $timeout) {
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+    
     let saved_mes;
     $translate('document.saved').then(function (val) {
         saved_mes = val;
@@ -112,7 +119,10 @@ app.controller('FormPreviewController', ['$scope', '$uibModal', '$log', '$http',
 
     $scope.save = function () {
         console.log($scope.answers);
-        $toastr.success(saved_mes);
+        Toast.fire({
+            type: 'success',
+            title: saved_mes
+        })
     }
 
 
@@ -159,7 +169,11 @@ app.controller('FormPreviewController', ['$scope', '$uibModal', '$log', '$http',
         question.f = file;
         question.errFile = errFiles && errFiles[0];
         if(question.errFile){
-            $toastr.error(question.errFile.$error + ' : ' + question.errFile.$errorParam, 'Error');
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: question.errFile.$error + ' : ' + question.errFile.$errorParam
+            })
         }
         if (file) {
             file.upload = Upload.upload({
