@@ -96,7 +96,7 @@ var app = angular.module("TeamAdmin", ['ngTouch','pascalprecht.translate', 'ngCo
 
     $scope.selectAll = function () {
         angular.forEach($scope.teams, function (team) {
-            team.checked = true;
+            if($scope.list_filter(team)) team.checked = true;
         });
     }
 
