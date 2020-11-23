@@ -34,7 +34,7 @@ router.get('/:competitionid', function (req, res, next) {
   if (!ObjectId.isValid(id)) {
     return next()
   }
-  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('competition_admin', {id: id, user: req.user})
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('competition_admin', {id: id, user: req.user, mailEnable: process.env.MAIL_SMTP})
   else res.render('access_denied', {user: req.user})
 })
 

@@ -25,7 +25,6 @@ block content
       button(ng-click="go('/admin/' + competitionId + '/teams')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.competition.teams" | translate}}
       button(ng-click="go('/admin/' + competitionId + '/rounds')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.competition.rounds" | translate}}
       button(ng-click="go('/admin/' + competitionId + '/fields')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.competition.fields" | translate}}
-      button(ng-click="go('/admin/' + competitionId + '/documents')" class='btn btn-outline-dark btn-lg btn-block') {{"document.admin.title" | translate}}
 
       hr
       h3 {{"admin.competition.line" | translate}}
@@ -36,8 +35,24 @@ block content
       button(ng-click="go('/admin/' + competitionId + '/maze/maps')" class='btn btn-outline-success btn-lg btn-block') {{"admin.competition.maps" | translate}}
       button(ng-click="go('/admin/' + competitionId + '/maze/runs')" class='btn btn-outline-success btn-lg btn-block') {{"admin.competition.runs" | translate}}
       hr
+      h3 {{"admin.competition.tools" | translate}}
+      button(ng-click="go('/admin/' + competitionId + '/documents')" class='btn btn-outline-dark btn-lg btn-block')
+        i.fas.fa-file-alt &nbsp;
+        | {{"document.admin.title" | translate}}
+      if mailEnable
+        button(ng-click="go('/admin/' + competitionId + '/mails')" class='btn btn-outline-dark btn-lg btn-block')
+          i.fas.fa-mail-bulk &nbsp;
+          | メール配信
+      else
+        button(class='btn btn-outline-dark btn-lg btn-block', disabled)
+          i.fas.fa-mail-bulk &nbsp;
+          | メール配信
+        p この機能を使用するには，設定ファイルにメールの設定を追加してください．
+      hr
       h3 {{"admin.competition.management" | translate}}
-      button(ng-click="go('/admin/' + competitionId + '/settings')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.competition.settings" | translate}}
+      button(ng-click="go('/admin/' + competitionId + '/settings')" class='btn btn-outline-dark btn-lg btn-block')
+        i.fas.fa-cogs &nbsp;
+        | {{"admin.competition.settings" | translate}}
       button(ng-click="go('/admin/' + competitionId + '/backup')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.competition.backup" | translate}}
       br
 
