@@ -316,7 +316,7 @@ adminRouter.get('/:competition/adminTeams', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id
-    },'_id name competition league country teamCode email').lean().exec(function (err, data) {
+    },'_id name competition league country teamCode email document.token document.deadline').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({

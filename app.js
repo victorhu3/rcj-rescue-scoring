@@ -71,6 +71,7 @@ var apiKioskRoute = require('./routes/api/kiosk')
 var apiBackupRoute = require('./routes/api/backup')
 var apiShortURL = require('./routes/api/shortURL')
 var apiDocumentRoute = require('./routes/api/document')
+var apiMailRoute = require('./routes/api/mail')
 
 //========================================================================
 //                          Configuration
@@ -157,6 +158,7 @@ app.use('/api/kiosk', [pass.ensureAdminApi, apiKioskRoute.admin])
 app.use('/api/backup', [pass.ensureAdminApi, apiBackupRoute.admin])
 app.use('/api/short', [pass.ensureSuperApi , apiShortURL.super])
 app.use('/api/document', [apiDocumentRoute.public, pass.ensureLoginApi, apiDocumentRoute.private, pass.ensureAdminApi, apiDocumentRoute.admin])
+app.use('/api/mail', [pass.ensureAdminApi, apiMailRoute.admin])
 
 //========================================================================
 //                          Website static pages(ish)

@@ -123,6 +123,7 @@ block content
                     input(type="email", ng-model='team.email[$index]' style="width:100%;margin-bottom:5px;")
                     button.btn.btn-success(type='button', ng-click='addTeamEmail(team)', style="padding:0px 6px;margin: 5px;", ng-if="$last && team.email[$index]")
                         i.fas.fa-plus
+                  input(type="email", ng-model='team.email[0]' style="width:100%;margin-bottom:5px;", ng-if="team.email.length == 0")
               td
                 div(ng-hide="team.edit")
                   .dropdown
