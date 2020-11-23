@@ -55,5 +55,3 @@ public/signage/intro.mp4
 public/signage/prohibited.mp4
 
 package-lock.json
-
-process.env
