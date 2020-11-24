@@ -13,7 +13,7 @@ block location
     a.breadcrumb-item(ng-click="go('/home')") Home
     a.breadcrumb-item(ng-click="go('/admin')") Admin
     a.breadcrumb-item(ng-click="go('/admin/' + competition._id)") {{competition.name}}
-    a.breadcrumb-item(ng-click="go('/admin/' + competition._id + '/mail')") Mail
+    a.breadcrumb-item(ng-click="go('/admin/' + competition._id + '/mails')") Mail
     span.breadcrumb-item.active Sent
 
 
@@ -64,17 +64,19 @@ block content
               th {{"common.team" | translate}}
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
+              th 状況
               th {{'common.operation' | translate}}
         tbody
             tr(ng-repeat='mail in mails | filter:list_filter | orderBy:"[name]"')
-              td(ng-bind="time(mail.time)")
-              td
+              td(ng-bind="time(mail.time)", ng-style="{'background-color':statusColour(mail.status)}")
+              td(ng-style="{'background-color':statusColour(mail.status)}")
                 a(ng-click="mailView(mail)", ng-bind="mail.subject", style="text-decoration: underline; color: blue;") 
-              td(ng-bind='mail.team.teamCode')
-              td(ng-bind='mail.team.name')
-              td(ng-bind='mail.team.country')
-              td(ng-bind='mail.team.league')
-              td
+              td(ng-bind='mail.team.teamCode', ng-style="{'background-color':statusColour(mail.status)}")
+              td(ng-bind='mail.team.name', ng-style="{'background-color':statusColour(mail.status)}")
+              td(ng-bind='mail.team.country', ng-style="{'background-color':statusColour(mail.status)}")
+              td(ng-bind='mail.team.league', ng-style="{'background-color':statusColour(mail.status)}")
+              td(ng-style="{'background-color':statusColour(mail.status)}") {{'mail.status.' + mail.status | translate}}
+              td(ng-style="{'background-color':statusColour(mail.status)}")
                 button.btn.btn-sm.btn-secondary(type='button', ng-click="detail(mail)")
                   i.fas.fa-envelope-open-text &nbsp;
                   | 詳細

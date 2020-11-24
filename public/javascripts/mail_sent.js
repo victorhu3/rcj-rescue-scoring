@@ -48,11 +48,13 @@ app.controller('MailSentController', ['$scope', '$uibModal', '$log', '$http', '$
     $scope.mailView = function(mail){
         let mailUrl = `/api/mail/sent/${mail.competition}/${mail.mailId}`;
         $http.get(mailUrl).then(function (response) {
+            let html = response.data.html.replace(/<img[^>]+>/, "");
+            let plain = response.data.plain.replace(/\r?\n/g, '<br>');
             Swal.fire({
                 html:'<ul class="nav nav-tabs" id="mailType" role="tablist"><li class="nav-item"><a class="nav-link active" id="html-tab" data-toggle="tab" href="#html" role="tab" aria-controls="html" aria-selected="true">HTML</a></li><li class="nav-item"><a class="nav-link" id="plain-tab" data-toggle="tab" href="#plain" role="tab" aria-controls="plain" aria-selected="false">Plain Text</a></li></ul>'+
                 '<div class="tab-content" id="mailTypeContent">'+
-                    '<div class="tab-pane fade show active" id="html" role="tabpanel" aria-labelledby="html-tab" style="text-align:left;max-height:calc(100vh - 200px);overflow:auto;">' + response.data.html +'</div>'+
-                    '<div class="tab-pane fade" id="plain" role="tabpanel" aria-labelledby="plain-tab" style="text-align:left;max-height:calc(100vh - 200px);overflow:auto;">' + response.data.plain + '</div>'+
+                    '<div class="tab-pane fade show active" id="html" role="tabpanel" aria-labelledby="html-tab" style="text-align:left;max-height:calc(100vh - 200px);overflow:auto;">' + html +'</div>'+
+                    '<div class="tab-pane fade" id="plain" role="tabpanel" aria-labelledby="plain-tab" style="text-align:left;max-height:calc(100vh - 200px);overflow:auto;">' + plain + '</div>'+
                 '</div>',
                 width: "100%",
                 height: "100%",
@@ -66,6 +68,17 @@ app.controller('MailSentController', ['$scope', '$uibModal', '$log', '$http', '$
             })
         })
         
+    }
+
+    $scope.statusColour = function(status){
+        switch(status){
+            case 1:
+              return "#ffffcc";
+            case 2:
+              return "#ccffe5";
+            default:
+              return "";
+          }
     }
 
     $scope.detail = function(mail){
