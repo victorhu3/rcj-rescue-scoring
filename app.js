@@ -158,7 +158,7 @@ app.use('/api/kiosk', [pass.ensureAdminApi, apiKioskRoute.admin])
 app.use('/api/backup', [pass.ensureAdminApi, apiBackupRoute.admin])
 app.use('/api/short', [pass.ensureSuperApi , apiShortURL.super])
 app.use('/api/document', [apiDocumentRoute.public, pass.ensureLoginApi, apiDocumentRoute.private, pass.ensureAdminApi, apiDocumentRoute.admin])
-app.use('/api/mail', [pass.ensureAdminApi, apiMailRoute.admin])
+app.use('/api/mail', [apiMailRoute.public, pass.ensureLoginApi, apiMailRoute.private, pass.ensureAdminApi, apiMailRoute.admin])
 
 //========================================================================
 //                          Website static pages(ish)

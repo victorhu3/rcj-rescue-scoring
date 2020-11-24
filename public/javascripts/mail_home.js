@@ -173,25 +173,37 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
     $scope.sending = false;
     $scope.mailSend = function(){
         $scope.sending = true;
-        $http.post(`/api/mail/send`, $scope.toTeam).then(function (response) {
-            Toast.fire({
-                type: 'success',
-                title: 'メールを配信しました'
-            })
-            $scope.toTeam = [];
-            $scope.mailContent = "";
-            $scope.mailTitle = "";
-            $scope.previewNo = 0;
-            $scope.mode = "select";
-            $scope.selectedTemplate = null;
-            $scope.sending = false;
-        }, function (error) {
-            console.log(error)
-            Toast.fire({
-                type: 'error',
-                title: "ERROR",
-                html: error.data.msg
-            })
+        Swal({
+            title: 'メール配信処理',
+            html: 'しばらくお待ちください...',
+            onBeforeOpen: () => {
+                Swal.showLoading()
+                $http.post(`/api/mail/send`, $scope.toTeam).then(function (response) {
+                    Swal.close()
+                    Swal({
+                        type: 'success',
+                        title: '配信成功',
+                        html: 'メールを配信しました'
+                    })
+                    $scope.toTeam = [];
+                    $scope.mailContent = "";
+                    $scope.mailTitle = "";
+                    $scope.previewNo = 0;
+                    $scope.mode = "select";
+                    $scope.selectedTemplate = null;
+                    $scope.sending = false;
+                    
+                }, function (error) {
+                    console.log(error)
+                    Swal.close()
+                    $scope.sending = false;
+                    Swal({
+                        type: 'error',
+                        title: "ERROR",
+                        html: error.data.msg
+                    })
+                })
+            }
         })
     }
 

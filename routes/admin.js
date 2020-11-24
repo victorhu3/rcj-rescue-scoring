@@ -48,6 +48,16 @@ router.get('/:competitionid/mails', function (req, res, next) {
   else res.render('access_denied', {user: req.user})
 })
 
+router.get('/:competitionid/mails/sent', function (req, res, next) {
+  const id = req.params.competitionid
+  
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN) && process.env.MAIL_SMTP) res.render('mail_sent', {id: id, user: req.user, mailEnable: process.env.MAIL_SMTP})
+  else res.render('access_denied', {user: req.user})
+})
+
 router.get('/:competitionid/teams', function (req, res, next) {
   const id = req.params.competitionid
   

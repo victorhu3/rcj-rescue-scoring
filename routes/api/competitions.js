@@ -386,6 +386,8 @@ publicRouter.get('/:competition/teams/:teamid', function (req, res, next) {
                 err: err.message
             })
         } else {
+            delete data.document;
+            delete data.email;
             if(!auth.authCompetition(req.user,id,ACCESSLEVELS.VIEW)){
                 delete data.interviewer;
                 if(!data.docPublic) delete data.comment
