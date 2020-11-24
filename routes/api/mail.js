@@ -115,7 +115,6 @@ adminRouter.post('/send', function (req, res, next) {
         let html4text = html;
 
         const regexpHref = /(href=)["|'](.*?)["|']+/g;
-        const regexpURL = /https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+/g;
 
         const mailId = Array.from(crypto.randomFillSync(new Uint8Array(N))).map((n)=>S[n%S.length]).join('');
 
