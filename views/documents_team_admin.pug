@@ -67,7 +67,7 @@ block content
               th {{"common.league" | translate}}
               th {{'document.teamAdmin.access' | translate}}
               th {{'document.deadline' | translate}}
-              th {{'document.teamAdmin.log' | translate}}
+              th {{'common.operation' | translate}}
         tbody
             tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
               td(ng-bind='team.teamCode')
@@ -81,7 +81,10 @@ block content
               td
                 input.form-control(type='datetime-local', ng-model='team.document.deadline',style="", ng-blur="save(team)")
               td
-                button.btn.btn-sm.btn-secondary(type='button', ng-click="openLog(team)")
+                button.btn.btn-sm.btn-secondary(type='button', ng-click="openLog(team)", style="margin-right:5px;")
                   i.fas.fa-file-alt &nbsp;
                   | {{'document.teamAdmin.log' | translate}}
+                button.btn.btn-sm.btn-secondary(type='button', ng-click="copy(team)")
+                  i.fas.fa-clipboard &nbsp;
+                  | {{'common.copy' | translate}}
       

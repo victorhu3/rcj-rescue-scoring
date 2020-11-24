@@ -127,7 +127,8 @@
         "enable": "Enable",
         "disable": "Disable",
         "email": "Email",
-        "edit": "Edit"
+        "edit": "Edit",
+        "copy": "Copy"
     },
     "accessDenied":{
         "title" : "Access denied",

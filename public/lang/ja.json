@@ -126,7 +126,8 @@
         "enable": "有効",
         "disable": "無効",
         "email": "メール",
-        "edit": "編集"
+        "edit": "編集",
+        "copy": "コピー"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",

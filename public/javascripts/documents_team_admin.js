@@ -118,4 +118,22 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         })
         
     }
+
+    $scope.copy = function(team){
+        let link = `${location.protocol}//${location.host}/document/${team._id}/${team.document.token}`;
+        if(navigator.clipboard){
+            navigator.clipboard.writeText(link);
+            Toast.fire({
+                type: 'success',
+                title: "Copied!",
+                html: link
+            });
+        }else{
+            Toast.fire({
+                type: 'error',
+                title: "Not supported!"
+            });
+        }
+        
+    }
 }]);
