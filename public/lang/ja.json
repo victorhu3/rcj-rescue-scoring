@@ -818,7 +818,43 @@
         "status": {
             "0": "配信済",
             "1": "開封済",
-            "2": "確認済"
+            "2": "クリック"
+        },
+        "home":{
+            "title": "メール配信",
+            "error": "この機能を使用するには，設定ファイルにメールの設定を追加してください．",
+            "newMailBulk": "選択した宛先にメールを新規作成",
+            "newMail": "メールを新規作成",
+            "deliveryStatus": "メール配信状況",
+            "writeMail": "メール作成",
+            "deliveredTo": "配信先",
+            "variable": "変数",
+            "loadTemplate": "テンプレートを読み込み",
+            "selectTemplate": "テンプレートを選択",
+            "subject": "件題",
+            "back2select": "配信先の選択に戻る",
+            "preview": "配信プレビュー",
+            "deliverNo": "配信番号",
+            "back2Edit": "メールの編集に戻る",
+            "send": "配信実行",
+            "js": {
+                "sending": "配信処理中",
+                "wait": "しばらくお待ちください",
+                "complete": "配信完了",
+                "completeMes": "メールを配信しました"
+            }
+        },
+        "sent":{
+            "title": "メール配信状況",
+            "time": "時刻",
+            "subject": "@:mail.home.subject",
+            "status": "状況",
+            "detail": "詳細",
+            "js": {
+                "eventLog": "イベントログ",
+                "user": "ユーザ",
+                "event": "イベント"
+            }
         }
     },
     "language": {

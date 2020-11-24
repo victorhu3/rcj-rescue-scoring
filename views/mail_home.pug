@@ -28,7 +28,7 @@ block content
   .row
     .col-12
       div(ng-if="mode=='select'")
-        h1 メール配信 - {{competition.name}}
+        h1 {{"mail.home.title" | translate}} - {{competition.name}}
         .refine
           .card.border-dark.mb-3(style='width:100%;')
             .card-header.bg-transparent.border-dark.fa-2x
@@ -66,10 +66,10 @@ block content
             button(ng-click="selectAll()" class='btn btn-primary' style="margin: 5px;") {{"common.selectAll" | translate}}
             button.btn.btn-secondary(type='button', ng-click="newEmail2SelectedTeam()" style="margin: 5px;")
                     i.fas.fa-envelope-open-text &nbsp;
-                    | 選択した宛先にメールを新規作成
+                    | {{"mail.home.newMailBulk" | translate}}
             button.btn.btn-warning(type='button', ng-click="go('/admin/' + competition._id + '/mails/sent')" style="margin: 5px;")
                     i.fas.fa-mail-bulk &nbsp;
-                    | メール配信状況
+                    | {{"mail.home.deliveryStatus" | translate}}
         table.custom(style="margin-bottom:20px;")
           thead
               tr
@@ -95,18 +95,18 @@ block content
                 td
                   button.btn.btn-sm.btn-secondary(type='button', ng-click="newMail(team)", ng-if="team.email.length > 0")
                     i.fas.fa-envelope-open-text &nbsp;
-                    | メールを新規作成
+                    | {{"mail.home.newMail" | translate}}
       div(ng-show="mode=='write'")
-        h2 メール作成 - {{competition.name}}
-        span 配信対象
+        h2 {{"mail.home.writeMail" | translate}} - {{competition.name}}
+        span {{"mail.home.deliveredTo" | translate}}
         div(style="max-height:200px;overflow: auto;")
           table.custom(style="margin-bottom:20px;")
             thead
               tr
-                th チーム名
-                th リーグ
-                th 配信先
-                th 変数
+                th {{"common.team" | translate}}
+                th {{"common.league" | translate}}
+                th {{"mail.home.deliveredTo" | translate}}
+                th {{"mail.home.variable" | translate}}
             tbody
               tr(ng-repeat="team in toTeam track by $index")
                 td(ng-bind="team.name")
@@ -118,17 +118,17 @@ block content
                 td
                   button.btn.btn-sm.btn-secondary(type='button', ng-click="showVariable(team.variable)")
                     i.fas.fa-box-open &nbsp;
-                    | 変数
+                    | {{"mail.home.variable" | translate}}
 
         .input-group(style="width:100%;margin-bottom:10px;")
           .input-group-prepend
-              span.input-group-text テンプレート読み込み
+              span.input-group-text {{"mail.home.loadTemplate" | translate}}
           select.custom-select(ng-model='selectedTemplate', ng-options='template.path as template.name for template in templates', ng-change="changeTemplate()")
-            option(value="") テンプレートを選択
+            option(value="") {{"mail.home.selectTemplate" | translate}}
 
         .input-group(style="margin-bottom:10px;")
           .input-group-prepend
-              span.input-group-text 題名
+              span.input-group-text {{"mail.home.subject" | translate}}
           input.form-control(type='text', ng-model='mailTitle')
         
         ng-quill-editor(ng-model="mailContent" on-editor-created="quillHeight(editor)")
@@ -136,16 +136,16 @@ block content
         div(style="text-align:center;margin-bottom:20px;")
           button.btn.btn-secondary(type='button', ng-click="back2TeamSelect()", style="margin-right:10px;")
             i.fas.fa-arrow-left &nbsp;
-            | 宛先の選択に戻る
+            | {{"mail.home.back2select" | translate}}
           button.btn.btn-primary(type='button', ng-click="preview()")
-            | メールをプレビュー&nbsp;
+            | {{"mail.home.preview" | translate}}&nbsp;
             i.fas.fa-arrow-right &nbsp;
 
       div(ng-show="mode=='preview'")
-        h2 配信プレビュー - {{competition.name}}
+        h2 {{"mail.home.preview" | translate}} - {{competition.name}}
         .row
           .col-md-4
-            span 配信番号
+            span {{"mail.home.deliverNo" | translate}}
             .input-group.mb-3(style='width:100%; height:40px;position:absolute;margin: auto;')
               .input-group-prepend
                 button.btn.btn-info(type='button', ng-click="changePreviewNo(-1)", ng-disabled="previewNo<=0")
@@ -156,14 +156,14 @@ block content
                 button.btn.btn-info(type='button', ng-click="changePreviewNo(1)", ng-disabled="(previewNo+1)>=toTeam.length")
                   i.fas.fa-chevron-right(aria-hidden='true')
           .col-md-8
-            span 配信対象
+            span {{"mail.home.deliveredTo" | translate}}
             div(style="max-height:200px;overflow: auto;")
               table.custom(style="margin-bottom:20px;")
                 thead
                   tr
-                    th チーム名
-                    th リーグ
-                    th 配信先
+                    th {{"common.team" | translate}}
+                    th {{"common.league" | translate}}
+                    th {{"mail.home.deliveredTo" | translate}}
                 tbody
                   tr
                     td(ng-bind="toTeam[previewNo].name")
@@ -175,8 +175,8 @@ block content
         
         .input-group(style="margin-bottom:10px;")
           .input-group-prepend
-              span.input-group-text 題名
-          input.form-control(type='text', ng-model='toTeam[previewNo].mailData.title')
+              span.input-group-text {{"mail.home.subject" | translate}}
+          input.form-control(type='text', ng-model='toTeam[previewNo].mailData.title', disabled)
 
         div(style="border: 1px solid #444;padding:5px;" ng-bind-html="trust(toTeam[previewNo].mailData.content)")
       
@@ -184,9 +184,9 @@ block content
         div(style="text-align:center;margin-bottom:20px;")
           button.btn.btn-secondary(type='button', ng-click="back2Edit()", style="margin-right:10px;")
             i.fas.fa-arrow-left &nbsp;
-            | メールの編集に戻る
+            | {{"mail.home.back2Edit" | translate}}
           button.btn.btn-primary(type='button', ng-click="mailSend()", ng-disabled="sending")
-            | メールを送信する&nbsp;
+            | {{"mail.home.send" | translate}}&nbsp;
             i.fas.fa-arrow-right &nbsp;
             
         

@@ -1,6 +1,48 @@
 var app = angular.module("MailSent", ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
 app.controller('MailSentController', ['$scope', '$uibModal', '$log', '$http', '$translate', '$sce', function ($scope, $uibModal, $log, $http, $translate, $sce) {
 
+    let eventLog_mes;
+    $translate('mail.sent.js.eventLog').then(function (val) {
+        eventLog_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let event_mes;
+    $translate('mail.sent.js.event').then(function (val) {
+        event_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let user_mes;
+    $translate('mail.sent.js.user').then(function (val) {
+        user_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let time_mes;
+    $translate('mail.sent.time').then(function (val) {
+        time_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deliveredTo_mes;
+    $translate('mail.home.deliveredTo').then(function (val) {
+        deliveredTo_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let mail_mes;
+    $translate('common.mail').then(function (val) {
+        mail_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -84,13 +126,13 @@ app.controller('MailSentController', ['$scope', '$uibModal', '$log', '$http', '$
     $scope.detail = function(mail){
         let mailUrl = `/api/mail/event/${mail.competition}/${mail.mailId}`;
         let html = `<div style="max-height:calc(100vh - 200px);overflow:auto;">`;
-        html += `<h3>配信先</h3><table class='custom'><thead><tr><th>メール</th></tr></thead><tbody>`;
+        html += `<h3>${deliveredTo_mes}</h3><table class='custom'><thead><tr><th>メール</th></tr></thead><tbody>`;
         for(let m of mail.to){
             html += `<tr><td>${m}</td></tr>`;
         }
         html += "</tbody></table><br>";
         $http.get(mailUrl).then(function (response) {
-            html += `<h3>イベントログ</h3><table class='custom'><thead><tr><th>時刻</th><th>ユーザ</th><th>メッセージ</th></tr></thead><tbody>`;
+            html += `<h3>${eventLog_mes}</h3><table class='custom'><thead><tr><th>${time_mes}</th><th>${user_mes}</th><th>${event_mes}</th></tr></thead><tbody>`;
             for(let e of response.data){
                 html += `<tr><td>${$scope.time(e.time)}</td><td>${e.user}</td><td>${e.event}</td></tr>`;
             }

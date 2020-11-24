@@ -21,7 +21,7 @@ block location
 block content
   .row
     .col-12
-      h1 メール配信状況 - {{competition.name}}
+      h1 {{"mail.sent.title" | translate}} - {{competition.name}}
       .refine
         .card.border-dark.mb-3(style='width:100%;')
           .card-header.bg-transparent.border-dark.fa-2x
@@ -58,14 +58,14 @@ block content
       table.custom(style="margin-bottom:20px;")
         thead
             tr
-              th 時刻
-              th 件名
+              th {{"mail.sent.time" | translate}}
+              th {{"mail.sent.subject" | translate}}
               th {{"common.teamCode" | translate}}
               th {{"common.team" | translate}}
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
-              th 状況
-              th {{'common.operation' | translate}}
+              th {{"mail.sent.status" | translate}}
+              th {{"common.operation" | translate}}
         tbody
             tr(ng-repeat='mail in mails | filter:list_filter | orderBy:"[name]"')
               td(ng-bind="time(mail.time)", ng-style="{'background-color':statusColour(mail.status)}")
@@ -79,4 +79,4 @@ block content
               td(ng-style="{'background-color':statusColour(mail.status)}")
                 button.btn.btn-sm.btn-secondary(type='button', ng-click="detail(mail)")
                   i.fas.fa-envelope-open-text &nbsp;
-                  | 詳細
+                  | {{"mail.sent.detail" | translate}}

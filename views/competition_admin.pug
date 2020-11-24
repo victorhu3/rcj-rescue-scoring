@@ -42,12 +42,12 @@ block content
       if mailEnable
         button(ng-click="go('/admin/' + competitionId + '/mails')" class='btn btn-outline-dark btn-lg btn-block')
           i.fas.fa-mail-bulk &nbsp;
-          | メール配信
+          | {{"mail.home.title" | translate}}
       else
         button(class='btn btn-outline-dark btn-lg btn-block', disabled)
           i.fas.fa-mail-bulk &nbsp;
-          | メール配信
-        p この機能を使用するには，設定ファイルにメールの設定を追加してください．
+          | {{"mail.home.title" | translate}}
+        p {{"mail.home.error" | translate}}
       hr
       h3 {{"admin.competition.management" | translate}}
       button(ng-click="go('/admin/' + competitionId + '/settings')" class='btn btn-outline-dark btn-lg btn-block')

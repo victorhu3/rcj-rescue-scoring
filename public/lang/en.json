@@ -816,6 +816,49 @@
             "overwrite": "A file has already been uploaded. When you upload a new file, it will overwrite the old one.",
             "uploaded": "Uploaded files"
         }
+    },  
+    "mail": {
+        "status": {
+            "0": "Delivered",
+            "1": "Opend",
+            "2": "Clicked"
+        },
+        "home":{
+            "title": "Email Delivery",
+            "error": "To use this function, please add a mail setting to the configuration file.",
+            "newMailBulk": "Create a new email to the selected teams",
+            "newMail": "メールを新規作成",
+            "deliveryStatus": "Create a new email",
+            "writeMail": "Email Editor",
+            "deliveredTo": "Delivery address",
+            "variable": "Variables",
+            "loadTemplate": "Loading the template",
+            "selectTemplate": "Select a template",
+            "subject": "Subject",
+            "back2select": "Return to destination selection",
+            "preview": "Delivery Preview",
+            "deliverNo": "Delivery number",
+            "back2Edit": "Return to Edit Mail",
+            "send": "Delivery Execution",
+            "js": {
+                "sending": "In the process of delivery",
+                "wait": "Please wait for a while.",
+                "complete": "Delivery completed",
+                "completeMes": "Emails have been sent out."
+            }
+        },
+        "sent":{
+            "title": "Email Delivery Status",
+            "time": "Time",
+            "subject": "@:mail.home.subject",
+            "status": "Status",
+            "detail": "Detail",
+            "js": {
+                "eventLog": "Event Log",
+                "user": "User",
+                "event": "Event"
+            }
+        }
     },
     "language": {
         "ja": "Japanese",

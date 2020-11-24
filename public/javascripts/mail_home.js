@@ -15,6 +15,34 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
     // = translationId;
     });
 
+    let sending_mes;
+    $translate('mail.home.js.sending').then(function (val) {
+        sending_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let wait_mes;
+    $translate('mail.home.js.wait').then(function (val) {
+        wait_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let complete_mes;
+    $translate('mail.home.js.complete').then(function (val) {
+        complete_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let completeMes_mes;
+    $translate('mail.home.js.completeMes').then(function (val) {
+        completeMes_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
     $scope.trust = function(html){
         return($sce.trustAsHtml(html));
     }
@@ -174,16 +202,16 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
     $scope.mailSend = function(){
         $scope.sending = true;
         Swal({
-            title: 'メール配信処理',
-            html: 'しばらくお待ちください...',
+            title: sending_mes,
+            html: wait_mes,
             onBeforeOpen: () => {
                 Swal.showLoading()
                 $http.post(`/api/mail/send`, $scope.toTeam).then(function (response) {
                     Swal.close()
                     Swal({
                         type: 'success',
-                        title: '配信成功',
-                        html: 'メールを配信しました'
+                        title: complete_mes,
+                        html: completeMes_mes
                     })
                     $scope.toTeam = [];
                     $scope.mailContent = "";
