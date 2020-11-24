@@ -158,6 +158,7 @@ app.controller('MailSentController', ['$scope', '$uibModal', '$log', '$http', '$
     $scope.refineName = "";
     $scope.refineCode = "";
     $scope.refineRegion = "";
+    $scope.refineSubject = "";
 
     $scope.$watch('Rleagues', function (newValue, oldValue) {
         showAllLeagues = true
@@ -173,7 +174,7 @@ app.controller('MailSentController', ['$scope', '$uibModal', '$log', '$http', '$
     }, true);
 
     $scope.list_filter = function (value, index, array) {
-        return (showAllLeagues || $scope.Rleagues[value.league])  && (~value.team.name.indexOf($scope.refineName)) && (~value.team.teamCode.indexOf($scope.refineCode)) && (~value.team.country.indexOf($scope.refineRegion))
+        return (showAllLeagues || $scope.Rleagues[value.league]) && (~value.subject.indexOf($scope.refineSubject))  && (~value.team.name.indexOf($scope.refineName)) && (~value.team.teamCode.indexOf($scope.refineCode)) && (~value.team.country.indexOf($scope.refineRegion))
     }
 
 }]);

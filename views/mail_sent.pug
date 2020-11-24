@@ -28,6 +28,13 @@ block content
             i.fas.fa-search(aria-hidden='true') &nbsp;
             | {{'common.refine' | translate}}
           .card-body.text-dark
+            h6.card-title {{"mail.sent.subject" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-envelope(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"mail.sent.subject" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineSubject')
+            hr
             h6.card-title {{"common.teamCode" | translate}}
             .input-group
               .input-group-prepend
