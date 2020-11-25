@@ -35,7 +35,60 @@ function writeLog(req, competitionId, teamId, message){
   });
 }
 
-/* GET home page. */
+
+privateRouter.get('/review/:teamId', function (req, res, next) {
+  const teamId = req.params.teamId;
+  
+  if (!ObjectId.isValid(teamId)) {
+    return next()
+  }
+
+  competitiondb.team.findById(teamId)
+  .select("competition document.token")
+  .exec(function (err, dbTeam) {
+          if (err || dbTeam == null) {
+              if(!err) err = {message: 'No team found'};
+              res.status(400).send({
+                  msg: "Could not get team",
+                  err: err.message
+              })
+          } else if (dbTeam) {
+            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.JUDGE)){
+              res.render('document_review', {competition: dbTeam.competition, team: teamId, user: req.user, token: dbTeam.document.token})
+            }else{
+              res.render('access_denied', {user: req.user})
+            }
+          }
+      }
+  )
+})
+
+privateRouter.get('/reviewed/:teamId', function (req, res, next) {
+  const teamId = req.params.teamId;
+  
+  if (!ObjectId.isValid(teamId)) {
+    return next()
+  }
+
+  competitiondb.team.findById(teamId)
+  .select("competition document.token")
+  .exec(function (err, dbTeam) {
+          if (err || dbTeam == null) {
+              if(!err) err = {message: 'No team found'};
+              res.status(400).send({
+                  msg: "Could not get team",
+                  err: err.message
+              })
+          } else if (dbTeam) {
+            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.VIEW)){
+              res.render('document_reviewed', {competition: dbTeam.competition, team: teamId, user: req.user, token: dbTeam.document.token})
+            }else{
+              res.render('access_denied', {user: req.user})
+            }
+          }
+      }
+  )
+})
 
 privateRouter.get('/:teamId', function (req, res, next) {
   const teamId = req.params.teamId;
@@ -56,7 +109,7 @@ privateRouter.get('/:teamId', function (req, res, next) {
                   err: err.message
               })
           } else if (dbTeam) {
-            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.VIEW)){
+            if(auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW)){
               if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
                 let teamDeadline = dbTeam.document.deadline;
                 let deadline = dbTeam.competition.documents.deadline;

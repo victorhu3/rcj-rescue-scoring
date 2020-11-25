@@ -1,0 +1,280 @@
+//- -*- tab-width: 2 -*-
+extends includes/layout
+
+block vars
+  - var ngAppDef = 'DocumentReview'
+
+append scripts
+  script.
+    var competitionId = "#{competition}"
+    var teamId = "#{team}"
+    var token = "#{token}"
+  script(src="/javascripts/documentReview.js")
+  script(src='/components/quill/index.js')
+  script(src='/components/ngQuill/src/ng-quill.js')
+  script(src='/components/quill-image-resize-module/image-resize.min.js')
+  script(src='/components/quill-image-drop-and-paste/quill-image-drop-and-paste.min.js')
+  script(src="/components/jquery-ui/jquery-ui.min.js")
+
+
+append css
+    style.
+        p{
+            margin-bottom: 0;
+        }
+        #container {
+            width: 100%;
+            height: calc(100vh - 86px);
+            margin: 0 auto;
+            position: relative;
+        }
+        #ANSWER, #COMMENTS, #DRUG {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            overflow: auto;
+        }
+        #ANSWER {
+            left: 0;
+            width: 60%;
+        }
+        #COMMENTS {
+            right: 0;
+            width: 39%;
+        }
+        #DRUG {
+            left: 60%;
+            width: 1%;
+            cursor: move;
+            background-color: #283655;
+            color: #fff;
+            text-align:center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    link(rel='stylesheet', href='/components/quill.snow/index.css')
+    link(href="/components/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet")
+
+block navbar
+    nav.navbar(style='background-color: #283655; color: #fff; position: fixed; top: 0; z-index:10 ;  width: 100%')
+        .col-sm-1.d-none.d-sm-block(style="text-align:left;")
+            button.btn.btn-secondary(type='button', ng-click="backPage()", style="padding:2px 5px 0px 3px;margin-right:10px;")
+                i.fas.fa-chevron-left(style="font-size:30px;")
+        .col-sm-7.col-12(style="text-align:center;")
+            span(style="font-size:20px;")
+                i.fas.fa-file-alt &nbsp;
+                | {{competition.name}}
+        .col-sm-4.col-12(style="text-align:right;")
+            button.btn.btn-primary(type='button', ng-click="changeLocale()", style="padding:2px 5px 0px 3px;margin-right:10px;")
+                i.fas.fa-language(style="font-size:30px;")
+            button.btn.btn-lg.btn-success(type='button', ng-click='save()',style="padding:1px 5px 0px 5px;font-size:22px;")
+                i.fas.fa-save &nbsp;
+                | {{"common.save" | translate}}
+
+block bread
+
+block content
+    .d-none.d-md-block
+        #container(style="margin-top:3px;")
+            #ANSWER(style="padding-top:10px;")
+                .alert.alert-danger(role='alert',style="margin-bottom: 20px;", ng-if="currentLang != displayLang")
+                    span {{"document.form.languageError" | translate}}
+                //Team basic information
+                .card(style="margin-bottom:20px;")
+                    h5.card-header
+                        i.fas.fa-user-friends &nbsp;
+                        | {{"document.form.basicInformation" | translate}}
+                    .card-body
+                        div(style="margin-bottom:10px;")
+                            strong {{"document.form.teamName" | translate}}
+                        div(style="font-size:20px;")
+                            p(ng-bind="team.name")
+                        hr
+                        div(style="margin-bottom:10px;")
+                            strong {{"common.league" | translate}}
+                        div(style="font-size:20px;")
+                            p(ng-bind="league.name")
+                        hr
+                        div(style="margin-bottom:10px;")
+                            strong {{"common.region" | translate}}
+                        div(style="font-size:20px;")
+                            p(ng-bind="team.country")
+
+                div(ng-repeat="(blockIndex, block) in blocks track by $index")
+                    .card(ng-style="{border: '3px solid #' + block.color}", style="margin-bottom:20px;")
+                        h5.card-header(ng-bind="langContent(block.i18n, 'title')")
+                        .card-body
+                            div(ng-repeat="(questionIndex, question) in block.questions track by $index")
+                                div(style="margin-bottom:10px;font-size:20px;")
+                                    i.far.fa-image(ng-if="question.type=='picture'") &nbsp;
+                                    i.fas.fa-video(ng-if="question.type=='movie'") &nbsp;
+                                    i.fas.fa-file-pdf(ng-if="question.type=='pdf'") &nbsp;
+                                    i.fas.fa-file-archive(ng-if="question.type=='zip'") &nbsp;
+                                    strong(ng-bind="langContent(question.i18n, 'question')")
+                                    span.badge.badge-danger(ng-show="question.required", style="float:right;margin-left:5px;") {{"document.form.required" | translate}}
+                                    span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") {{"document.form.optional" | translate}}
+                                div(style="font-size:15px;")
+                                    p(ng-bind-html="langContent(question.i18n, 'description')")
+                                    p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
+                                    p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
+                                    p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
+                                    p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
+
+                                div(ng-if="question.type=='input'")
+                                    if editable
+                                        ng-quill-editor(ng-model="answers[blockIndex][questionIndex]")
+                                    else
+                                        div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
+                                div(ng-if="question.type=='select'")
+                                    if editable
+                                        select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                                    else
+                                        select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                                div(ng-if="question.type=='picture'")
+                                    .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                                        .col-12
+                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                            br
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                img.img-thumbnail(style="max-height: 80vh;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
+
+                                div(ng-if="question.type=='movie'")
+                                    .row(ng-if="checkUploaded(question.fileName) && !question.uploading", style="width:100%;")
+                                        .col-12
+                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                            br
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
+                                                    source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+
+                                div(ng-if="question.type=='pdf'")
+                                    .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                                        .col-12
+                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                            br
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                iframe(ng-src="{{getPdfLink(question.fileName)}}" style="width:100%; height:500px;" )
+                
+                                div(ng-if="question.type=='zip'")
+                                    .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                                        .col-12
+                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                            br
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                a.btn.btn-primary(type='file' ng-href="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
+                                                    i.fas.fa-file-archive &nbsp;
+                                                    | {{"document.form.uploaded" | translate}}
+
+                                hr(ng-if="!$last")
+            #COMMENTS(style="padding-top:5px;")
+                .alert.alert-info(role='alert',style="margin: 5px;")
+                    span 
+                        i.fas.fa-user-edit &nbsp;
+                        | {{"document.review.reviewer" | translate}}
+                    strong(style="font-size:20px;") #{user.username}
+                div(style="margin: 0 5px;")
+                    ng-quill-editor(ng-model="comments" on-editor-created="quillHeight(editor)")
+            #DRUG
+                i.fas.fa-ellipsis-v(style="margin-top:10vh;")
+                i.fas.fa-ellipsis-v(style="margin-top:30vh;")
+                i.fas.fa-ellipsis-v(style="margin-top:30vh;")
+    .d-block.d-md-none
+        .alert.alert-danger(role='alert',style="margin: 20px 0px;", ng-if="currentLang != displayLang")
+            span {{"document.form.languageError" | translate}}
+        //Team basic information
+        .card(style="margin:20px 0px;")
+            h5.card-header
+                i.fas.fa-user-friends &nbsp;
+                | {{"document.form.basicInformation" | translate}}
+            .card-body
+                div(style="margin-bottom:10px;")
+                    strong {{"document.form.teamName" | translate}}
+                div(style="font-size:20px;")
+                    p(ng-bind="team.name")
+                hr
+                div(style="margin-bottom:10px;")
+                    strong {{"common.league" | translate}}
+                div(style="font-size:20px;")
+                    p(ng-bind="league.name")
+                hr
+                div(style="margin-bottom:10px;")
+                    strong {{"common.region" | translate}}
+                div(style="font-size:20px;")
+                    p(ng-bind="team.country")
+
+        div(ng-repeat="(blockIndex, block) in blocks track by $index")
+            .card(ng-style="{border: '3px solid #' + block.color}", style="margin-bottom:20px;")
+                h5.card-header(ng-bind="langContent(block.i18n, 'title')")
+                .card-body
+                    div(ng-repeat="(questionIndex, question) in block.questions track by $index")
+                        div(style="margin-bottom:10px;font-size:20px;")
+                            i.far.fa-image(ng-if="question.type=='picture'") &nbsp;
+                            i.fas.fa-video(ng-if="question.type=='movie'") &nbsp;
+                            i.fas.fa-file-pdf(ng-if="question.type=='pdf'") &nbsp;
+                            i.fas.fa-file-archive(ng-if="question.type=='zip'") &nbsp;
+                            strong(ng-bind="langContent(question.i18n, 'question')")
+                            span.badge.badge-danger(ng-show="question.required", style="float:right;margin-left:5px;") {{"document.form.required" | translate}}
+                            span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") {{"document.form.optional" | translate}}
+                        div(style="font-size:15px;")
+                            p(ng-bind-html="langContent(question.i18n, 'description')")
+                            p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
+                            p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
+                            p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
+                            p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
+
+                        div(ng-if="question.type=='input'")
+                            if editable
+                                ng-quill-editor(ng-model="answers[blockIndex][questionIndex]")
+                            else
+                                div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
+                        div(ng-if="question.type=='select'")
+                            if editable
+                                select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                            else
+                                select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                        div(ng-if="question.type=='picture'")
+                            .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                                .col-12
+                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                    br
+                                    div(style="text-align:center;margin:10px 0px;")
+                                        img.img-thumbnail(style="max-height: 80vh;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
+
+                        div(ng-if="question.type=='movie'")
+                            .row(ng-if="checkUploaded(question.fileName) && !question.uploading", style="width:100%;")
+                                .col-12
+                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                    br
+                                    div(style="text-align:center;margin:10px 0px;")
+                                        video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
+                                            source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+
+                        div(ng-if="question.type=='pdf'")
+                            .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                                .col-12
+                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                    br
+                                    div(style="text-align:center;margin:10px 0px;")
+                                        iframe(ng-src="{{getPdfLink(question.fileName)}}" style="width:100%; height:500px;" )
+        
+                        div(ng-if="question.type=='zip'")
+                            .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
+                                .col-12
+                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
+                                    br
+                                    div(style="text-align:center;margin:10px 0px;")
+                                        a.btn.btn-primary(type='file' ng-href="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
+                                            i.fas.fa-file-archive &nbsp;
+                                            | {{"document.form.uploaded" | translate}}
+
+                        hr(ng-if="!$last")
+        hr
+        .alert.alert-info(role='alert',style="margin: 5px;")
+            span 
+                i.fas.fa-user-edit &nbsp;
+                | {{"document.review.reviewer" | translate}}
+            strong(style="font-size:20px;") #{user.username}
+        div(style="margin: 0px 5px 20px 0px;")
+            ng-quill-editor(ng-model="comments")
+

@@ -186,7 +186,11 @@ const teamSchema = new Schema({
     enabled  : {type: Boolean, default: true, select: false},
     token    : {type: String, default: '', select: false},
     answers  : [[{type: String, default: null, select: false}]]
-  }
+  },
+  review     : [{
+    reviewer : {type: ObjectId, ref: 'User', select: false},
+    comments : {type: String, default: '', select: false}
+  }]
 })
 
 teamSchema.pre('save', function (next) {

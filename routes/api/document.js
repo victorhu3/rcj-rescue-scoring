@@ -111,7 +111,7 @@ publicRouter.put('/answer/:teamId/:token', function (req, res, next) {
                 err: err.message
             })
         } else if (dbTeam) {
-            let userAuth = auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW);
+            let userAuth = auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.JUDGE);
             if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || userAuth){
                 let teamDeadline = dbTeam.document.deadline;
                 let deadline = dbTeam.competition.documents.deadline;
@@ -176,7 +176,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                 err: err.message
             })
         } else if (dbTeam) {
-            let userAuth = auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW);
+            let userAuth = auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.JUDGE);
             if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || userAuth){
                 let teamDeadline = dbTeam.document.deadline;
                 let deadline = dbTeam.competition.documents.deadline;
@@ -420,6 +420,129 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
 
 //// for reviwer & admin
 
+privateRouter.get('/comments/my/:teamId', function (req, res, next) {
+    const teamId = req.params.teamId;
+    
+    if (!ObjectId.isValid(teamId)) {
+        return next()
+    }
+
+    competitiondb.team.aggregate([
+        {$match: {_id: ObjectId(teamId)}},
+        {$unwind: "$review"},
+        {$match: { 'review.reviewer': ObjectId(req.user._id)}}
+      ])
+    .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get comments",
+                err: err.message
+            })
+        } else if (dbTeam.length >= 1) {
+            if(auth.authCompetition(req.user,dbTeam[0].competition,ACCESSLEVELS.VIEW)){
+                res.send(dbTeam[0].review.comments);
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
+            }
+        }else{
+            res.status(401).send({
+                msg: "Operation not permited"
+            })
+        }
+    })
+})
+
+privateRouter.get('/comments/all/:teamId', function (req, res, next) {
+    const teamId = req.params.teamId;
+    
+    if (!ObjectId.isValid(teamId)) {
+        return next()
+    }
+
+    competitiondb.team.findById(teamId)
+    .populate("review.reviewer", "username")
+    .select("competition review.reviewer review.comments ")
+    .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.VIEW)){
+                res.send(dbTeam.review);
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
+            }
+        }
+    })
+})
+
+privateRouter.put('/comments/:teamId', function (req, res, next) {
+    const teamId = req.params.teamId;
+    const comments = req.body;
+    
+    if (!ObjectId.isValid(teamId)) {
+        return next()
+    }
+
+    competitiondb.team.findById(teamId)
+    .select("competition review.reviewer review.comments")
+    .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.JUDGE)){
+                let reviewIndex = -1;
+                if(dbTeam.review.length){
+                    reviewIndex = dbTeam.review.findIndex((r)=> r.reviewer.toString() == req.user._id);
+                }else{
+                    dbTeam.review = [];
+                }
+                
+                if(reviewIndex == -1){
+                    let tmp = {
+                        reviewer: req.user._id,
+                        comments: comments.html
+                    }
+                    dbTeam.review.push(tmp);
+                }else{
+                    dbTeam.review[reviewIndex].comments = comments.html;
+                }
+                
+
+                dbTeam.save(function (err) {
+                    if (err) {
+                        logger.error(err)
+                        return res.status(400).send({
+                            err: err.message,
+                            msg: "Could not save changes"
+                        })
+                    } else {
+                        writeLog(req, dbTeam.competition._id, dbTeam._id, `Reviewer: ${req.user.username}'s comment has been updated`);
+                        return res.status(200).send({
+                            msg: "Saved changes"
+                        }); 
+                    }
+                })
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
+            }
+        }
+    })
+})
 
 
 publicRouter.all('*', function (req, res, next) {
