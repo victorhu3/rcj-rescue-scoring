@@ -78,7 +78,7 @@ function authCompetition(user, competitionId, level) {
     return true
   }
   if (user.competitions != undefined) {
-    return user.competitions.some((c) => c.id.toString == competitionId && c.accessLevel >= level);
+    return user.competitions.some((c) => c.id.toString() == competitionId && c.accessLevel >= level);
   }
   return false
 }
