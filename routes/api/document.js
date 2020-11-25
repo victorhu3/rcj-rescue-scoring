@@ -28,6 +28,7 @@ const { time } = require('console')
 const LEAGUES_JSON = competitiondb.LEAGUES_JSON;
 const dateformat = require('dateformat');
 
+
 const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 const N=32
 
@@ -62,34 +63,29 @@ publicRouter.get('/answer/:teamId/:token', function (req, res, next) {
         return next()
     }
 
-    competitiondb.team.findById(teamId)
+    competitiondb.team.findOne({
+        "_id": ObjectId(teamId),
+        "document.token": token
+    })
     .populate("competition")
-    .select("competition document.answers document.token document.enabled")
+    .select("competition document.answers document.enabled")
     .exec(function (err, dbTeam) {
-            if (err || dbTeam == null) {
-                if(!err) err = {message: 'No team found'};
-                res.status(400).send({
-                    msg: "Could not get team",
-                    err: err.message
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW)){
+                res.send(dbTeam.document.answers);
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
                 })
-            } else if (dbTeam) {
-                if(dbTeam.document.token == token){
-                    if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
-                        res.send(dbTeam.document.answers);
-                    }else{
-                        res.status(401).send({
-                            msg: "Operation not permited"
-                        })
-                    }
-                }
-                else {
-                    res.status(401).send({
-                        msg: "Auth error"
-                    })
-                }
             }
         }
-    )
+    })
 })
 
 publicRouter.put('/answer/:teamId/:token', function (req, res, next) {
@@ -101,65 +97,60 @@ publicRouter.put('/answer/:teamId/:token', function (req, res, next) {
         return next()
     }
 
-    competitiondb.team.findById(teamId)
+    competitiondb.team.findOne({
+        "_id": ObjectId(teamId),
+        "document.token": token
+    })
     .populate('competition')
-    .select("competition document.answers document.token document.deadline document.enabled")
+    .select("competition document.answers document.deadline document.enabled")
     .exec(function (err, dbTeam) {
-            if (err || dbTeam == null) {
-                if(!err) err = {message: 'No team found'};
-                res.status(400).send({
-                    msg: "Could not get team",
-                    err: err.message
-                })
-            } else if (dbTeam) {
-                if(dbTeam.document.token == token){
-                    if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
-                        let teamDeadline = dbTeam.document.deadline;
-                        let deadline = dbTeam.competition.documents.deadline;
-                        if(teamDeadline != null) deadline = teamDeadline;
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            let userAuth = auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW);
+            if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || userAuth){
+                let teamDeadline = dbTeam.document.deadline;
+                let deadline = dbTeam.competition.documents.deadline;
+                if(teamDeadline != null) deadline = teamDeadline;
 
-                        let now = new Date();
-                        let timestamp = Math.floor(now.getTime()/1000);
+                let now = new Date();
+                let timestamp = Math.floor(now.getTime()/1000);
 
-                        if(deadline >= timestamp){
-                            dbTeam.document.answers = answer;
-                            dbTeam.save(function (err) {
-                                if (err) {
-                                    logger.error(err)
-                                    writeLog(req, dbTeam.competition._id, dbTeam._id, "ERROR: " + err.message);
-                                    return res.status(400).send({
-                                        err: err.message,
-                                        msg: "Could not save changes"
-                                    })
-                                } else {
-                                    writeLog(req, dbTeam.competition._id, dbTeam._id, "Submissions have been updated");
-                                    return res.status(200).send({
-                                        msg: "Saved changes"
-                                    }); 
-                                }
+                if(deadline >= timestamp || userAuth){
+                    dbTeam.document.answers = answer;
+                    dbTeam.save(function (err) {
+                        if (err) {
+                            logger.error(err)
+                            writeLog(req, dbTeam.competition._id, dbTeam._id, "ERROR: " + err.message);
+                            return res.status(400).send({
+                                err: err.message,
+                                msg: "Could not save changes"
                             })
-                        }else{
-                            writeLog(req, dbTeam.competition._id, dbTeam._id, "They  have attempted to update the submission, but it has expired the deadline.");
-                            res.status(400).send({
-                                msg: "The deadline has passed."
-                            })
+                        } else {
+                            writeLog(req, dbTeam.competition._id, dbTeam._id, "Submissions have been updated");
+                            return res.status(200).send({
+                                msg: "Saved changes"
+                            }); 
                         }
-                    }else{
-                        writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to update the submission, but this operation is not allowed.");
-                        res.status(401).send({
-                            msg: "Operation not permited"
-                        })
-                    }
-                    
-                }
-                else {
-                    res.status(401).send({
-                        msg: "Auth error"
+                    })
+                }else{
+                    writeLog(req, dbTeam.competition._id, dbTeam._id, "They  have attempted to update the submission, but it has expired the deadline.");
+                    res.status(400).send({
+                        msg: "The deadline has passed."
                     })
                 }
+            }else{
+                writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to update the submission, but this operation is not allowed.");
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
             }
         }
-    )
+    })
 })
 
 publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
@@ -171,130 +162,117 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
         return next()
     }
 
-    competitiondb.team.findById(teamId)
+    competitiondb.team.findOne({
+        "_id": ObjectId(teamId),
+        "document.token": token
+    })
     .populate('competition')
-    .select("competition document.token document.deadline document.enabled")
+    .select("competition document.deadline document.enabled")
     .exec(function (err, dbTeam) {
-            if (err || dbTeam == null) {
-                if(!err) err = {message: 'No team found'};
-                res.status(400).send({
-                    msg: "Could not get team",
-                    err: err.message
-                })
-            } else if (dbTeam) {
-                if(dbTeam.document.token == token){
-                    if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
-                        let teamDeadline = dbTeam.document.deadline;
-                        let deadline = dbTeam.competition.documents.deadline;
-                        if(teamDeadline != null) deadline = teamDeadline;
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            let userAuth = auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW);
+            if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || userAuth){
+                let teamDeadline = dbTeam.document.deadline;
+                let deadline = dbTeam.competition.documents.deadline;
+                if(teamDeadline != null) deadline = teamDeadline;
 
-                        let now = new Date();
-                        let timestamp = Math.floor(now.getTime()/1000);
+                let now = new Date();
+                let timestamp = Math.floor(now.getTime()/1000);
 
-                        if(deadline >= timestamp){
-                            glob.glob(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/" + fileName + '.*', function (er, files) {
-                                let i = files.length;
-                                if(i == 0){
-                                    upload_process();
-                                    return;
-                                }
-                                fs.mkdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", (err) => {
-                                    files.forEach(function(file){
-                                        fs.rename(file, path.dirname(file) + '/trash/' + (new Date().getTime())/1000  + path.extname(file), function (err) {
-                                            if(err) logger.error(err.message);
-                                            i--;
-                                            if(i <= 0){
-                                                upload_process();
-                                                return;
-                                            }
-                                        });
-                                    });
-                                });
-                                
-
-                                function upload_process(){
-                                    let originalname = '';
-                                    var storage = multer.diskStorage({
-                                        destination: function (req, file, callback) {
-                                            callback(null, __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId)
-                                        },
-                                        filename: function (req, file, callback) {
-                                            originalname = file.originalname;
-                                            callback(null, fileName + path.extname(originalname))
-                                            
-                                        }
-                                    })
-                
-                                    var upload = multer({
-                                        storage: storage
-                                    }).single('file')
-                
-                                    upload(req, res, function (err) {
-                                        res.status(200).send({
-                                            msg: 'File is uploaded'
-                                        })
-                                        const ft = mime.getType(originalname);
-                                        
-                                        if(ft.includes('video')){
-                                            const filepath = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/" + fileName;
-                                            fs.unlink(filepath + '-thumbnail.png', function(err){
-                                                try{
-                                                    const original = ffmpeg(filepath + path.extname(originalname));
-                                                
-                                                    original.screenshots({
-                                                        count: 1,
-                                                        folder: __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId,
-                                                        filename: fileName + '-thumbnail.png',
-                                                        size: '640x?'
-                                                    }).on('error', function(err) {
-                                                        console.log('an error happened: ' + err.message);
-                                                    });
-                                                    
-                                                    if(ft != "video/mp4"){
-                                                        original.output(filepath + '.mp4').on('error', function(err) {
-                                                            console.log('an error happened: ' + err.message);
-                                                        });
-                                                    }
-                                                }catch(err){
-
-                                                }
-                                                
-                                            });
-                                        }
-
-                                        /*fs.rmdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", { recursive: true },(err) => {
-                                            if(err) logger.error(err.message);
-                                        });*/
-                                        writeLog(req, dbTeam.competition._id, dbTeam._id, "File uploaded! File name: " + fileName);
-                                    })
-                                }
-
-                            });
-
-                            
-                        }else{
-                            res.status(400).send({
-                                msg: "The deadline has passed."
-                            })
-                            writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but it has expired the deadline. File name: " + fileName);
+                if(deadline >= timestamp || userAuth){
+                    glob.glob(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/" + fileName + '.*', function (er, files) {
+                        let i = files.length;
+                        if(i == 0){
+                            upload_process();
+                            return;
                         }
-                    }else{
-                        res.status(401).send({
-                            msg: "Operation not permited"
-                        })
-                        writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but this operation is not allowed. File name: " + fileName);
-                    }
-                    
-                    
-                }
-                else {
-                    res.status(401).send({
-                        msg: "Auth error"
+                        fs.mkdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", (err) => {
+                            files.forEach(function(file){
+                                fs.rename(file, path.dirname(file) + '/trash/' + (new Date().getTime())/1000  + path.extname(file), function (err) {
+                                    if(err) logger.error(err.message);
+                                    i--;
+                                    if(i <= 0){
+                                        upload_process();
+                                        return;
+                                    }
+                                });
+                            });
+                        });
+                        
+
+                        function upload_process(){
+                            let originalname = '';
+                            var storage = multer.diskStorage({
+                                destination: function (req, file, callback) {
+                                    callback(null, __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId)
+                                },
+                                filename: function (req, file, callback) {
+                                    originalname = file.originalname;
+                                    callback(null, fileName + path.extname(originalname))
+                                    
+                                }
+                            })
+        
+                            var upload = multer({
+                                storage: storage
+                            }).single('file')
+        
+                            upload(req, res, function (err) {
+                                res.status(200).send({
+                                    msg: 'File is uploaded'
+                                })
+                                const ft = mime.getType(originalname);
+                                
+                                if(ft.includes('video')){
+                                    const filepath = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/" + fileName;
+                                    fs.unlink(filepath + '-thumbnail.png', function(err){
+                                        try{
+                                            const original = ffmpeg(filepath + path.extname(originalname));
+                                        
+                                            original.screenshots({
+                                                count: 1,
+                                                folder: __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId,
+                                                filename: fileName + '-thumbnail.png',
+                                                size: '640x?'
+                                            }).on('error', function(err) {
+                                                console.log('an error happened: ' + err.message);
+                                            });
+                                            
+                                            if(ft != "video/mp4"){
+                                                original.output(filepath + '.mp4').on('error', function(err) {
+                                                    console.log('an error happened: ' + err.message);
+                                                });
+                                            }
+                                        }catch(err){
+
+                                        }
+                                        
+                                    });
+                                }
+                                writeLog(req, dbTeam.competition._id, dbTeam._id, "File uploaded! File name: " + fileName);
+                            })
+                        }
+                    }); 
+                }else{
+                    res.status(400).send({
+                        msg: "The deadline has passed."
                     })
+                    writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but it has expired the deadline. File name: " + fileName);
                 }
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
+                writeLog(req, dbTeam.competition._id, dbTeam._id, "They have attempted to upload a file, but this operation is not allowed. File name: " + fileName);
             }
         }
-    )
+    })
 })
 
 publicRouter.get('/files/:teamId/:token', function (req, res, next) {
@@ -305,48 +283,43 @@ publicRouter.get('/files/:teamId/:token', function (req, res, next) {
         return next()
     }
 
-    competitiondb.team.findById(teamId)
+    competitiondb.team.findOne({
+        "_id": ObjectId(teamId),
+        "document.token": token
+    })
     .populate("competition")
-    .select("competition document.token document.enabled")
+    .select("competition document.enabled")
     .exec(function (err, dbTeam) {
-            if (err || dbTeam == null) {
-                if(!err) err = {message: 'No team found'};
-                res.status(400).send({
-                    msg: "Could not get team",
-                    err: err.message
-                })
-            } else if (dbTeam) {
-                if(dbTeam.document.token == token){
-                    if(dbTeam.competition.documents.enable && dbTeam.document.enabled){
-                        let path = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId;
-                        fs.readdir(path, {withFileTypes: true}, (err, dirents) => {
-                            if (err) {
-                                console.error(err);
-                                return;
-                            }
-
-                            let d = [];
-                            for (const dirent of dirents) {
-                                if (!dirent.isDirectory()) {
-                                    d.push(dirent.name);
-                                }
-                            }
-                            res.send(d);
-                        });
-                    }else{
-                        res.status(401).send({
-                            msg: "Operation not permited"
-                        })
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW)){
+                let path = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId;
+                fs.readdir(path, {withFileTypes: true}, (err, dirents) => {
+                    if (err) {
+                        console.error(err);
+                        return;
                     }
-                }
-                else {
-                    res.status(401).send({
-                        msg: "Auth error"
-                    })
-                }
+
+                    let d = [];
+                    for (const dirent of dirents) {
+                        if (!dirent.isDirectory()) {
+                            d.push(dirent.name);
+                        }
+                    }
+                    res.send(d);
+                });
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
             }
         }
-    )
+    })
 })
 
 publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
@@ -358,97 +331,95 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
         return next()
     }
 
-    competitiondb.team.findById(teamId)
+    competitiondb.team.findOne({
+        "_id": ObjectId(teamId),
+        "document.token": token
+    })
     .populate("competition")
-    .select("competition document.token document.enabled")
+    .select("competition document.enabled")
     .exec(function (err, dbTeam) {
-            if (err || dbTeam == null) {
-                if(!err) err = {message: 'No team found'};
-                res.status(400).send({
-                    msg: "Could not get team",
-                    err: err.message
-                })
-            } else if (dbTeam) {
-                if(dbTeam.document.token == token){
-                    if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || fileName == "log.txt"){
-                        let path = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + '/' + fileName;
-                        fs.stat(path, (err, stat) => {
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            if((dbTeam.competition.documents.enable && dbTeam.document.enabled) || auth.authCompetition(req.user,dbTeam.competition._id,ACCESSLEVELS.VIEW)){
+                let path = __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + '/' + fileName;
+                fs.stat(path, (err, stat) => {
 
-                            // Handle file not found
-                            if (err !== null && err.code === 'ENOENT') {
-                                res.status(404).send({
-                                    msg: "File not found"
-                                })
-                                return;
-                            }
+                    // Handle file not found
+                    if (err !== null && err.code === 'ENOENT') {
+                        res.status(404).send({
+                            msg: "File not found"
+                        })
+                        return;
+                    }
 
-                            // Streaming Video
-                            if(mime.getType(path).includes('video')){
-                                try{
-                                    const fileSize = stat.size
-                                    const range = req.headers.range
+                    // Streaming Video
+                    if(mime.getType(path).includes('video')){
+                        try{
+                            const fileSize = stat.size
+                            const range = req.headers.range
+                        
+                            if (range) {
+                        
+                                const parts = range.replace(/bytes=/, "").split("-");
+                        
+                                const start = parseInt(parts[0], 10);
+                                const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
                                 
-                                    if (range) {
-                                
-                                        const parts = range.replace(/bytes=/, "").split("-");
-                                
-                                        const start = parseInt(parts[0], 10);
-                                        const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
-                                        
-                                        const chunksize = (end-start)+1;
-                                        const file = fs.createReadStream(path, {start, end});
-                                        file.on('error', function(err) {
-                                            logger.error(err.message);
-                                        });
-                                        const head = {
-                                            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-                                            'Accept-Ranges': 'bytes',
-                                            'Content-Length': chunksize,
-                                            'Content-Type': mime.getType(path),
-                                        }
-                                        
-                                        res.writeHead(206, head);
-                                        file.pipe(res);
-                                        return;
-                                    } else {
-                                        const head = {
-                                            'Content-Length': fileSize,
-                                            'Content-Type': mime.getType(path),
-                                        }
-                                
-                                        res.writeHead(200, head);
-                                        fs.createReadStream(path).pipe(res);
-                                        return;
-                                    }
-                                }catch(err){
+                                const chunksize = (end-start)+1;
+                                const file = fs.createReadStream(path, {start, end});
+                                file.on('error', function(err) {
                                     logger.error(err.message);
+                                });
+                                const head = {
+                                    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                                    'Accept-Ranges': 'bytes',
+                                    'Content-Length': chunksize,
+                                    'Content-Type': mime.getType(path),
                                 }
                                 
-                            }else{
-                                fs.readFile(path, function (err, data) {
-                                    res.writeHead(200, {
-                                        'Content-Type': mime.getType(path)
-                                    });
-                                    res.end(data);
-                                });
+                                res.writeHead(206, head);
+                                file.pipe(res);
+                                return;
+                            } else {
+                                const head = {
+                                    'Content-Length': fileSize,
+                                    'Content-Type': mime.getType(path),
+                                }
+                        
+                                res.writeHead(200, head);
+                                fs.createReadStream(path).pipe(res);
+                                return;
                             }
-                        });
+                        }catch(err){
+                            logger.error(err.message);
+                        }
+                        
                     }else{
-                        res.status(401).send({
-                            msg: "Operation not permited"
-                        })
+                        fs.readFile(path, function (err, data) {
+                            res.writeHead(200, {
+                                'Content-Type': mime.getType(path)
+                            });
+                            res.end(data);
+                        });
                     }
-                    
-                }
-                else {
-                    res.status(401).send({
-                        msg: "Auth error"
-                    })
-                }
+                });
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
             }
         }
-    )
+    })
 })
+
+
+//// for reviwer & admin
+
 
 
 publicRouter.all('*', function (req, res, next) {
