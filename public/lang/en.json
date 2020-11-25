@@ -816,6 +816,10 @@
             "selectFile": "Select a file",
             "overwrite": "A file has already been uploaded. When you upload a new file, it will overwrite the old one.",
             "uploaded": "Uploaded files"
+        },
+        "review":{
+            "reviewer": "Logged in reviewer: ",
+            "comments": "Review Comments"
         }
     },  
     "mail": {

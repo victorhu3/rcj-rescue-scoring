@@ -149,27 +149,6 @@ app.controller('DocumentReviewedController', ['$scope', '$uibModal', '$log', '$h
     })
 
     
-
-    
-
-    $scope.save = function () {
-        let d = {
-            html : $scope.comments
-        };
-        $http.put("/api/document/comments/" + teamId, d).then(function (response) {
-            Toast.fire({
-                type: 'success',
-                title: saved_mes
-            })
-        }, function (response) {
-            Toast.fire({
-                type: 'error',
-                title: "Error: " + response.statusText,
-                html: response.data.msg
-            })
-        });
-    }
-
     $scope.trust = function(html){
         return $sce.trustAsHtml(html);
     }
@@ -192,7 +171,6 @@ app.controller('DocumentReviewedController', ['$scope', '$uibModal', '$log', '$h
     }
     
     $scope.changeLocale = function(){
-        $scope.save();
         $scope.go('/locales');
     }
 
