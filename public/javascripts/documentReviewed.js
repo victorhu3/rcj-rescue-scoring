@@ -1,56 +1,8 @@
 // register the directive with your app module
-var app = angular.module('DocumentReview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize', 'ngFileUpload']);
-
-app.constant('NG_QUILL_CONFIG', {
-    /*
-     * @NOTE: this config/output is not localizable.
-     */
-    modules: {
-      toolbar: [
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        ['blockquote', 'code-block'],
-  
-        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        [{ 'script': 'sub' }, { 'script': 'super' }],     // superscript/subscript
-        [{ 'indent': '-1' }, { 'indent': '+1' }],         // outdent/indent
-        [{ 'direction': 'rtl' }],                         // text direction
-  
-        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  
-        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-        [{ 'font': [] }],
-        [{ 'align': [] }],
-  
-        ['clean'],                                         // remove formatting button
-  
-        ['link', 'image', 'video']                         // link and image, video
-      ],
-      imageResize: {
-      },
-      imageDropAndPaste: {
-      }
-    },
-    theme: 'snow',
-    debug: 'warn',
-    placeholder: '',
-    readOnly: false,
-    bounds: document.body,
-    scrollContainer: null
-  })
-  
-  app.config([
-    'ngQuillConfigProvider',
-    'NG_QUILL_CONFIG',
-  
-    function (ngQuillConfigProvider, NG_QUILL_CONFIG) {
-      ngQuillConfigProvider.set(NG_QUILL_CONFIG)
-    }
-  ])
+var app = angular.module('DocumentReview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngSanitize']);
 
 // function referenced by the drop target
-app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$http', '$translate','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $sce, Upload, $timeout) {
+app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$http', '$translate','$sce', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $sce, $timeout) {
 
     const Toast = Swal.mixin({
         toast: true,
