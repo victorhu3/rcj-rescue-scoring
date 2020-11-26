@@ -94,6 +94,28 @@ const competitionSchema = new Schema({
           'required': {type: Boolean, default: true},
           'fileName': {type: String, default: ''}
         }]
+      }],
+      'review': [{
+        'i18n':[{
+          'language' : {type: String, default: ''},
+          'title': {type: String, default: ''},
+        }],
+        'color': {type: String, default: '2980b9'},
+        'questions': [{
+          'i18n':[{
+            'language' : {type: String, default: ''},
+            'question': {type: String, default: ''},
+            'description': {type: String, default: ''},
+            'example': {type: String, default: ''},
+            'options': [{
+              'value': {type: String, default: ''},
+              'text': {type: String, default: ''}
+            }],
+          }],
+          'type': {type: String, enum: QUESTION_TYPES},
+          'required': {type: Boolean, default: true},
+          'fileName': {type: String, default: ''}
+        }]
       }]
     }]
   }
