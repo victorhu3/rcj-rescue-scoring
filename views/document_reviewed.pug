@@ -149,11 +149,6 @@ block content
 
                                 hr(ng-if="!$last")
             #COMMENTS(style="padding:5px 15px 0 0;margin-right: -15px;")
-                .alert.alert-info(role='alert',style="margin: 5px;")
-                    span 
-                        i.fas.fa-user-edit &nbsp;
-                        | {{"document.review.reviewer" | translate}}
-                    strong(style="font-size:20px;") #{user.username}
                 div(style="margin: 0 5px;")
                     div(ng-repeat="(blockIndex, block) in review track by $index")
                         .card(ng-style="{border: '3px solid #' + block.color}", style="margin-bottom:20px;")
@@ -302,11 +297,6 @@ block content
 
                         hr(ng-if="!$last")
         hr
-        .alert.alert-info(role='alert',style="margin: 5px;")
-            span 
-                i.fas.fa-user-edit &nbsp;
-                | {{"document.review.reviewer" | translate}}
-            strong(style="font-size:20px;") #{user.username}
         div(style="margin: 0 5px;")
             div(ng-repeat="(blockIndex, block) in review track by $index")
                 .card(ng-style="{border: '3px solid #' + block.color}", style="margin-bottom:20px;")
@@ -323,100 +313,59 @@ block content
                                 span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") {{"document.form.optional" | translate}}
                             div(style="font-size:15px;")
                                 p(ng-bind-html="langContent(question.i18n, 'description')")
-                                p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
-                                p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
-                                p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
-                                p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
-                            div(style="text-align:center;margin:10px 0px;")
-                                button.btn.btn-sm.btn-outline-primary(type='button', ng-click="hints(langContent(question.i18n, 'example'))", ng-if="langContent(question.i18n, 'example')")
-                                    i.fas.fa-lightbulb &nbsp;
-                                    | {{"document.form.hints" | translate}}
                             div(ng-if="question.type=='input'")
-                                ng-quill-editor(ng-model="myComments[blockIndex][questionIndex]")
+                                div(ng-repeat="review in reviewComments track by $index")
+                                    span
+                                        i.fas.fa-user-edit &nbsp;
+                                        | {{review.reviewer.username}}
+                                    div(style="border: solid 1px #666;margin-bottom:10px;", ng-bind-html="trust(review.comments[blockIndex][questionIndex])")
                             div(ng-if="question.type=='select'")
-                                select.custom-select(ng-model='myComments[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                                div(ng-repeat="review in reviewComments track by $index")
+                                    span
+                                        i.fas.fa-user-edit &nbsp;
+                                        | {{review.reviewer.username}}
+                                    select.custom-select(ng-model='review.comments[blockIndex][questionIndex]', ng-options="option.value as option.text for option in langArray(question.i18n, 'options')", disabled, style="margin-bottom:10px;")
                             div(ng-if="question.type=='picture'")
-                                .row(ng-if="checkUploadedReview(question.fileName)", style="width:100%;")
-                                    .col-12
-                                        strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                        br
-                                        div(style="text-align:center;margin:10px 0px;")
-                                            a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/document/review/files/{{team._id}}/{{nameUploadedReview(question.fileName)}}?v={{updateTime}}" data-lightbox="image")
-                                                img.img-thumbnail(style="max-height: 500px;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/review/files/{{team._id}}/{{nameUploadedReview(question.fileName)}}?v={{updateTime}}")
-                                .d-sm-flex.flex-row
-                                    div
-                                        button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='image/*' ngf-max-size='5MB')
-                                            i.far.fa-folder-open
-                                            | {{"document.form.selectFile" | translate}}
-                                    div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
-                                        span ERROR: {{question.errFile.$error}}
-                                    .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
-                                        .progress
-                                            .progress-bar(role='progressbar' style='width: {{question.f.progress}}%;' aria-valuenow='{{question.f.progress}}' aria-valuemin='0' aria-valuemax='100') {{question.f.progress}}%
-                                    div(style="color:#e74c3c;margin-top:10px;", ng-if="question.errorMsg")
-                                        span {{question.errorMsg}}
+                                div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
+                                    span
+                                        i.fas.fa-user-edit &nbsp;
+                                        | {{review.reviewer.username}}
+                                    .row(style="width:100%;")
+                                        .col-12
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/document/review/files/{{team._id}}/{{nameUploadedReview(question.fileName, review.reviewer.username)}}?v={{updateTime}}" data-lightbox="image")
+                                                    img.img-thumbnail(style="max-height: 500px;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/review/files/{{team._id}}/{{nameUploadedReview(question.fileName, review.reviewer.username)}}?v={{updateTime}}")
+                                
                             div(ng-if="question.type=='movie'")
-                                .row(ng-if="checkUploadedReview(question.fileName) && !question.uploading", style="width:100%;")
-                                    .col-12
-                                        strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                        br
-                                        div(style="text-align:center;margin:10px 0px;")
-                                            video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLinkReview(question.fileName)}}")
-                                                source(ng-src="{{getVideoLinkReview(v)}}", ng-repeat="v in getVideoListReview(question.fileName)")
+                                div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
+                                    span
+                                        i.fas.fa-user-edit &nbsp;
+                                        | {{review.reviewer.username}}
+                                    .row(style="width:100%;")
+                                        .col-12
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLinkReview(question.fileName, review.reviewer.username)}}")
+                                                    source(ng-src="{{getVideoLinkReview(v)}}", ng-repeat="v in getVideoListReview(question.fileName, review.reviewer.username)")
 
-                                .d-sm-flex.flex-row
-                                    div
-                                        button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='5000MB')
-                                            i.far.fa-folder-open
-                                            | {{"document.form.selectFile" | translate}}
-                                    div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
-                                        span ERROR: {{question.errFile.$error}}
-                                    .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
-                                        .progress
-                                            .progress-bar(role='progressbar' style='width: {{question.f.progress}}%;' aria-valuenow='{{question.f.progress}}' aria-valuemin='0' aria-valuemax='100') {{question.f.progress}}%
-                                    div(style="color:#e74c3c;margin-top:10px;", ng-if="question.errorMsg")
-                                        span {{question.errorMsg}}
                             div(ng-if="question.type=='pdf'")
-                                .row(ng-if="checkUploadedReview(question.fileName)", style="width:100%;")
-                                    .col-12
-                                        strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                        br
-                                        div(style="text-align:center;margin:10px 0px;")
-                                            iframe(ng-src="{{getPdfLinkReview(question.fileName)}}" style="width:100%; height:600px;" )
-                                .d-sm-flex.flex-row
-                                    div
-                                        button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='application/pdf' ngf-max-size='10MB')
-                                            i.far.fa-folder-open
-                                            | {{"document.form.selectFile" | translate}}
-                                    div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
-                                        span ERROR: {{question.errFile.$error}}
-                                    .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
-                                        .progress
-                                            .progress-bar(role='progressbar' style='width: {{question.f.progress}}%;' aria-valuenow='{{question.f.progress}}' aria-valuemin='0' aria-valuemax='100') {{question.f.progress}}%
-                                    div(style="color:#e74c3c;margin-top:10px;", ng-if="question.errorMsg")
-                                        span {{question.errorMsg}}
+                                div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
+                                    span
+                                        i.fas.fa-user-edit &nbsp;
+                                        | {{review.reviewer.username}}
+                                    .row(style="width:100%;")
+                                        .col-12
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                iframe(ng-src="{{getPdfLinkReview(question.fileName, review.reviewer.username)}}" style="width:100%; height:600px;" )
                             div(ng-if="question.type=='zip'")
-                                .row(ng-if="checkUploadedReview(question.fileName)", style="width:100%;")
-                                    .col-12
-                                        strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                        br
-                                        div(style="text-align:center;margin:10px 0px;")
-                                            a.btn.btn-primary(type='file' ng-href="/api/document/review/files/{{team._id}}/{{nameUploadedReview(question.fileName)}}?v={{updateTime}}")
-                                                i.fas.fa-file-archive &nbsp;
-                                                | {{"document.form.uploaded" | translate}}
-                                .d-sm-flex.flex-row
-                                    div
-                                        button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='application/zip' ngf-max-size='50MB')
-                                            i.far.fa-folder-open
-                                            | {{"document.form.selectFile" | translate}}
-                                    div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
-                                        span ERROR: {{question.errFile.$error}}
-                                    .flex-fill(style="margin:10px 0px 0px 10px;", ng-show="question.f.progress > 0")
-                                        .progress
-                                            .progress-bar(role='progressbar' style='width: {{question.f.progress}}%;' aria-valuenow='{{question.f.progress}}' aria-valuemin='0' aria-valuemax='100') {{question.f.progress}}%
-                                    div(style="color:#e74c3c;margin-top:10px;", ng-if="question.errorMsg")
-                                        span {{question.errorMsg}}
-
+                                div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
+                                    span
+                                        i.fas.fa-user-edit &nbsp;
+                                        | {{review.reviewer.username}}
+                                    .row(style="width:100%;")
+                                        .col-12
+                                            div(style="text-align:center;margin:10px 0px;")
+                                                a.btn.btn-primary(type='file' ng-href="/api/document/review/files/{{team._id}}/{{nameUploadedReview(question.fileName, review.reviewer.username)}}?v={{updateTime}}")
+                                                    i.fas.fa-file-archive &nbsp;
+                                                    | {{"document.form.uploaded" | translate}}
 
                             hr(ng-if="!$last")
-
