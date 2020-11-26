@@ -143,6 +143,7 @@ publicRouter.get('/:teamId/:token', function (req, res, next) {
   .populate('competition')
   .select("competition document.deadline document.token document.enabled")
   .exec(function (err, dbTeam) {
+    console.log(dbTeam)
           if (err || dbTeam == null) {
               if(!err) err = {message: 'No team found'};
               res.status(400).send({

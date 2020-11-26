@@ -758,7 +758,8 @@
             "overall": "General settings",
             "access": "Access Activation",
             "team": "Team setting",
-            "question": "Question Setting"
+            "question": "Question Setting",
+            "review": "Review Setting"
         },
         "teamAdmin":{
             "title": "Individual team settings",
@@ -799,6 +800,12 @@
             "choices": "Options",
             "fileName": "File name",
             "extension": "The extension will automatically added by the system, so do not specify it here."
+        },
+        "review_editor": {
+            "title": "Document Review Form Editor",
+            "export": "Export this review forms to Json file",
+            "import": "Importing review forms from Json files",
+            "languageWarn": "The language settings are linked to the settings of the forms for the team."
         },
         "form":{
             "languageError": "This form is not available in your language, so it will be displayed in an alternative language.",

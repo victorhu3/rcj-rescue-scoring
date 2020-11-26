@@ -1,5 +1,5 @@
 // register the directive with your app module
-var app = angular.module('DocumentReview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize']);
+var app = angular.module('DocumentReview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize', 'ngFileUpload']);
 
 app.constant('NG_QUILL_CONFIG', {
     /*
@@ -50,7 +50,7 @@ app.constant('NG_QUILL_CONFIG', {
   ])
 
 // function referenced by the drop target
-app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$http', '$translate','$sce', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $sce, $timeout) {
+app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$http', '$translate','$sce', 'Upload', '$timeout' , function ($scope, $uibModal, $log, $http, $translate, $sce, Upload, $timeout) {
 
     const Toast = Swal.mixin({
         toast: true,
@@ -109,11 +109,13 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
         });
 
         $scope.updateUploaded();
+        $scope.updateReviewUploaded();
         
-        $http.get("/api/competitions/" + competitionId + "/documents/" + $scope.team.league).then(function (response) {
+        $http.get("/api/competitions/" + competitionId + "/documents/" + $scope.team.league + "/review").then(function (response) {
             $scope.blocks = response.data.blocks;
             $scope.notifications = response.data.notifications;
             $scope.languages = response.data.languages;
+            $scope.review = response.data.review;
 
             $http.get("/api/document/answer/"+ $scope.team._id + "/" + token).then(function (response) {
                 $scope.answers = response.data;
@@ -128,6 +130,29 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
                     }
                 }
             });
+
+            $http.get("/api/document/review/" + teamId).then(function (response) {
+                $scope.reviewComments = response.data;
+                let fil = $scope.reviewComments.filter((r) => r.reviewer._id == userId);
+                $scope.myComments = [];
+
+                if(fil.length == 0){
+                    for(let b of $scope.review){
+                        let ba = [];
+                        for(let q of b.questions){
+                            if(q.type == "select"){
+                                ba.push('option0');
+                            }
+                            else{
+                                ba.push('');
+                            }
+                        }
+                        $scope.myComments.push(ba);
+                    }
+                }else{
+                    $scope.myComments = fil[0].comments;
+                }
+            })
             
             //Check 1st lang
             for(let l of $scope.languages){
@@ -143,9 +168,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
             }
         })
 
-        $http.get("/api/document/comments/my/" + teamId).then(function (response) {
-            $scope.comments = response.data
-        })
+        
     })
 
     
@@ -153,10 +176,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
     
 
     $scope.save = function () {
-        let d = {
-            html : $scope.comments
-        };
-        $http.put("/api/document/comments/" + teamId, d).then(function (response) {
+        $http.put("/api/document/review/" + teamId, $scope.myComments).then(function (response) {
             Toast.fire({
                 type: 'success',
                 title: saved_mes
@@ -209,38 +229,116 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
         })
     }
 
+    $scope.updateReviewUploaded = function(){
+        $http.get("/api/document/review/files/" + $scope.team._id).then(function (response) {
+            $scope.uploadedReview = response.data;
+            $scope.updateTime = new Date().getTime()/1000;
+        })
+    }
+
     $scope.checkUploaded = function(name){
-        return($scope.uploaded.some((n) => new RegExp(name+'\.').test(n)));
+        return($scope.uploaded.some((n) => new RegExp(name+'\\.').test(n)));
+    }
+
+    $scope.checkUploadedReview = function(name){
+        return($scope.uploadedReview.some((n) => new RegExp(userName + '/' + name+'\\.').test(n)));
     }
 
     $scope.nameUploaded = function(name){
-        return($scope.uploaded[$scope.uploaded.findIndex((n) => new RegExp(name+'\.').test(n))]);
+        return($scope.uploaded[$scope.uploaded.findIndex((n) => new RegExp(name+'\\.').test(n))]);
+    }
+
+    $scope.nameUploadedReview = function(name){
+        return($scope.uploadedReview[$scope.uploadedReview.findIndex((n) => new RegExp(userName + '/' + name+'\\.').test(n))]);
     }
 
     $scope.getPdfLink = function(name){
         return("/components/pdfjs/web/viewer.html?file=/api/document/files/" + $scope.team._id + "/" + token + "/" + $scope.nameUploaded(name) + '&v=' + $scope.updateTime);
     }
 
+    $scope.getPdfLinkReview = function(name){
+        return("/components/pdfjs/web/viewer.html?file=/api/document/review/files/" + $scope.team._id + "/" + $scope.nameUploadedReview(name) + '&v=' + $scope.updateTime);
+    }
+
     $scope.getVideoList = function(name){
         let res = $scope.uploaded.filter(function(value) {
-            return new RegExp(name+'\.').test(value);
+            return new RegExp(name+'\\.').test(value);
         });
         return res;
     }
 
+    $scope.getVideoListReview = function(name){
+        let res = $scope.uploadedReview.filter(function(value) {
+            return new RegExp(userName + '/' + name+'\\.').test(value);
+        });
+        return res;
+    }
+
+
     $scope.getVideoLink = function(path){
         return("/api/document/files/" + $scope.team._id + "/" + token + "/" + path + '?v=' + $scope.updateTime);
+    }
+
+    $scope.getVideoLinkReview = function(path){
+        return("/api/document/review/files/" + $scope.team._id + "/" + path + '?v=' + $scope.updateTime);
     }
 
     $scope.getThumbnailLink = function(name){
         return("/api/document/files/" + $scope.team._id + "/" + token + "/" + $scope.nameUploaded(name+'-thumbnail') + '?v=' + $scope.updateTime);
     }
 
-    let qe;
-    $scope.quillHeight = function (editor) {
-        qe = editor;
-        resizeQuill();
-    };
+    $scope.getThumbnailLinkReview = function(name){
+        return("/api/document/review/files/" + $scope.team._id + "/" + $scope.nameUploadedReview(name+'-thumbnail') + '?v=' + $scope.updateTime);
+    }
+
+    $scope.uploadFiles = function(question, file, errFiles) {
+        question.f = file;
+        question.errFile = errFiles && errFiles[0];
+        if(question.errFile){
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: question.errFile.$error + ' : ' + question.errFile.$errorParam
+            })
+        }
+        if (file) {
+            question.uploading = true;
+            file.upload = Upload.upload({
+                url: '/api/document/review/files/' + $scope.team._id + '/' + question.fileName,
+                data: {file: file}
+            });
+
+            file.upload.then(function (response) {
+                $timeout(function () {
+                    $scope.updateReviewUploaded();
+                    if(question.type == "movie"){
+                        setTimeout((function() {
+                            question.uploading = false;
+                            
+                        }),1);
+                    }
+                    file.result = response.data;
+                    Toast.fire({
+                        type: 'success',
+                        title: upload_mes
+                    })
+                    delete question.f;
+                });
+            }, function (response) {
+                if (response.status > 0){
+                     question.errorMsg = response.status + ': ' + response.data.msg;
+                     Toast.fire({
+                        type: 'error',
+                        title: "Error: " + response.statusText,
+                        html: response.data.msg
+                    })
+                }
+            }, function (evt) {
+                file.progress = Math.min(100, parseInt(100.0 * 
+                                         evt.loaded / evt.total));
+            });
+        }   
+    }
 
     function resizeQuill(){
         if(qe.container.offsetTop == 0){
@@ -260,8 +358,8 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
                 bw = A + B - aw;
             //set widths and information...
             $('#ANSWER').css({width : aw});
-            $('#COMMENTS').css({width : bw});
-            qe.container.style.height = (window.innerHeight - qe.container.offsetTop - 90) + 'px';
+            $('#COMMENTS').css({width : bw + 15});
+            //qe.container.style.height = (window.innerHeight - qe.container.offsetTop - 90) + 'px';
 
 
         };

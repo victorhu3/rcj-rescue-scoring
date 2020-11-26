@@ -49,7 +49,14 @@ block content
       button(ng-click="go('/admin/' + competitionId + '/documents/teams')" class='btn btn-outline-primary btn-lg btn-block' style="margin-bottom:20px;")
             i.fas.fa-user(aria-hidden='true') &nbsp; {{"document.teamAdmin.title" | translate}}
       hr
-      h3 {{"document.admin.question" | translate}}
-      div(ng-repeat="league in leagues")
-          button(ng-click="go('/admin/' + competitionId + '/documents/' + league.id)" class='btn btn-outline-danger btn-lg btn-block' style="margin-bottom:20px;")
-            i.fas.fa-question-circle(aria-hidden='true') &nbsp; {{league.name}}
+      .row
+        .col-md-6
+          h3 {{"document.admin.question" | translate}}
+          div(ng-repeat="league in leagues")
+              button(ng-click="go('/admin/' + competitionId + '/documents/' + league.id + '/form')" class='btn btn-outline-danger btn-lg btn-block' style="margin-bottom:20px;")
+                i.fas.fa-question-circle(aria-hidden='true') &nbsp; {{league.name}}
+        .col-md-6
+          h3 {{"document.admin.review" | translate}}
+          div(ng-repeat="league in leagues")
+              button(ng-click="go('/admin/' + competitionId + '/documents/' + league.id + '/review')" class='btn btn-outline-danger btn-lg btn-block' style="margin-bottom:20px;")
+                i.fas.fa-question-circle(aria-hidden='true') &nbsp; {{league.name}}

@@ -137,7 +137,7 @@ router.get('/:competitionid/documents/teams', function (req, res, next) {
   else res.render('access_denied', {user: req.user})
 })
 
-router.get('/:competitionid/documents/:lid', function (req, res, next) {
+router.get('/:competitionid/documents/:lid/form', function (req, res, next) {
   const id = req.params.competitionid
   const lid = req.params.lid;
 
@@ -152,6 +152,24 @@ router.get('/:competitionid/documents/:lid', function (req, res, next) {
   }
   
   if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('documents_form_editor', {id: id, lid: lid, user: req.user})
+  else res.render('access_denied', {user: req.user})
+})
+
+router.get('/:competitionid/documents/:lid/review', function (req, res, next) {
+  const id = req.params.competitionid
+  const lid = req.params.lid;
+
+  if (LEAGUES.filter(function (elm){
+      return elm.indexOf(lid) != -1;
+  }).length == 0){
+      return next()
+  }
+  
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+  
+  if(auth.authCompetition(req.user,id,ACCESSLEVELS.ADMIN)) res.render('documents_review_editor', {id: id, lid: lid, user: req.user})
   else res.render('access_denied', {user: req.user})
 })
 

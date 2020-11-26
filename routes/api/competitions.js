@@ -141,6 +141,46 @@ publicRouter.get('/:competition/documents/:leagueId', function (req, res, next) 
                 msg: "Could not get competition"
             })
         } else {
+            if(data[0]){
+                if(data[0].documents.leagues.review) delete data[0].documents.leagues.review;
+                res.status(200).send(data[0].documents.leagues)
+            }
+            else res.status(200).send(data)
+        }
+    })
+})
+
+privateRouter.get('/:competition/documents/:leagueId/review', function (req, res, next) {
+    const id = req.params.competition;
+    const lid = req.params.leagueId;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (LEAGUES.filter(function (elm){
+        return elm.indexOf(lid) != -1;
+    }).length == 0){
+        return next()
+    }
+
+    if (!auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW)) {
+        return res.status(401).send({
+            msg: "You have no authority to access this api"
+        })
+    }
+
+    competitiondb.competition.aggregate([
+        {$match: {_id: ObjectId(id)}},
+        {$unwind: "$documents.leagues"},
+        {$match: { 'documents.leagues.league': lid}}
+      ]).exec(function (err, data) {
+        if (err || !data) {
+            logger.error(err);
+            res.status(400).send({
+                msg: "Could not get competition"
+            })
+        } else {
             if(data[0]) res.status(200).send(data[0].documents.leagues)
             else res.status(200).send(data)
         }
@@ -196,18 +236,20 @@ adminRouter.put('/:competitionid', function (req, res, next) {
                     let updated = false;
                     for(let l of dbCompetition.documents.leagues){
                         if(l.league == data.documents.league){
-                            l.notifications = data.documents.notifications;
-                            l.blocks = data.documents.blocks;
-                            l.languages = data.documents.languages;
+                            if(data.documents.notifications != null) l.notifications = data.documents.notifications;
+                            if(data.documents.blocks != null) l.blocks = data.documents.blocks;
+                            if(data.documents.languages != null) l.languages = data.documents.languages;
+                            if(data.documents.review != null) l.review = data.documents.review;
                             updated = true;
                         }
                     }
                     if(!updated){
                         let tmp = {
                             league: data.documents.league,
-                            notifications: data.documents.notifications,
-                            blocks: data.documents.blocks,
-                            languages: data.documents.languages
+                            notifications: data.documents.notifications || [],
+                            blocks: data.documents.blocks || [],
+                            languages: data.documents.languages || [],
+                            review: data.documents.review || []
                         }
                         dbCompetition.documents.leagues.push(tmp);
                     }

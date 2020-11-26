@@ -59,7 +59,7 @@ const competitionSchema = new Schema({
     enable: {type: Boolean,  default: false},
     deadline: {type: Number, default: 0},
     leagues: [{
-      'league': {type: String, enum: LEAGUES, unique: true},
+      'league': {type: String, enum: LEAGUES},
       'languages': [{
         'language': {type: String, default: ''},
         'enable': {type: Boolean, default: true}
@@ -208,11 +208,7 @@ const teamSchema = new Schema({
     enabled  : {type: Boolean, default: true, select: false},
     token    : {type: String, default: '', select: false},
     answers  : [[{type: String, default: null, select: false}]]
-  },
-  review     : [{
-    reviewer : {type: ObjectId, ref: 'User', select: false},
-    comments : {type: String, default: '', select: false}
-  }]
+  }
 })
 
 teamSchema.pre('save', function (next) {
