@@ -116,34 +116,19 @@ block content
                                     span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") {{"document.form.optional" | translate}}
                                 div(style="font-size:15px;")
                                     p(ng-bind-html="langContent(question.i18n, 'description')")
-                                    p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
-                                    p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
-                                    p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
-                                    p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
-
                                 div(ng-if="question.type=='input'")
-                                    if editable
-                                        ng-quill-editor(ng-model="answers[blockIndex][questionIndex]")
-                                    else
-                                        div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
+                                    div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
                                 div(ng-if="question.type=='select'")
-                                    if editable
-                                        select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
-                                    else
-                                        select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                                    select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
                                 div(ng-if="question.type=='picture'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                         .col-12
-                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                            br
                                             div(style="text-align:center;margin:10px 0px;")
                                                 a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}" data-lightbox="image")
                                                     img.img-thumbnail(style="max-height: 500px;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
                                 div(ng-if="question.type=='movie'")
                                     .row(ng-if="checkUploaded(question.fileName) && !question.uploading", style="width:100%;")
                                         .col-12
-                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                            br
                                             div(style="text-align:center;margin:10px 0px;")
                                                 video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                                     source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
@@ -151,16 +136,12 @@ block content
                                 div(ng-if="question.type=='pdf'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                         .col-12
-                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                            br
                                             div(style="text-align:center;margin:10px 0px;")
                                                 iframe(ng-src="{{getPdfLink(question.fileName)}}" style="width:100%; height:500px;" )
                 
                                 div(ng-if="question.type=='zip'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                         .col-12
-                                            strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                            br
                                             div(style="text-align:center;margin:10px 0px;")
                                                 a.btn.btn-primary(type='file' ng-href="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
                                                     i.fas.fa-file-archive &nbsp;
@@ -222,34 +203,19 @@ block content
                             span.badge.badge-primary(ng-hide="question.required", style="float:right;margin-left:5px;") {{"document.form.optional" | translate}}
                         div(style="font-size:15px;")
                             p(ng-bind-html="langContent(question.i18n, 'description')")
-                            p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
-                            p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
-                            p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
-                            p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
-
                         div(ng-if="question.type=='input'")
-                            if editable
-                                ng-quill-editor(ng-model="answers[blockIndex][questionIndex]")
-                            else
-                                div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
+                            div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
                         div(ng-if="question.type=='select'")
-                            if editable
-                                select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
-                            else
-                                select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                            select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
                         div(ng-if="question.type=='picture'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                 .col-12
-                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                    br
                                     div(style="text-align:center;margin:10px 0px;")
                                         img.img-thumbnail(style="max-height: 80vh;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
 
                         div(ng-if="question.type=='movie'")
                             .row(ng-if="checkUploaded(question.fileName) && !question.uploading", style="width:100%;")
                                 .col-12
-                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                    br
                                     div(style="text-align:center;margin:10px 0px;")
                                         video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                             source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
@@ -257,16 +223,12 @@ block content
                         div(ng-if="question.type=='pdf'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                 .col-12
-                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                    br
                                     div(style="text-align:center;margin:10px 0px;")
                                         iframe(ng-src="{{getPdfLink(question.fileName)}}" style="width:100%; height:500px;" )
         
                         div(ng-if="question.type=='zip'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                 .col-12
-                                    strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
-                                    br
                                     div(style="text-align:center;margin:10px 0px;")
                                         a.btn.btn-primary(type='file' ng-href="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
                                             i.fas.fa-file-archive &nbsp;
