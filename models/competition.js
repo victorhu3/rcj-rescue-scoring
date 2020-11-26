@@ -206,6 +206,7 @@ const teamSchema = new Schema({
   document   : {
     deadline : {type: String, default: null, select: false},
     enabled  : {type: Boolean, default: true, select: false},
+    public  : {type: Boolean, default: false, select: false},
     token    : {type: String, default: '', select: false},
     answers  : [[{type: String, default: null, select: false}]]
   }
