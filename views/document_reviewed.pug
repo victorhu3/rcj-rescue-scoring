@@ -15,6 +15,8 @@ append scripts
   script(src='/components/quill-image-resize-module/image-resize.min.js')
   script(src='/components/quill-image-drop-and-paste/quill-image-drop-and-paste.min.js')
   script(src="/components/jquery-ui/jquery-ui.min.js")
+  script(src='/components/lightbox2/dist/js/lightbox.min.js')
+
 
 
 append css
@@ -55,6 +57,7 @@ append css
         }
     link(rel='stylesheet', href='/components/quill.snow/index.css')
     link(href="/components/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet")
+    link(rel='stylesheet',href='/components/lightbox2/dist/css/lightbox.min.css')
 
 block navbar
     nav.navbar(style='background-color: #283655; color: #fff; position: fixed; top: 0; z-index:10 ;  width: 100%')
@@ -134,8 +137,8 @@ block content
                                             strong(style="color:#e74c3c;") {{"document.form.overwrite" | translate}}
                                             br
                                             div(style="text-align:center;margin:10px 0px;")
-                                                img.img-thumbnail(style="max-height: 80vh;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
-
+                                                a(style="max-width: 100%;height: auto; margin-bottom:20px;" ng-href="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}" data-lightbox="image")
+                                                    img.img-thumbnail(style="max-height: 500px;max-width:100%;width: auto;margin-bottom:20px;" ng-src="/api/document/files/{{team._id}}/{{token}}/{{nameUploaded(question.fileName)}}?v={{updateTime}}")
                                 div(ng-if="question.type=='movie'")
                                     .row(ng-if="checkUploaded(question.fileName) && !question.uploading", style="width:100%;")
                                         .col-12
