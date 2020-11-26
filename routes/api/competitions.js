@@ -291,7 +291,7 @@ adminRouter.get('/:competition/teams/documents', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id
-    }).select("_id name competition league country teamCode document.deadline document.enabled document.token").lean().exec(function (err, data) {
+    }).select("_id name competition league country teamCode document.deadline document.enabled document.token document.public").lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({
@@ -326,8 +326,9 @@ adminRouter.put('/:competition/teams/documents', function (req, res, next) {
                 err: err.message
             })
         } else {
-            dbTeam.document.deadline = team.document.deadline;
+            if(team.document.deadline != null) dbTeam.document.deadline = team.document.deadline;
             dbTeam.document.enabled = team.document.enabled;
+            dbTeam.document.public = team.document.public;
             dbTeam.save(function (err) {
                 if (err) {
                     logger.error(err)
@@ -381,7 +382,7 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id
-    },'_id name competition league inspected interviewer country checkin teamCode').lean().exec(function (err, data) {
+    },'_id name competition league inspected country checkin teamCode document.public').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({

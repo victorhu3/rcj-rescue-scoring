@@ -128,7 +128,9 @@
         "disable": "Disable",
         "email": "Email",
         "edit": "Edit",
-        "copy": "Copy"
+        "copy": "Copy",
+        "inspection": "Inspection",
+        "checkin": "Check in"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -764,7 +766,8 @@
         "teamAdmin":{
             "title": "Individual team settings",
             "access": "Accessible",
-            "log": "Log"
+            "log": "Log",
+            "public": "Public Access"
         },
         "editor": {
             "title": "Document Form Editor",

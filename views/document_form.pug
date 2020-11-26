@@ -53,16 +53,17 @@ block content
     .alert.alert-danger(role='alert',style="margin-bottom: 20px;", ng-if="currentLang != displayLang")
         span {{"document.form.languageError" | translate}}
 
-    .alert.alert-info(role='alert')
-        h4.alert-heading {{"document.deadline" | translate}}: 
-            strong(ng-bind="deadline()")
-        span {{"document.form.editDeadline" | translate}}
+    if !public
+        .alert.alert-info(role='alert')
+            h4.alert-heading {{"document.deadline" | translate}}: 
+                strong(ng-bind="deadline()")
+            span {{"document.form.editDeadline" | translate}}
 
-    //Notifications
-    div(style="margin-top: 20px;" ng-repeat="notification in notifications track by $index")
-        .alert(role="alert", ng-style="{color: '#'+ notification.color, backgroundColor: '#'+ notification.bkColor, borderColor: '#'+ notification.color}")
-            h4.alert-heading(ng-bind="langContent(notification.i18n, 'title')")
-            span(ng-bind-html="langContent(notification.i18n, 'description')")
+        //Notifications
+        div(style="margin-top: 20px;" ng-repeat="notification in notifications track by $index")
+            .alert(role="alert", ng-style="{color: '#'+ notification.color, backgroundColor: '#'+ notification.bkColor, borderColor: '#'+ notification.color}")
+                h4.alert-heading(ng-bind="langContent(notification.i18n, 'title')")
+                span(ng-bind-html="langContent(notification.i18n, 'description')")
     
     //Team basic information
     .card(style="margin-bottom:20px;")

@@ -1,5 +1,5 @@
-var app = angular.module("TeamAdmin", ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
-app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '$translate', function ($scope, $uibModal, $log, $http, $translate) {
+var app = angular.module("TeamHome", ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
+app.controller('TeamHomeController', ['$scope', '$uibModal', '$log', '$http', '$translate', function ($scope, $uibModal, $log, $http, $translate) {
 
     const Toast = Swal.mixin({
         toast: true,
@@ -7,13 +7,7 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         showConfirmButton: false,
         timer: 3000
     });
-      
-    let saved_mes;
-    $translate('document.saved').then(function (val) {
-        saved_mes = val;
-    }, function (translationId) {
-    // = translationId;
-    });
+    
 
     $scope.competitionId = competitionId;
     updateTeamList();
@@ -32,49 +26,15 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         }
     })
 
-
-    $scope.save = function(data){
-        let deadline = null;
-        if(data.document.deadline) {
-            deadline = Math.round( data.document.deadline.getTime() / 1000 )
-        }
-        let tmp = {
-            _id: data._id,
-            competition: data.competition,
-            document:{
-                public: data.document.public,
-                deadline: deadline,
-                enabled: data.document.enabled
-            }
-        };
-
-        $http.put("/api/competitions/" + competitionId + "/teams/documents", tmp).then(function (response) {
-            Toast.fire({
-                type: 'success',
-                title: saved_mes
-            })
-        }, function (response) {
-            Toast.fire({
-                type: 'error',
-                title: "Error: " + response.statusText,
-                html: response.data.msg
-            })
-        });
-    }
-
     function updateTeamList() {
         $http.get("/api/competitions/" + competitionId +
-            "/teams/documents").then(function (response) {
+            "/teams").then(function (response) {
             $scope.teams = response.data;
-
-            $scope.showCode = false;
-            for(let t of $scope.teams){
-                if(t.document.deadline){
-                    t.document.deadline = new Date(t.document.deadline * 1000);
-                }
-            }
         })
     }
+
+    
+
     $scope.go = function (path) {
         window.location = path
     }

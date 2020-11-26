@@ -69,7 +69,7 @@ publicRouter.get('/answer/:teamId/:token', function (req, res, next) {
 
     competitiondb.team.findOne({
         "_id": ObjectId(teamId),
-        "document.token": token
+        $or : [{"document.token": token}, {"document.public": true}]
     })
     .populate("competition")
     .select("competition document.answers document.enabled")
@@ -289,7 +289,7 @@ publicRouter.get('/files/:teamId/:token', function (req, res, next) {
 
     competitiondb.team.findOne({
         "_id": ObjectId(teamId),
-        "document.token": token
+        $or : [{"document.token": token}, {"document.public": true}]
     })
     .populate("competition")
     .select("competition document.enabled")
@@ -337,7 +337,7 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
 
     competitiondb.team.findOne({
         "_id": ObjectId(teamId),
-        "document.token": token
+        $or : [{"document.token": token}, {"document.public": true}]
     })
     .populate("competition")
     .select("competition document.enabled")

@@ -127,7 +127,9 @@
         "disable": "無効",
         "email": "メール",
         "edit": "編集",
-        "copy": "コピー"
+        "copy": "コピー",
+        "inspection": "検査",
+        "checkin": "チェックイン"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -761,7 +763,8 @@
         "teamAdmin":{
             "title": "チーム個別設定",
             "access": "アクセス可否",
-            "log": "ログ"
+            "log": "ログ",
+            "public": "一般公開"
         },
         "editor": {
             "title": "ドキュメント　フォームエディタ",

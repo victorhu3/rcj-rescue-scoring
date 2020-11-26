@@ -216,8 +216,25 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
         window.location = path
     }
 
+    $scope.getParam = function (key) {
+        var str = location.search.split("?");
+        if (str.length < 2) {
+          return "";
+        }
+
+        var params = str[1].split("&");
+        for (var i = 0; i < params.length; i++) {
+          var keyVal = params[i].split("=");
+          if (keyVal[0] == key && keyVal.length == 2) {
+            return decodeURIComponent(keyVal[1]);
+          }
+        }
+        return "";
+    }
+
     $scope.backPage = function(){
-        window.history.back(-1);
+        if($scope.getParam("return")) $scope.go($scope.getParam("return"));
+        else window.history.back(-1);
         return false;
     }
 

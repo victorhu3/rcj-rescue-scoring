@@ -2,28 +2,26 @@
 extends includes/layout
 
 block vars
-  - var ngAppDef = 'TeamAdmin'
+  - var ngAppDef = 'TeamHome'
 
 append scripts
   script.
     var competitionId = "#{id}"
-  script(src='/javascripts/documents_team_admin.js')
+  script(src='/javascripts/team_home.js')
 
 
 
 block location
     a.breadcrumb-item(ng-click="go('/home')") Home
-    a.breadcrumb-item(ng-click="go('/admin')") Admin
-    a.breadcrumb-item(ng-click="go('/admin/' + competition._id)") {{competition.name}}
-    a.breadcrumb-item(ng-click="go('/admin/' + competition._id + '/documents')") Document settings
-    span.breadcrumb-item.active Team settings
+    a.breadcrumb-item(ng-click="go('/home/' + competition._id)") {{competition.name}}
+    span.breadcrumb-item.active Teams
 
 
 
 block content
   .row
     .col-12
-      h1 {{'document.teamAdmin.title' | translate}} - {{competition.name}}
+      h1 チーム一覧 - {{competition.name}}
       .refine
         .card.border-dark.mb-3(style='width:100%;')
           .card-header.bg-transparent.border-dark.fa-2x
@@ -57,7 +55,6 @@ block content
               label.checkbox(for="checkL_{{key}}") {{key}}
             
       
-      
       table.custom(style="margin-bottom:20px;")
         thead
             tr
@@ -65,9 +62,8 @@ block content
               th {{"common.team" | translate}}
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
-              th {{'document.teamAdmin.access' | translate}}
-              th {{'document.deadline' | translate}}
-              th {{'document.teamAdmin.public' | translate}}
+              th {{"common.checkin" | translate}}
+              th {{"common.inspected" | translate}}
               th {{'common.operation' | translate}}
         tbody
             tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
@@ -76,20 +72,24 @@ block content
               td(ng-bind='team.country')
               td(ng-bind='team.league')
               td
-                select.custom-select(ng-model='team.document.enabled', ng-change="save(team)")
-                  option(ng-value='true') {{'common.enable' | translate}}
-                  option(ng-value='false') {{'common.disable' | translate}}
+                i(class="fa fa-2x fa-check" aria-hidden="true" style="color:#2ecc71;" ng-if="team.checkin")
+                i(class="fa fa-2x fa-times" aria-hidden="true" style="color:#e74c3c;" ng-if="!team.checkin")
               td
-                input.form-control(type='datetime-local', ng-model='team.document.deadline',style="", ng-blur="save(team)")
+                i(class="fa fa-2x fa-check" aria-hidden="true" style="color:#2ecc71;" ng-if="team.inspected")
+                i(class="fa fa-2x fa-times" aria-hidden="true" style="color:#e74c3c;" ng-if="!team.inspected")
               td
-                select.custom-select(ng-model='team.document.public', ng-change="save(team)")
-                  option(ng-value='true') {{'common.enable' | translate}}
-                  option(ng-value='false') {{'common.disable' | translate}}
-              td
-                button.btn.btn-sm.btn-secondary(type='button', ng-click="openLog(team)", style="margin-right:5px;")
+                if judge
+                  button.btn.btn-sm.btn-warning(type='button', ng-click="go('/document/public/' + team._id)", style="margin-right:5px;")
+                    i.fas.fa-ruler-combined &nbsp;
+                    | {{"common.inspection" | translate}}
+                button.btn.btn-sm.btn-info(type='button', ng-click="go('/document/public/' + team._id)", style="margin-right:5px;", ng-if="team.document.public")
                   i.fas.fa-file-alt &nbsp;
-                  | {{'document.teamAdmin.log' | translate}}
-                button.btn.btn-sm.btn-secondary(type='button', ng-click="copy(team)")
-                  i.fas.fa-clipboard &nbsp;
-                  | {{'common.copy' | translate}}
-      
+                  | ドキュメント
+                if judge
+                  button.btn.btn-sm.btn-primary(type='button', ng-click="go('/document/review/' + team._id + '?return=/home/' + team.competition + '/teams')", style="margin-right:5px;")
+                    i.fas.fa-file-alt &nbsp;
+                    | レビューする
+                if view
+                  button.btn.btn-sm.btn-success(type='button', ng-click="go('/document/reviewed/' + team._id + '?return=/home/' + team.competition + '/teams')", style="margin-right:5px;")
+                    i.fas.fa-file-alt &nbsp;
+                    | レビュー結果確認

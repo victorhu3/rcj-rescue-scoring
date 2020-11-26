@@ -90,6 +90,31 @@ privateRouter.get('/reviewed/:teamId', function (req, res, next) {
   )
 })
 
+publicRouter.get('/public/:teamId', function (req, res, next) {
+  const teamId = req.params.teamId;
+  
+  if (!ObjectId.isValid(teamId)) {
+    return next()
+  }
+
+  competitiondb.team.findOne({
+    "_id": ObjectId(teamId),
+    "document.public": true,
+    "document.enabled": true
+  })
+  .select("competition")
+  .exec(function (err, dbTeam) {
+          if (err || dbTeam == null) {
+              if(!err) err = {message: 'No team found'};
+              res.render('access_denied', {user: req.user})
+          } else if (dbTeam) {
+              res.render('document_form', {public:true, editable: false, competition: dbTeam.competition, team: teamId, token: "public", user: req.user})
+          }
+      }
+  )
+})
+
+
 privateRouter.get('/:teamId', function (req, res, next) {
   const teamId = req.params.teamId;
   
@@ -118,7 +143,7 @@ privateRouter.get('/:teamId', function (req, res, next) {
                 let now = new Date();
                 let timestamp = Math.floor(now.getTime()/1000);
 
-                res.render('document_form', {deadline: deadline, editable: deadline >= timestamp, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
+                res.render('document_form', {deadline: deadline, editable: true, competition: dbTeam.competition._id, team: teamId, token: dbTeam.document.token, user: req.user})
               }else{
                 res.render('access_denied', {user: req.user})
               }
@@ -143,7 +168,6 @@ publicRouter.get('/:teamId/:token', function (req, res, next) {
   .populate('competition')
   .select("competition document.deadline document.token document.enabled")
   .exec(function (err, dbTeam) {
-    console.log(dbTeam)
           if (err || dbTeam == null) {
               if(!err) err = {message: 'No team found'};
               res.status(400).send({
