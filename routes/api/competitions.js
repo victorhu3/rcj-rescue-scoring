@@ -390,14 +390,6 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
                 err: err.message
             })
         } else {
-            for(d of data){
-                if(d.interviewer != "" && d.interviewer != "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMCIgaGVpZ2h0PSIwIj48L3N2Zz4="){
-                    d.interviewed = true;
-                }else{
-                    d.interviewed = false;
-                }
-                delete d.interviewer;
-            }
             res.status(200).send(data)
         }
     })
@@ -431,10 +423,7 @@ publicRouter.get('/:competition/teams/:teamid', function (req, res, next) {
         } else {
             delete data.document;
             delete data.email;
-            if(!auth.authCompetition(req.user,id,ACCESSLEVELS.VIEW)){
-                delete data.interviewer;
-                if(!data.docPublic) delete data.comment
-            }
+            delete data.review;
             res.status(200).send(data)
         }
     })

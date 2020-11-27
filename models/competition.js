@@ -196,8 +196,6 @@ const teamSchema = new Schema({
   name       : {type: String, required: true},
   league     : {type: String, enum: LEAGUES, required: true, index: true},
   inspected  : {type: Boolean, default: false},
-  comment    : {type: String, default: ""},
-  interviewer: {type: String, default: ""},
   docPublic  : {type: Boolean, default: false},
   country    : {type: String, default: ""},
   checkin    : {type: Boolean, default: false},
