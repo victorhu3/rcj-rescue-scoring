@@ -52,7 +52,9 @@ publicRouter.get('/', function (req, res) {
                 if(!data[i].message) data[i].message = "";
                 if(!data[i].description) data[i].description = "";
                 if(!data[i].logo) data[i].logo = "/images/NoImage.png";
+                if(data[i].documents) delete data[i].documents.leagues;
             }
+            
             res.status(200).send(data)
         }
     })
@@ -60,6 +62,10 @@ publicRouter.get('/', function (req, res) {
 
 publicRouter.get('/rules', function (req, res) {
     res.send(competitiondb.competition.schema.path('rule').enumValues)
+})
+
+publicRouter.get('/leagues', async function (req, res, next) {
+    res.send(LEAGUES_JSON);
 })
 
 publicRouter.get('/leagues/:league', async function (req, res, next) {
@@ -104,7 +110,79 @@ publicRouter.get('/:competition', function (req, res, next) {
             if(!data.message) data.message = "";
             if(!data.description) data.description = "";
             if(!data.logo) data.logo = "/images/noLogo.png";
+            if(data.documents) delete data.documents.leagues;
             res.status(200).send(data)
+        }
+    })
+})
+
+publicRouter.get('/:competition/documents/:leagueId', function (req, res, next) {
+    const id = req.params.competition;
+    const lid = req.params.leagueId;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (LEAGUES.filter(function (elm){
+        return elm.indexOf(lid) != -1;
+    }).length == 0){
+        return next()
+    }
+
+    competitiondb.competition.aggregate([
+        {$match: {_id: ObjectId(id)}},
+        {$unwind: "$documents.leagues"},
+        {$match: { 'documents.leagues.league': lid}}
+      ]).exec(function (err, data) {
+        if (err || !data) {
+            logger.error(err);
+            res.status(400).send({
+                msg: "Could not get competition"
+            })
+        } else {
+            if(data[0]){
+                if(data[0].documents.leagues.review) delete data[0].documents.leagues.review;
+                res.status(200).send(data[0].documents.leagues)
+            }
+            else res.status(200).send(data)
+        }
+    })
+})
+
+privateRouter.get('/:competition/documents/:leagueId/review', function (req, res, next) {
+    const id = req.params.competition;
+    const lid = req.params.leagueId;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (LEAGUES.filter(function (elm){
+        return elm.indexOf(lid) != -1;
+    }).length == 0){
+        return next()
+    }
+
+    if (!auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW)) {
+        return res.status(401).send({
+            msg: "You have no authority to access this api"
+        })
+    }
+
+    competitiondb.competition.aggregate([
+        {$match: {_id: ObjectId(id)}},
+        {$unwind: "$documents.leagues"},
+        {$match: { 'documents.leagues.league': lid}}
+      ]).exec(function (err, data) {
+        if (err || !data) {
+            logger.error(err);
+            res.status(400).send({
+                msg: "Could not get competition"
+            })
+        } else {
+            if(data[0]) res.status(200).send(data[0].documents.leagues)
+            else res.status(200).send(data)
         }
     })
 })
@@ -131,22 +209,55 @@ adminRouter.put('/:competitionid', function (req, res, next) {
                     err: err.message
                 })
             } else if (dbCompetition) {
-                dbCompetition.name = data.name;
-                dbCompetition.rule = data.rule;
-                dbCompetition.logo = data.logo;
-                dbCompetition.bkColor = data.bkColor;
-                dbCompetition.color = data.color;
-                dbCompetition.message = data.message;
-                dbCompetition.description = data.description;
+                if(data.name != null) dbCompetition.name = data.name;
+                if(data.rule != null) dbCompetition.rule = data.rule;
+                if(data.logo != null) dbCompetition.logo = data.logo;
+                if(data.bkColor != null) dbCompetition.bkColor = data.bkColor;
+                if(data.color != null) dbCompetition.color = data.color;
+                if(data.message != null) dbCompetition.message = data.message;
+                if(data.description != null) dbCompetition.description = data.description;
 
-                dbCompetition.ranking = [];
-                for(let i in data.ranking){
-                    let tmp = {
-                        'league': data.ranking[i].id,
-                        'num': data.ranking[i].count
+
+                if(data.ranking != null){
+                    dbCompetition.ranking = [];
+                    for(let i in data.ranking){
+                        let tmp = {
+                            'league': data.ranking[i].id,
+                            'num': data.ranking[i].count
+                        }
+                        dbCompetition.ranking.push(tmp);
                     }
-                    dbCompetition.ranking.push(tmp);
                 }
+                if(data.documents != null){
+                    if(data.documents.enable != null) dbCompetition.documents.enable = data.documents.enable;
+                    if(data.documents.deadline != null) dbCompetition.documents.deadline = data.documents.deadline;
+
+                    if(data.documents.league != null){
+                        let updated = false;
+                        for(let l of dbCompetition.documents.leagues){
+                            if(l.league == data.documents.league){
+                                if(data.documents.notifications != null) l.notifications = data.documents.notifications;
+                                if(data.documents.blocks != null) l.blocks = data.documents.blocks;
+                                if(data.documents.languages != null) l.languages = data.documents.languages;
+                                if(data.documents.review != null) l.review = data.documents.review;
+                                updated = true;
+                            }
+                        }
+                        if(!updated){
+                            let tmp = {
+                                league: data.documents.league,
+                                notifications: data.documents.notifications,
+                                blocks: data.documents.blocks,
+                                languages: data.documents.languages,
+                                review: data.documents.review
+                            }
+                            dbCompetition.documents.leagues.push(tmp);
+                        }
+                    }
+                }
+
+                
+
 
                 dbCompetition.save(function (err) {
                     if (err) {
@@ -168,6 +279,103 @@ adminRouter.put('/:competitionid', function (req, res, next) {
       );
 })
 
+adminRouter.get('/:competition/teams/documents', function (req, res, next) {
+    const id = req.params.competition;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
+        return res.status(401).send({
+            msg: "You have no authority to access this api"
+        })
+    }
+
+    competitiondb.team.find({
+        competition: id
+    }).select("_id name competition league country teamCode document.deadline document.enabled document.token document.public").lean().exec(function (err, data) {
+        if (err) {
+            logger.error(err)
+            res.status(400).send({
+                msg: "Could not get teams",
+                err: err.message
+            })
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
+
+adminRouter.put('/:competition/teams/documents', function (req, res, next) {
+    const id = req.params.competition;
+    const team = req.body;
+
+    if (!ObjectId.isValid(id)) {
+        return next()
+    }
+
+    if (!auth.authCompetition(req.user, team.competition, ACCESSLEVELS.ADMIN)) {
+        return res.status(401).send({
+            msg: "You have no authority to access this api"
+        })
+    }
+
+    competitiondb.team.findById(team._id).exec(function (err, dbTeam) {
+        if (err) {
+            logger.error(err)
+            res.status(400).send({
+                msg: "Could not get teams",
+                err: err.message
+            })
+        } else {
+            if(team.document.deadline != null) dbTeam.document.deadline = team.document.deadline;
+            dbTeam.document.enabled = team.document.enabled;
+            dbTeam.document.public = team.document.public;
+            dbTeam.save(function (err) {
+                if (err) {
+                    logger.error(err)
+                    return res.status(400).send({
+                        err: err.message,
+                        msg: "Could not save changes"
+                    })
+                } else {
+                    return res.status(200).send({
+                        msg: "Saved changes"
+                    })
+                }
+            })
+        }
+    })
+})
+
+adminRouter.get('/:competition/adminTeams', function (req, res, next) {
+    const id = req.params.competition;
+
+    if (!ObjectId.isValid(id)) {
+        return next();
+    }
+
+    if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
+        return next();
+    }
+
+    competitiondb.team.find({
+        competition: id
+    },'_id name competition league country teamCode email document.token document.deadline').lean().exec(function (err, data) {
+        if (err) {
+            logger.error(err)
+            res.status(400).send({
+                msg: "Could not get teams",
+                err: err.message
+            })
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
+
+
 publicRouter.get('/:competition/teams', function (req, res, next) {
     const id = req.params.competition;
 
@@ -177,7 +385,7 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
 
     competitiondb.team.find({
         competition: id
-    },'_id name competition league inspected interviewer country checkin teamCode').lean().exec(function (err, data) {
+    },'_id name competition league inspected country checkin teamCode document.public').lean().exec(function (err, data) {
         if (err) {
             logger.error(err)
             res.status(400).send({
@@ -185,18 +393,12 @@ publicRouter.get('/:competition/teams', function (req, res, next) {
                 err: err.message
             })
         } else {
-            for(d of data){
-                if(d.interviewer != "" && d.interviewer != "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMCIgaGVpZ2h0PSIwIj48L3N2Zz4="){
-                    d.interviewed = true;
-                }else{
-                    d.interviewed = false;
-                }
-                delete d.interviewer;
-            }
             res.status(200).send(data)
         }
     })
 })
+
+
 
 
 
@@ -222,10 +424,9 @@ publicRouter.get('/:competition/teams/:teamid', function (req, res, next) {
                 err: err.message
             })
         } else {
-            if(!auth.authCompetition(req.user,id,ACCESSLEVELS.VIEW)){
-                delete data.interviewer;
-                if(!data.docPublic) delete data.comment
-            }
+            delete data.document;
+            delete data.email;
+            delete data.review;
             res.status(200).send(data)
         }
     })
@@ -594,13 +795,19 @@ adminRouter.delete('/:competitionid', function (req, res, next) {
         if (err) {
             logger.error(err)
             res.status(400).send({
-                msg: "Could not remove run",
+                msg: "Could not remove competition",
                 err: err.message
             })
         } else {
             res.status(200).send({
-                msg: "Run has been removed!"
+                msg: "Competition has been removed!"
             })
+            let path = __dirname + "/../../documents/" + id;
+            fs.rmdir(path, { recursive: true },(err) => {
+                if (err) {
+                    logger.error(err.message);
+                }
+            });
         }
     })
 

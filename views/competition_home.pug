@@ -26,7 +26,7 @@ block content
         .col-sm-6
           .card(style='width: 100%;margin-bottom:20px;')
               a(onclick="location.href='/line/' + competitionId")
-                img.card-img-top(src='/images/line.png', alt='Card image cap' style="width:100%; height=auto;")
+                img.card-img-top(src='/images/line.png', alt='Card image cap' style="width:100%; height:auto;")
               .card-body
                 h4.card-title {{'home.line' | translate}}
                 p.card-text(translate="home.line_description")
@@ -34,13 +34,14 @@ block content
         .col-sm-6
             .card(style='width: 100%;margin-bottom:20px;')
               a(onclick="location.href='/maze/' + competitionId")
-                img.card-img-top(src='/images/maze.png', alt='Card image cap' style="width:100%; height=auto;")
+                img.card-img-top(src='/images/maze.png', alt='Card image cap' style="width:100%; height:auto;")
               .card-body
                 h4.card-title {{'home.maze' | translate}}
                 p.card-text(translate="home.maze_description")
                 button(onclick="location.href='/maze/' + competitionId" class='btn btn-primary btn-lg btn-block') {{'home.go_maze' | translate}}
-      button(ng-click="go('/interview/' + competition._id + '?return=/home/'+ competition._id)" class='btn btn-outline-success btn-lg btn-block' style="margin-top:20px;margin-bottom:20px;") 
-        i.fas.fa-microphone(aria-hidden='true')  {{'common.interview' | translate}}
+
+      button(ng-click="go('/home/' + competition._id + '/teams')" class='btn btn-outline-success btn-lg btn-block' style="margin-top:20px;margin-bottom:20px;") 
+        i.fas.fa-users(aria-hidden='true')  {{'team_home.title' | translate}}
       if judge
         button(ng-click="go('/home/scanner/home')" class='btn btn-outline-dark btn-lg btn-block' style="margin-top:20px;margin-bottom:20px;")
           i.fas.fa-qrcode(aria-hidden='true')  {{'home.goScanner' | translate}}

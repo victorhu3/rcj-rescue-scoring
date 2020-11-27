@@ -6,7 +6,7 @@
         "maze": "Rescue Maze",
         "login": "ログイン",
         "logout": "ログアウト",
-        "about": "RCJ Scoring Systemは，ロボカップジュニア レスキューライン/メイズ の審判の補助を目的に制作されました．このシステムでは，コースマップの作成からスコアの計算やランク付けまで，ロボカップジュニアの大会におけるレスキュー競技の運営に関連するすべての作業を非常に簡単に実行できます．あなたが，このシステムを採用する大会の審判である場合は，下のボタンからログインしてください．ログインに必要なIDとパスワードは，大会のOC（運営委員）が知っています．あなたが，このシステムを採用する大会に参加した選手であるならば、以下のリストからあなたが参加した大会を選ぶことによって，競技の詳細な結果と順位を確認することができます．",
+        "about": "RoboCupJunior Competition Management System は，ロボカップジュニア レスキューライン/メイズ の審判の補助を目的に制作されました．このシステムでは，コースマップの作成からスコアの計算やランク付けまで，ロボカップジュニアの大会におけるレスキュー競技の運営に関連するすべての作業を非常に簡単に実行できます．あなたが，このシステムを採用する大会の審判である場合は，下のボタンからログインしてください．ログインに必要なIDとパスワードは，大会のOC（運営委員）が知っています．あなたが，このシステムを採用する大会に参加した選手であるならば、以下のリストからあなたが参加した大会を選ぶことによって，競技の詳細な結果と順位を確認することができます．",
         "line_description": "様々な障害を乗り越えながらライントレースを行い，最後に被災者を模した球体を所定の場所に運んで救出する競技．",
         "maze_description": "壁で囲まれた空間をロボットが自律走行し，熱を発する被災者を発見，レスキューキットを配布する競技．",
         "go_line": "Go Line",
@@ -14,6 +14,12 @@
         "management": "各種設定・大会管理",
         "access_level": "ログイン中のアカウント， {{account}} は，「大会管理」にアクセスする権限がありません.",
         "goScanner": "スコアシートのマニュアル入力"
+    },
+    "team_home":{
+        "title": "チーム一覧",
+        "document": "ドキュメント",
+        "review": "レビュー実施",
+        "result": "レビューリスト"
     },
     "service_home": {
         "about": "RCJ Scoring Systemは，ロボカップジュニア レスキューライン/メイズ の審判の補助を目的に制作されました．このシステムでは，コースマップの作成からスコアの計算やランク付けまで，ロボカップジュニアの大会におけるレスキュー競技の運営に関連するすべての作業を非常に簡単に実行できます．このページからはシステムにログインすることなく，ライン/メイズ競技のフィールドマップを作成して画像としてダウンロードできます．また，Erebusプラットフォーム（シミュレーション）向けのワールドファイルも作成できます．"
@@ -122,7 +128,15 @@
         "teamCode": "チームコード",
         "duplicate": "複製",
         "print": "印刷",
-        "printPage": "印刷画面"
+        "printPage": "印刷ページ",
+        "refine": "絞り込み検索",
+        "enable": "有効",
+        "disable": "無効",
+        "email": "メール",
+        "edit": "編集",
+        "copy": "コピー",
+        "inspection": "検査",
+        "checkin": "チェックイン"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -248,8 +262,8 @@
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "救助済みの被災者を削除するには，ダブルクリック（PC）か左にスワイプ（モバイル）します．",
             "noShow": "チームが来なかった場合に時間計測を開始する",
-            "search": "探す",
-            "noSearch": "探さない",
+            "search": "レベル1",
+            "noSearch": "レベル2",
             "js": {
                 "score_element": "チェックポイントマーカーは，得点項目のあるタイルには設置できません． (ルール 3.3.5)",
                 "cantvisit": "ロボットの通ることのできないタイルをチェックポイントに指定することはできません．",
@@ -481,7 +495,8 @@
             "maze": "Maze",
             "maps": "マップ（フィールドレイアウト）管理",
             "runs": "競技管理",
-            "backup": "バックアップ"
+            "backup": "バックアップ",
+            "tools": "ツール"
         },
         "teams": {
             "title": "チーム管理",
@@ -581,7 +596,8 @@
             "s3D": "ファイルを選択したら，下に表示される登録内容が正しいかを確認して，よろしければ，『実行』ボタンを押してください．",
             "exe": "実行",
             "inpro": "処理中...",
-            "complete": "件登録完了"
+            "complete": "件登録完了",
+            "headerError": "データタイプの指定に問題があります．"
         },
         "mazeMapAdmin": {
             "title": "Maze マップ（フィールドレイアウト）管理",
@@ -738,5 +754,137 @@
             "oneVictim": "１体の被災者のみ配置できます",
             "obstacle": "障害物"
         }
+    },
+    "document": {
+        "deadline": "提出期限",
+        "saved": "正常に保存しました",
+        "uploaded": "正常にアップロードに成功しました",
+        "admin":{
+            "title": "ドキュメント提出システム設定",
+            "overall": "全般設定",
+            "access": "アクセス有効化",
+            "team": "チーム設定",
+            "question": "質問設定",
+            "review": "レビュー設定"
+        },
+        "teamAdmin":{
+            "title": "チーム個別設定",
+            "access": "アクセス可否",
+            "log": "ログ",
+            "public": "一般公開"
+        },
+        "editor": {
+            "title": "ドキュメント　フォームエディタ",
+            "export": "このフォームをJsonファイルにエクスポート",
+            "import": "フォームをJsonファイルからインポート",
+            "preview": "プレビュー",
+            "language": "言語設定",
+            "notification": "お知らせ",
+            "question": "質問内容",
+            "addNotification": "ここに新規お知らせを追加",
+            "letterColour": "文字色",
+            "backgroundColour": "背景色",
+            "cTitle": "タイトル",
+            "content": "内容",
+            "addBlock": "ここに新規質問ブロックを追加",
+            "addQuestion": "ここに新規質問を追加",
+            "block": "質問ブロック",
+            "blockTitle": "ブロックタイトル",
+            "blockColour": "ブロックカラー",
+            "questionType": "設問タイプ",
+            "writing": "記述式",
+            "select": "選択式",
+            "picture": "画像",
+            "video": "動画",
+            "pdf": "PDFファイル",
+            "archive": "圧縮ファイル",
+            "requiredOrNot": "項目種別",
+            "required": "必須",
+            "optional": "任意",
+            "questionTitle": "質問のタイトル",
+            "description": "質問文",
+            "hints": "ヒント",
+            "choices": "選択肢",
+            "fileName": "ファイル名",
+            "extension": "拡張子はシステムによって自働付加されますので，ここで指定しないでください．"
+        },
+        "review_editor": {
+            "title": "ドキュメント　レビューフォームエディタ",
+            "export": "このレビューフォームをJsonファイルにエクスポート",
+            "import": "レビューフォームをJsonファイルからインポート",
+            "languageWarn": "言語設定は，チーム向けフォームの設定と連動しています．"
+        },
+        "form":{
+            "languageError": "このフォームは，お使いの言語に対応していませんので，代替言語で表示します．",
+            "editDeadline": "このフォームは，上の提出期限まで何度でも編集可能です．",
+            "basicInformation": "チーム基本情報",
+            "teamName": "チームコード・チーム名",
+            "required": "@:document.editor.required",
+            "optional": "@:document.editor.optional",
+            "max5": "最大サイズは5MBです．",
+            "max10": "最大サイズは10MBです．",
+            "max50": "最大サイズは50MBです．",
+            "pdfOnly": "PDF形式のみ受け付けます．",
+            "zipOnly": "ZIP形式のみ受け付けます．",
+            "hints": "@:document.editor.hints",
+            "selectFile": "ファイルを選ぶ",
+            "overwrite": "ファイルが既にアップロードされています．新しいファイルをアップロードすると，古いものを上書きします．",
+            "uploaded": "アップロード済ファイル"
+        },
+        "review":{
+            "reviewer": "ログインしているレビュアー：",
+            "comments": "レビューコメント"
+        },
+        "inspection":{
+            "do": "検査実施",
+            "cancel": "検査キャンセル"
+        }
+    },
+    "mail": {
+        "status": {
+            "0": "配信済",
+            "1": "開封済",
+            "2": "クリック"
+        },
+        "home":{
+            "title": "メール配信",
+            "error": "この機能を使用するには，設定ファイルにメールの設定を追加してください．",
+            "newMailBulk": "選択した宛先にメールを新規作成",
+            "newMail": "メールを新規作成",
+            "deliveryStatus": "メール配信状況",
+            "writeMail": "メール作成",
+            "deliveredTo": "配信先",
+            "variable": "変数",
+            "loadTemplate": "テンプレートを読み込み",
+            "selectTemplate": "テンプレートを選択",
+            "subject": "件題",
+            "back2select": "配信先の選択に戻る",
+            "preview": "配信プレビュー",
+            "deliverNo": "配信番号",
+            "back2Edit": "メールの編集に戻る",
+            "send": "配信実行",
+            "js": {
+                "sending": "配信処理中",
+                "wait": "しばらくお待ちください",
+                "complete": "配信完了",
+                "completeMes": "メールを配信しました"
+            }
+        },
+        "sent":{
+            "title": "メール配信状況",
+            "time": "時刻",
+            "subject": "@:mail.home.subject",
+            "status": "状況",
+            "detail": "詳細",
+            "js": {
+                "eventLog": "イベントログ",
+                "user": "ユーザ",
+                "event": "イベント"
+            }
+        }
+    },
+    "language": {
+        "ja": "日本語",
+        "en": "英語"
     }
 }

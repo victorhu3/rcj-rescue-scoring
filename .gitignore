@@ -5,6 +5,7 @@ logs/*
 public/components/*
 node_modules/*
 fonts/*
+documents/*
 
 .idea/
 
@@ -54,3 +55,6 @@ public/signage/intro.mp4
 public/signage/prohibited.mp4
 
 package-lock.json
+
+mail.env
+tmp/course/

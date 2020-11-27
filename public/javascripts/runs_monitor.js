@@ -20,10 +20,10 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
 
     $http.get("/api/competitions/" + competitionId +
-        "/Line/fields").then(function (response) {
+        "/line/fields").then(function (response) {
         $scope.fields = response.data
         $http.get("/api/competitions/" + competitionId +
-            "/Maze/fields").then(function (response) {
+            "/maze/fields").then(function (response) {
             $scope.fields = $scope.fields.concat(response.data)
             console.log($scope.fields);
         })

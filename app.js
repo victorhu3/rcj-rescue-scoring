@@ -44,11 +44,11 @@ var mazeRoute = require('./routes/maze')
 var loginRoute = require('./routes/login')
 var adminRoute = require('./routes/admin')
 var localesRoute = require('./routes/locales')
-var interviewRoute = require('./routes/interview')
 var signageRoute = require('./routes/signage')
 var shortRoute = require('./routes/shortURL')
 var kioskRoute = require('./routes/kiosk')
 var serviceRoute = require('./routes/service')
+var documentRoute = require('./routes/document')
 
 
 //========================================================================
@@ -69,6 +69,8 @@ var apiSignageRoute = require('./routes/api/signage')
 var apiKioskRoute = require('./routes/api/kiosk')
 var apiBackupRoute = require('./routes/api/backup')
 var apiShortURL = require('./routes/api/shortURL')
+var apiDocumentRoute = require('./routes/api/document')
+var apiMailRoute = require('./routes/api/mail')
 
 //========================================================================
 //                          Configuration
@@ -154,6 +156,8 @@ app.use('/api/signage', [pass.ensureLoginApi, apiSignageRoute.private, pass.ensu
 app.use('/api/kiosk', [pass.ensureAdminApi, apiKioskRoute.admin])
 app.use('/api/backup', [pass.ensureAdminApi, apiBackupRoute.admin])
 app.use('/api/short', [pass.ensureSuperApi , apiShortURL.super])
+app.use('/api/document', [apiDocumentRoute.public, pass.ensureLoginApi, apiDocumentRoute.private, pass.ensureAdminApi, apiDocumentRoute.admin])
+app.use('/api/mail', [apiMailRoute.public, pass.ensureLoginApi, apiMailRoute.private, pass.ensureAdminApi, apiMailRoute.admin])
 
 //========================================================================
 //                          Website static pages(ish)
@@ -171,10 +175,10 @@ app.use('/service', serviceRoute)
 
 app.use('/line', [lineRoute.public, pass.ensureAuthenticated, lineRoute.private, pass.ensureAdmin, lineRoute.admin])
 app.use('/maze', [mazeRoute.public, pass.ensureAuthenticated, mazeRoute.private, pass.ensureAdmin, mazeRoute.admin])
-app.use('/interview', [interviewRoute.public, pass.ensureAuthenticated, interviewRoute.private, pass.ensureAdmin, interviewRoute.admin])
 app.use('/signage', [pass.ensureAuthenticated, signageRoute.private, pass.ensureAdmin, signageRoute.admin])
 app.use('/admin', pass.ensureAdmin, adminRoute)
 app.use('/kiosk', [kioskRoute.public, pass.ensureAuthenticated, kioskRoute.private])
+app.use('/document', [documentRoute.public, pass.ensureAuthenticated, documentRoute.private, pass.ensureAdmin, documentRoute.admin])
 
 //========================================================================
 //                          Custom routes
@@ -228,8 +232,8 @@ app.use(function (err, req, res, next) {
         var stringSplit = req.originalUrl.split("/")
         //res.status(err.status || 500)
         if (stringSplit[1] !== undefined && stringSplit[1] === "api") {
-            res.send({
-                error: "Error 404"
+            res.status(404).send({
+                message: "404 Not found"
             })
         } else {
 

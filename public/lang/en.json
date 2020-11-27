@@ -6,7 +6,7 @@
         "maze": "Rescue Maze",
         "login": "Login",
         "logout": "Logout",
-        "about": "The RCJ Scoring System was designed for help the referees of RoboCup Junior Rescue Line / Maze.  In this system, it is very easy to do everything related to competition management, from course map creation to score calculation and ranking.  If you are a judge of a competition that adopts this system, please login from the button below. The competition OC knows the ID and password.  If you are a player, you can check the detailed results and ranking of the competition by choosing the competition you participated from the list below.",
+        "about": "The RoboCupJunior Competition Management System is designed for help the referees of RoboCupJunior Rescue Line / Maze.  In this system, it is very easy to do everything related to competition management, from course map creation to score calculation and ranking.  If you are a judge of a competition that adopts this system, please login from the button below. The competition OC knows the ID and password.  If you are a player, you can check the detailed results and ranking of the competition by choosing the competition you participated from the list below.",
         "line_description": "The robot must be durable and intelligent enough to navigate through treacherous terrain with hills, uneven land and rubble without getting stuck. When the robot finally finds the victims, it has to gently and carefully transport the victims to the safe evacuation point where humans can take over the rescue. After the victim rescue, the robot should be able to find its way out of the dangerous area. ",
         "maze_description": "The robot must be durable and intelligent enough to navigate through treacherous terrain with hills, uneven land and rubble without getting stuck. The robot must search for victims, dispense rescue kits, and signal the position of the victims so the humans can take over. ",
         "go_line": "Go Line",
@@ -14,6 +14,12 @@
         "management": "Settings / Competition Management",
         "access_level": "The you logged in account, {{account}}, does not have permission to access Competition Management.",
         "goScanner": "Manual input of score sheet"
+    },
+    "team_home":{
+        "title": "Team List",
+        "document": "Document",
+        "review": "Review",
+        "result": "Review List"
     },
     "service_home": {
         "about": "The RCJ Scoring System was designed to assist the RoboCup Junior Rescue Line/Maze referees. The system makes it very easy to do everything involved in running a competition, from creating course maps to calculating and ranking scores. From this page, you can create a field map of your line/maze and download it as an image without having to log into the system. You can also generate world files for the Erebus platform(simulation)."
@@ -122,7 +128,15 @@
         "teamCode": "Team code",
         "duplicate": "Duplication",
         "print": "Print",
-        "printPage": "Print page"
+        "printPage": "Print page",
+        "refine": "Refine your search",
+        "enable": "Enable",
+        "disable": "Disable",
+        "email": "Email",
+        "edit": "Edit",
+        "copy": "Copy",
+        "inspection": "Inspection",
+        "checkin": "Check in"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -250,8 +264,8 @@
             "rescuedVictims": "@:line.view.rescuedVictims",
             "rescuedVictimsMes" : "To delete a rescued victim, double click or swipe left (Mobile Device)",
             "noShow": "Start timer when team no show",
-            "search": "Search",
-            "noSearch": "No search",
+            "search": "Level 1",
+            "noSearch": "Level 2",
             "js": {
                 "score_element": "Place checkpoint markers on tiles without scoring elements (rule 3.3.5)",
                 "cantvisit": "Cannot place checkpoint markers on tile that robot can't visit.",
@@ -483,7 +497,8 @@
             "maze": "Maze",
             "maps": "Maps(Field layout)",
             "runs": "Runs",
-            "backup": "Backup"
+            "backup": "Backup",
+            "tools": "Tools"
         },
         "teams": {
             "title": "Teams",
@@ -583,7 +598,8 @@
             "s3D": "After selecting the file, please check the contents displayed below.",
             "exe": "Execution",
             "inpro": "Registration in progress ...",
-            "complete": "Registration completed"
+            "complete": "Registration completed",
+            "headerError": "There is a problem in specifying the data type."
         },
         "mazeMapAdmin": {
             "title": "Maze Map(Field layout)",
@@ -740,5 +756,137 @@
             "oneVictim": "Only one victim can be placed.",
             "obstacle": "Obstacle"
         }
+    },
+    "document": {
+        "deadline": "Submission deadline",
+        "saved": "Saved successfully",
+        "uploaded": "Successfully uploaded!",
+        "admin":{
+            "title": "Document submission system settings",
+            "overall": "General settings",
+            "access": "Access Activation",
+            "team": "Team setting",
+            "question": "Question Setting",
+            "review": "Review Setting"
+        },
+        "teamAdmin":{
+            "title": "Individual team settings",
+            "access": "Accessible",
+            "log": "Log",
+            "public": "Public Access"
+        },
+        "editor": {
+            "title": "Document Form Editor",
+            "export": "Export this forms to Json file",
+            "import": "Importing forms from Json files",
+            "preview": "Preview",
+            "language": "Language settings",
+            "notification": "Announcements",
+            "question": "Questions",
+            "addNotification": "Add a new announcement here",
+            "letterColour": "Letter colour",
+            "backgroundColour": "Background colour",
+            "cTitle": "Title",
+            "content": "Contents",
+            "addBlock": "Add a new question block here",
+            "addQuestion": "Add a new question here",
+            "block": "Question Block",
+            "blockTitle": "Block title",
+            "blockColour": "Block colour",
+            "questionType": "Question type",
+            "writing": "Descriptive Formula",
+            "select": "Selectable",
+            "picture": "Picture",
+            "video": "Video",
+            "pdf": "PDF file",
+            "archive": "Compressed file",
+            "requiredOrNot": "Item type",
+            "required": "Required",
+            "optional": "Optional",
+            "questionTitle": "Title of the question",
+            "description": "Description",
+            "hints": "Hints",
+            "choices": "Options",
+            "fileName": "File name",
+            "extension": "The extension will automatically added by the system, so do not specify it here."
+        },
+        "review_editor": {
+            "title": "Document Review Form Editor",
+            "export": "Export this review forms to Json file",
+            "import": "Importing review forms from Json files",
+            "languageWarn": "The language settings are linked to the settings of the forms for the team."
+        },
+        "form":{
+            "languageError": "This form is not available in your language, so it will be displayed in an alternative language.",
+            "editDeadline": "You can edit this form as many times as you wish until the submission deadline above.",
+            "basicInformation": "Basic Team Information",
+            "teamName": "Team Code / Team Name",
+            "required": "@:document.editor.required",
+            "optional": "@:document.editor.optional",
+            "max5": "The maximum size is 5MB.",
+            "max10": "The maximum size is 10MB.",
+            "max50": "The maximum size is 50MB.",
+            "pdfOnly": "Only PDF format is accepted.",
+            "zipOnly": "Only ZIP format is accepted.",
+            "hints": "@:document.editor.hints",
+            "selectFile": "Select a file",
+            "overwrite": "A file has already been uploaded. When you upload a new file, it will overwrite the old one.",
+            "uploaded": "Uploaded files"
+        },
+        "review":{
+            "reviewer": "Logged in reviewer: ",
+            "comments": "Review Comments"
+        },
+        "inspection":{
+            "do": "Inspections carried out",
+            "cancel": "Inspection cancellation"
+        }
+    },  
+    "mail": {
+        "status": {
+            "0": "Delivered",
+            "1": "Opend",
+            "2": "Clicked"
+        },
+        "home":{
+            "title": "Email Delivery",
+            "error": "To use this function, please add a mail setting to the configuration file.",
+            "newMailBulk": "Create a new email to the selected teams",
+            "newMail": "メールを新規作成",
+            "deliveryStatus": "Create a new email",
+            "writeMail": "Email Editor",
+            "deliveredTo": "Delivery address",
+            "variable": "Variables",
+            "loadTemplate": "Loading the template",
+            "selectTemplate": "Select a template",
+            "subject": "Subject",
+            "back2select": "Return to destination selection",
+            "preview": "Delivery Preview",
+            "deliverNo": "Delivery number",
+            "back2Edit": "Return to Edit Mail",
+            "send": "Delivery Execution",
+            "js": {
+                "sending": "In the process of delivery",
+                "wait": "Please wait for a while.",
+                "complete": "Delivery completed",
+                "completeMes": "Emails have been sent out."
+            }
+        },
+        "sent":{
+            "title": "Email Delivery Status",
+            "time": "Time",
+            "subject": "@:mail.home.subject",
+            "status": "Status",
+            "detail": "Detail",
+            "js": {
+                "eventLog": "Event Log",
+                "user": "User",
+                "event": "Event"
+            }
+        }
+    },
+    "language": {
+        "ja": "Japanese",
+        "en": "English"
     }
 }

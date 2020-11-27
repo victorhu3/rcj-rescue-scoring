@@ -25,16 +25,16 @@ html(ng-app="ddApp")
       // Navbar content
       .col-md-6.col-sm4.col-12
         li.navbar-brand(href='#', ng-show='!networkError')
-          i.fas.fa-sync(ng-class="{'fa-spin' : sync > 0}")
-          |  {{team.name}}
+          i.fas.fa-sync(ng-class="{'fa-spin' : sync > 0}") &nbsp;
+          | {{team.name}}
         li.navbar-brand(href='#', ng-show='networkError')
-          i.fas.fa-exclamation-triangle(style='color: #f1c40f;')
+          i.fas.fa-exclamation-triangle(style='color: #f1c40f;') &nbsp;
           |  Network ERROR {{team.name}}
       .col-md-3.col-sm4.col-7
-        i.fas.fa-calculator.fa-2x(aria-hidden='true')
+        i.fas.fa-calculator.fa-2x(aria-hidden='true') &nbsp;
         li.navbar-brand(href='#')  {{score}} {{'common.point' | translate}}
       .col-md-3.col-sm4.col-5
-        i.fas.fa-stopwatch.fa-2x(aria-hidden='true')
+        i.fas.fa-stopwatch.fa-2x(aria-hidden='true') &nbsp;
         li.navbar-brand(href='#')  {{time | date:'mm:ss'}}
     .container-fluid.nav-cont
       div(style='text-align: center;', ng-if='!checked')
@@ -88,14 +88,14 @@ html(ng-app="ddApp")
               h3.card-header
                 i.far.fa-images(aria-hidden='true') {{'interview.me_pic' | translate}}
               .card-body(ng-style="{backgroundColor: checkMember? '#e1f7d5' : '#ffbdbd'}", ng-click='toggleCheckMember()')
-                img.img-thumbnail(style='max-width: 100%;height: auto;margin-bottom:20px', ng-src='/api/teams/pic/{{competition._id}}/{{team._id}}/member')
+                img.img-thumbnail(style='max-width: 100%;height: auto;margin-bottom:20px', ng-src='/api/document/inspection/files/{{team._id}}/teamPhoto')
           .col-md-6
             .card
               h3.card-header
                 i.far.fa-images(aria-hidden='true') {{'interview.ma_pic' | translate}}
               .card-body(ng-style="{backgroundColor: checkMachine? '#e1f7d5' : '#ffbdbd'}", ng-click='toggleCheckMachine()')
                 div
-                  img.img-thumbnail(style='max-width: 100%;height: auto;margin-bottom:20px', ng-src='/api/teams/pic/{{competition._id}}/{{team._id}}/machine')
+                  img.img-thumbnail(style='max-width: 100%;height: auto;margin-bottom:20px', ng-src='/api/document/inspection/files/{{team._id}}/robotPhoto')
         p(ng-show='!(checkTeam && checkRound && checkMember && checkMachine)') {{'line.judge.tap_red' | translate}}
         button.btn.btn-success(type='button', ng-click='infochecked()', ng-disabled='!(checkTeam && checkRound && checkMember && checkMachine)')
           i.fas.fa-check-circle.fa-2x(aria-hidden='true')  {{'line.judge.confirm' | translate}}

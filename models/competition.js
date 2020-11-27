@@ -24,6 +24,8 @@ const SUPPORT_RULES = ["2021"];
 
 const LEAGUES = [].concat(LINE_LEAGUES, MAZE_LEAGUES);
 
+const QUESTION_TYPES = ['input', 'select', 'picture', 'movie', 'pdf', 'zip'];
+
 module.exports.LINE_LEAGUES = LINE_LEAGUES;
 module.exports.MAZE_LEAGUES = MAZE_LEAGUES;
 module.exports.LEAGUES = LEAGUES;
@@ -42,9 +44,9 @@ module.exports.LEAGUES_JSON = LEAGUES_JSON;
 
 
 const competitionSchema = new Schema({
-  name: {type: String, required: true, unique: true},
-  rule: {type: String, enum: SUPPORT_RULES, required: true},
-  logo: {type: String, default: ""},
+  name: {type: String, unique: true},
+  rule: {type: String, enum: SUPPORT_RULES},
+  logo: {type: String, default: "/images/noLogo.png"},
   bkColor: {type: String, default: "#fff"},
   color: {type: String, default: "#000"},
   message: {type: String, default: ""},
@@ -52,7 +54,71 @@ const competitionSchema = new Schema({
   ranking: [{
     'league': {type: String, enum: LEAGUES},
     'num': {type: Number, default: 20}
-  }]
+  }],
+  documents: {
+    enable: {type: Boolean,  default: false},
+    deadline: {type: Number, default: 0},
+    leagues: [{
+      'league': {type: String, enum: LEAGUES},
+      'languages': [{
+        'language': {type: String, default: ''},
+        'enable': {type: Boolean, default: true}
+      }],
+      'notifications':[{
+        'color' : {type: String, default: '273c75'},
+        'bkColor' : {type: String, default: 'ccffff'},
+        'i18n':[{
+          'language' : {type: String, default: ''},
+          'title' : {type: String, default: ''},
+          'description' : {type: String, default: ''}
+        }]
+      }],
+      'blocks': [{
+        'i18n':[{
+          'language' : {type: String, default: ''},
+          'title': {type: String, default: ''},
+        }],
+        'color': {type: String, default: '2980b9'},
+        'questions': [{
+          'i18n':[{
+            'language' : {type: String, default: ''},
+            'question': {type: String, default: ''},
+            'description': {type: String, default: ''},
+            'example': {type: String, default: ''},
+            'options': [{
+              'value': {type: String, default: ''},
+              'text': {type: String, default: ''}
+            }],
+          }],
+          'type': {type: String, enum: QUESTION_TYPES},
+          'required': {type: Boolean, default: true},
+          'fileName': {type: String, default: ''}
+        }]
+      }],
+      'review': [{
+        'i18n':[{
+          'language' : {type: String, default: ''},
+          'title': {type: String, default: ''},
+        }],
+        'color': {type: String, default: '2980b9'},
+        'questions': [{
+          'i18n':[{
+            'language' : {type: String, default: ''},
+            'question': {type: String, default: ''},
+            'description': {type: String, default: ''},
+            'example': {type: String, default: ''},
+            'options': [{
+              'value': {type: String, default: ''},
+              'text': {type: String, default: ''}
+            }],
+          }],
+          'type': {type: String, enum: QUESTION_TYPES},
+          'required': {type: Boolean, default: true},
+          'fileName': {type: String, default: ''}
+        }]
+      }]
+    }]
+  }
 })
 
 const signageSchema = new Schema({
@@ -130,12 +196,18 @@ const teamSchema = new Schema({
   name       : {type: String, required: true},
   league     : {type: String, enum: LEAGUES, required: true, index: true},
   inspected  : {type: Boolean, default: false},
-  comment    : {type: String, default: ""},
-  interviewer: {type: String, default: ""},
   docPublic  : {type: Boolean, default: false},
   country    : {type: String, default: ""},
   checkin    : {type: Boolean, default: false},
-  teamCode   : {type: String, default: ""}
+  teamCode   : {type: String, default: ""},
+  email      : [{type: String, default: '', select: false}],
+  document   : {
+    deadline : {type: String, default: null, select: false},
+    enabled  : {type: Boolean, default: true, select: false},
+    public  : {type: Boolean, default: false, select: false},
+    token    : {type: String, default: '', select: false},
+    answers  : [[{type: String, default: null, select: false}]]
+  }
 })
 
 teamSchema.pre('save', function (next) {

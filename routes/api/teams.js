@@ -28,6 +28,10 @@ var md5hex = function(src){
 };
 const LEAGUES_JSON = competitiondb.LEAGUES_JSON;
 
+const S="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const N=32
+
+
 //publicRouter.get('/', function (req, res) {
 //    query.doFindResultSortQuery(req, res, null, null, competitiondb.team)
 //})
@@ -201,6 +205,14 @@ privateRouter.put('/:competitionid/:teamid', function (req, res, next) {
                     if (team.checkin != null) dbTeam.checkin = team.checkin;
                     if (team.code != null) dbTeam.teamCode = team.code;
 
+                    if(auth.authCompetition(req.user, competitionid, ACCESSLEVELS.ADMIN)){
+                        if(team.name != null) dbTeam.name = team.name;
+                        if(team.teamCode != null) dbTeam.teamCode = team.teamCode;
+                        if(team.league != null) dbTeam.league = team.league;
+                        if(team.country != null) dbTeam.country = team.country;
+                        if(team.email != null) dbTeam.email = team.email;
+                    }
+
                     dbTeam.save(function (err) {
                         if (err) {
                             logger.error(err)
@@ -282,6 +294,12 @@ adminRouter.delete('/:teamid', function (req, res, next) {
                     res.status(200).send({
                         msg: "Team has been removed!"
                     })
+                    for(let id of ids){
+                        let path = __dirname + "/../../documents/" + dbTeam.competition + "/" + id;
+                        fs.rmdir(path, { recursive: true },(err) => {
+                            if (err) throw err;
+                        });
+                    }
                 }
             })
         })
@@ -290,18 +308,6 @@ adminRouter.delete('/:teamid', function (req, res, next) {
 adminRouter.post('/', function (req, res) {
     var team = req.body;
 
-    var code = "";
-    if(team.code){
-        code = team.code;
-    }
-
-    let country = ""
-    if(team.country){
-        country = team.country;
-    }
-
-
-
     competitiondb.competition.findOne({
         _id: team.competition
     })
@@ -309,30 +315,18 @@ adminRouter.post('/', function (req, res) {
             if (err) {
                 logger.error(err)
             } else if (dbComp) {
-                var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name);
-                mkdirp(path, function (err) {
-                    if (err) logger.error(err);
-                    else logger.info(path);
-                });
-
-                let inspected = false;
-                if(isExistFile(__dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name) + "/picmachine.jpg")){
-                    inspected = true;
-                }
-                if(isExistFile(__dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name) + "/picmachine.png")){
-                    inspected = true;
-                }
-                if(isExistFile(__dirname + "/../../TechnicalDocument/" + md5hex(dbComp.name) + "/" + md5hex(team.name) + "/picmachine.jpeg")){
-                    inspected = true;
-                }
 
                 let newTeam = new competitiondb.team({
                     name: team.name,
                     league: team.league,
                     competition: team.competition,
-                    code: code,
-                    country: country,
-                    inspected: inspected
+                    teamCode: team.teamCode,
+                    country: team.country,
+                    document: {
+                        token: Array.from(crypto.randomFillSync(new Uint8Array(N))).map((n)=>S[n%S.length]).join(''),
+                        answers: []
+                    },
+                    email: team.email
                 });
 
                 newTeam.save(function (err, data) {
@@ -348,6 +342,10 @@ adminRouter.post('/', function (req, res) {
                             msg: "New team has been saved",
                             id: data._id
                         })
+                        let path = __dirname + "/../../documents/" + dbComp._id + "/" + data._id;
+                        mkdirp(path, function (err) {
+                            if (err) logger.error(err);
+                        });
                     }
                 })
 
@@ -355,457 +353,71 @@ adminRouter.post('/', function (req, res) {
         }
 
       )
-
-
-
-
-
-
-
 })
 
-function isExistFile(file) {
-    try {
-        fs.statSync(file);
-        return true
-    } catch (err) {
-        if (err.code === 'ENOENT') return false
-    }
-}
-
-publicRouter.get('/document/:competitionid/:teamid', function (req, res, next) {
-    const id = req.params.competitionid
-    const tid = req.params.teamid
-
-    if (!ObjectId.isValid(id)) {
-        return next()
-    }
+adminRouter.post('/bulk', function (req, res) {
+    var teams = req.body;
 
     competitiondb.competition.findOne({
-            _id: id
-        })
-        .exec(function (err, dbCompe) {
-                if (err) {
-                    logger.error(err)
-                    return res.status(400).send({
-                        msg: "Could not get competition",
-                        err: err.message
-                    })
-                } else if (dbCompe) {
-                    competitiondb.team.findOne({
-                            _id: tid,
-                            competition: id
-                        })
-                        .exec(function (err, dbTeam) {
-                                if (err) {
-                                    logger.error(err)
-                                    return res.status(400).send({
-                                        msg: "Could not get team",
-                                        err: err.message
-                                    })
-                                } else if (dbTeam) {
-                                    if (auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW)) {
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/full.html"
-                                    } else if (dbTeam.docPublic) {
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/full_public.html"
-                                    } else {
-                                        return res.status(401).send({
-                                            msg: "You have no authority to access this api"
-                                        })
-
-                                    }
-                                    if (isExistFile(path)) {
-                                        fs.readFile(path, 'utf8', function (err, html) {
-                                          var regExp = new RegExp( "./usercontent", "g" );
-                                          html = html.replace(regExp, "/api/teams/document/" + id + "/" + tid + "/usercontent");
-                                          res.send(html);
-                                        });
-                                    } else {
-                                      console.log(path);
-                                        return res.status(404).send({
-                                            msg: "No html file for this team"
-                                        })
-                                    }
-
-                                }
+        _id: teams[0].competition
+    })
+      .exec(function (err, dbComp) {
+            if (err) {
+                logger.error(err)
+            } else if (dbComp) {
+                let count = teams.length;
+                let responseSent = false;
+                for(let team of teams){
+                    let newTeam = new competitiondb.team({
+                        name: team.name,
+                        league: team.league,
+                        competition: team.competition,
+                        teamCode: team.teamCode,
+                        country: team.country,
+                        document: {
+                            token: Array.from(crypto.randomFillSync(new Uint8Array(N))).map((n)=>S[n%S.length]).join(''),
+                            answers: []
+                        },
+                        email: team.email
+                    });
+    
+                    newTeam.save(function (err, data) {
+                        if (err) {
+                            logger.error(err)
+                            if(!responseSent){
+                                responseSent = true;
+                                res.status(400).send({
+                                    message: "Error saving team",
+                                    error: err.message
+                                })
                             }
-
-                        )
-
-
-                }
-            }
-
-        )
-
-})
-
-publicRouter.get('/document/:competitionid/:teamid/usercontent/:filename', function (req, res, next) {
-    const id = req.params.competitionid
-    const tid = req.params.teamid
-    const file = req.params.filename
-
-    if (!ObjectId.isValid(id)) {
-        return next()
-    }
-
-    competitiondb.competition.findOne({
-            _id: id
-        })
-        .exec(function (err, dbCompe) {
-                if (err) {
-                    logger.error(err)
-                    return res.status(400).send({
-                        msg: "Could not get competition",
-                        err: err.message
-                    })
-                } else if (dbCompe) {
-                    competitiondb.team.findOne({
-                            _id: tid,
-                            competition: id
-                        })
-                        .exec(function (err, dbTeam) {
-                                if (err) {
-                                    logger.error(err)
-                                    return res.status(400).send({
-                                        msg: "Could not get team",
-                                        err: err.message
-                                    })
-                                } else if (dbTeam) {
-                                    if (auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW)) {
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/usercontent/" + file;
-                                    } else if (dbTeam.docPublic) {
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/usercontent/" + file;
-                                    } else {
-                                        return res.status(401).send({
-                                            msg: "You have no authority to access this api"
-                                        })
-
-                                    }
-                                    if (isExistFile(path)) {
-                                        fs.readFile(path, function (err, data) {
-                                            let type = filetype(data);
-                                            res.writeHead(200, {
-                                                'Content-Type': type.mime
-                                            });
-                                            res.end(data);
-                                        });
-                                        return;
-                                    } else {
-                                      console.log(path);
-                                        return res.status(404).send({
-                                            msg: "No html file for this team"
-                                        })
-                                    }
-
-                                }
-                            }
-
-                        )
-
-
-                }
-            }
-
-        )
-
-})
-
-privateRouter.get('/pdf/:competitionid/:teamid/:filename', function (req, res, next) {
-    const id = req.params.competitionid
-    const tid = req.params.teamid
-    const filename = req.params.filename
-
-    if (!ObjectId.isValid(id)) {
-        return next()
-    }
-    competitiondb.competition.findOne({
-            _id: id
-        })
-        .exec(function (err, dbCompe) {
-                if (err) {
-                    logger.error(err)
-                    return res.status(400).send({
-                        msg: "Could not get competition",
-                        err: err.message
-                    })
-                } else if (dbCompe) {
-                    competitiondb.team.findOne({
-                            _id: tid,
-                            competition: id
-                        })
-                        .exec(function (err, dbTeam) {
-                                if (err) {
-                                    logger.error(err)
-                                    return res.status(400).send({
-                                        msg: "Could not get team",
-                                        err: err.message
-                                    })
-                                } else if (dbTeam && (dbTeam.docPublic || auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW))) {
-                                    var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + filename + ".pdf"
-                                    if (isExistFile(path)) {
-                                        var file = fs.createReadStream(path);
-                                        var stat = fs.statSync(path);
-                                        res.setHeader('Content-Length', stat.size);
-                                        res.setHeader('Content-Type', 'application/pdf');
-                                        res.setHeader('Content-Disposition', 'attachment; filename=' + filename + '.pdf');
-                                        file.pipe(res);
-                                        return
-                                    } else {
-                                        return res.status(404).send({
-                                            msg: "No PDF file for this team"
-                                        })
-                                    }
-
-                                } else {
-                                    return res.status(401).send({
-                                        msg: "You have no authority to access this api"
+                            
+                        } else {
+                            let path = __dirname + "/../../documents/" + dbComp._id + "/" + data._id;
+                            mkdirp(path, function (err) {
+                                if (err) logger.error(err);
+                            });
+                            count --;
+                            if(count <= 0){
+                                if(!responseSent){
+                                    responseSent = true;
+                                    res.location("/api/teams/" + data._id)
+                                    res.status(201).send({
+                                        message: "New teams have been saved"
                                     })
                                 }
                             }
+                            
+                        }
+                    })
 
-                        )
-
-
+                   
                 }
             }
+        }
 
-        )
-
+      )
 })
-
-privateRouter.get('/pic/:competitionid/:teamid/:pic', function (req, res, next) {
-    const id = req.params.competitionid
-    const tid = req.params.teamid
-    const pic = req.params.pic
-
-    if (!ObjectId.isValid(id)) {
-        return next()
-    }
-    if (!ObjectId.isValid(tid)) {
-        return next()
-    }
-    if (auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW)) {
-        competitiondb.competition.findOne({
-                _id: id
-            })
-            .exec(function (err, dbCompe) {
-                    if (err) {
-                        logger.error(err)
-                        return res.status(400).send({
-                            msg: "Could not get competition",
-                            err: err.message
-                        })
-                    } else if (dbCompe) {
-                        competitiondb.team.findOne({
-                                _id: tid,
-                                competition: id
-                            })
-                            .exec(function (err, dbTeam) {
-                                    if (err) {
-                                        logger.error(err)
-                                        return res.status(400).send({
-                                            msg: "Could not get team",
-                                            err: err.message
-                                        })
-                                    } else if (dbTeam) {
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + "pic" + pic + ".jpg";
-                                        if (isExistFile(path)) {
-                                            fs.readFile(path, function (err, data) {
-                                                res.writeHead(200, {
-                                                    'Content-Type': 'image/jpeg'
-                                                });
-                                                res.end(data);
-                                            });
-                                            return;
-                                        }
-
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + "pic" + pic + ".jpeg";
-                                        if (isExistFile(path)) {
-                                            fs.readFile(path, function (err, data) {
-                                                res.writeHead(200, {
-                                                    'Content-Type': 'image/jpeg'
-                                                });
-                                                res.end(data);
-                                            });
-                                            return;
-                                        }
-
-                                        var path = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + "pic" + pic + ".png";
-                                        if (isExistFile(path)) {
-                                            fs.readFile(path, function (err, data) {
-                                                res.writeHead(200, {
-                                                    'Content-Type': 'image/png'
-                                                });
-                                                res.end(data);
-                                            });
-                                            return;
-                                        }
-
-                                        var path = __dirname + "/../../public/images/NoImage.png";
-                                        if (isExistFile(path)) {
-                                            fs.readFile(path, function (err, data) {
-                                                res.writeHead(200, {
-                                                    'Content-Type': 'image/png'
-                                                });
-                                                res.end(data);
-                                            });
-                                            return;
-                                        }
-                                        return res.status(404).send({
-                                            msg: "No Pic file for this team"
-                                        })
-                                    }
-                                }
-
-                            )
-
-
-                    }
-                }
-
-            )
-    } else {
-        res.status(401).send({
-            msg: "You have no authority to access this api"
-        })
-        return next()
-    }
-})
-
-privateRouter.get('/pic/:competitionid/:teamid', function (req, res, next) {
-    const id = req.params.competitionid
-    const tid = req.params.teamid
-
-    if (!ObjectId.isValid(id)) {
-        return next()
-    }
-    if (!ObjectId.isValid(tid)) {
-        return next()
-    }
-    if (auth.authCompetition(req.user, id, ACCESSLEVELS.VIEW)) {
-        competitiondb.competition.findOne({
-                _id: id
-            })
-            .exec(function (err, dbCompe) {
-                    if (err) {
-                        logger.error(err)
-                        return res.status(400).send({
-                            msg: "Could not get competition",
-                            err: err.message
-                        })
-                    } else if (dbCompe) {
-                        competitiondb.team.findOne({
-                                _id: tid,
-                                competition: id
-                            })
-                            .exec(function (err, dbTeam) {
-                                    if (err) {
-                                        logger.error(err)
-                                        return res.status(400).send({
-                                            msg: "Could not get team",
-                                            err: err.message
-                                        })
-                                    } else if (dbTeam) {
-                                        var pic = 0;
-                                        while (1) {
-                                            var path1 = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + "pic" + pic + ".jpg";
-                                            var path2 = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + "pic" + pic + ".jpeg";
-                                            var path3 = __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name) + "/" + "pic" + pic + ".png";
-                                            if (!isExistFile(path1) && !isExistFile(path2) && !isExistFile(path3)) break;
-                                            pic++;
-                                        }
-
-                                        return res.status(200).send({
-                                            number: pic
-                                        })
-                                    }
-                                }
-
-                            )
-
-
-                    }
-                }
-
-            )
-    } else {
-        res.status(401).send({
-            msg: "You have no authority to access this api"
-        })
-        return next()
-    }
-})
-
-privateRouter.post('/pic/:competitionid/:teamid/:pic', function (req, res, next) {
-    const id = req.params.competitionid
-    const tid = req.params.teamid
-    const pic = req.params.pic
-
-    if (!ObjectId.isValid(id)) {
-        return next()
-    }
-    if (!ObjectId.isValid(tid)) {
-        return next()
-    }
-    if (auth.authCompetition(req.user, id, ACCESSLEVELS.JUDGE)) {
-        competitiondb.competition.findOne({
-                _id: id
-            })
-            .exec(function (err, dbCompe) {
-                    if (err) {
-                        logger.error(err)
-                        res.status(400).send({
-                            msg: "Could not get competition",
-                            err: err.message
-                        })
-                    } else if (dbCompe) {
-                        competitiondb.team.findOne({
-                                _id: tid,
-                                competition: id
-                            })
-                            .exec(function (err, dbTeam) {
-                                    if (err) {
-                                        logger.error(err)
-                                        res.status(400).send({
-                                            msg: "Could not get team",
-                                            err: err.message
-                                        })
-                                    } else if (dbTeam) {
-                                        var storage = multer.diskStorage({
-                                            destination: function (req, file, callback) {
-                                                callback(null, __dirname + "/../../TechnicalDocument/" + md5hex(dbCompe.name) + "/" + md5hex(dbTeam.name))
-                                            },
-                                            filename: function (req, file, callback) {
-                                                callback(null, "pic" + pic + path.extname(file.originalname))
-                                            }
-                                        })
-
-                                        var upload = multer({
-                                            storage: storage
-                                        }).single('file')
-
-                                        upload(req, res, function (err) {
-                                            res.end('File is uploaded')
-                                        })
-                                    }
-                                }
-
-                            )
-
-
-                    }
-                }
-
-            )
-    } else {
-        res.status(401).send({
-            msg: "You have no authority to access this api"
-        })
-        return next()
-    }
-})
-
 
 
 publicRouter.all('*', function (req, res, next) {

@@ -1,13 +1,12 @@
 //- -*- tab-width: 2 -*-
 
 nav.navbar(style='background-color: #283655; color: #fff; position: fixed; top: 0; z-index:10 ;  width: 100%')
-    .col-6
-      li.navbar-brand
-        a(href='/home' style="color: #ecf0f1;") RCJ Scoring System
-    .col-6(style="text-align:right;")
-        if typeof(user) == "undefined"
-            i.fas.fa-user-circle.fa-2x(aria-hidden='true')
-        else
-            .fa-2x
-                i.fas.fa-user-circle(aria-hidden='true')
-                | &nbsp;#{user.username}
+    a.navbar-brand(href='/home', style="color: #ecf0f1;")
+        img.d-inline-block.align-top(src="/images/logo.png", style="height:23px;width:auto;")
+        | &nbsp;RCJ CMS
+    if typeof(user) == "undefined"
+        i.fas.fa-user-circle.fa-2x(aria-hidden='true')
+    else
+        .fa-2x
+            i.fas.fa-user-circle(aria-hidden='true')
+            | &nbsp;#{user.username}

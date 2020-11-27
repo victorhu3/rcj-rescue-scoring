@@ -10,14 +10,6 @@ const ACCESSLEVELS = require('../models/user').ACCESSLEVELS
 const logger = require('../config/logger').mainLogger
 
 /* GET home page. */
-privateRouter.get('/line_checkpoint/:runid', function (req, res, next) {
-  const id = req.params.runid
-  if (!ObjectId.isValid(id)) {
-    return next()
-  }
-  //logger.debug(req)
-  res.render('line_checkpoint', {id: id})
-})
 
 privateRouter.get('/:competitionid/line/apteam/:team', function (req, res, next) {
   const id = req.params.competitionid

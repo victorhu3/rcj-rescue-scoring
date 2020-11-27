@@ -80,7 +80,7 @@ function getMazeRuns(req, res) {
         query.populate([
             {
                 path: "team",
-                select: "name league"
+                select: "name league teamCode"
       },
             {
                 path: "round",
@@ -131,13 +131,15 @@ function getMazeRuns(req, res) {
         } else if (dbRuns) {
             // Hide map and field from public
             for (let i = 0; i < dbRuns.length; i++) {
-                var authResult = auth.authViewRun(req.user, dbRuns[i], ACCESSLEVELS.VIEW)
-                if (authResult == 0) {
-                    return res.status(403)
-                } else if (authResult == 2) {
-                    delete dbRuns[i].comment
-                    delete dbRuns[i].sign
-                }
+              if (!auth.authViewRun(req.user, dbRuns[i], ACCESSLEVELS.NONE + 1)) {
+                delete dbRuns[i].map
+                delete dbRuns[i].field
+                delete dbRuns[i].comment
+                delete dbRuns[i].sign
+              }else if(!auth.authCompetition(req.user, dbRuns[i].competition, ACCESSLEVELS.VIEW)){
+                delete dbRuns[i].comment
+                delete dbRuns[i].sign
+              }
             }
             res.status(200).send(dbRuns)
         }
@@ -230,7 +232,7 @@ function getLatestMazeRun(req, res) {
     var query = mazeRun.findOne(selection).sort("-updatedAt")
 
     if (req.query['populate'] !== undefined && req.query['populate']) {
-        query.populate(["round", { path: "team", select: "name league"}, "field", "competition"])
+        query.populate(["round", { path: "team", select: "name league teamCode"}, "field", "competition"])
     }
 
     query.lean().exec(function (err, dbRun) {
@@ -328,7 +330,7 @@ privateRouter.get('/find/team_status/:competitionid/:teamid/:status', function (
     },
     {
       path: "team",
-      select: "name league"
+      select: "name league teamCode"
     },
     {
       path: "field",
@@ -366,7 +368,7 @@ publicRouter.get('/find/:competitionid/:field/:status', function (req, res, next
         field: field_id,
         status: status
     }, "field team competition status")
-    query.populate([{ path: "team", select: "name league"}])
+    query.populate([{ path: "team", select: "name league teamCode"}])
     query.exec(function (err, data) {
         if (err) {
             logger.error(err)
@@ -429,7 +431,7 @@ publicRouter.get('/:runid', function (req, res, next) {
     const query = mazeRun.findById(id, "-__v")
 
     if (req.query['populate'] !== undefined && req.query['populate']) {
-        query.populate(["round", { path: "team", select: "name league"}, "field", "competition"])
+        query.populate(["round", { path: "team", select: "name league teamCode"}, "field", "competition"])
     }
 
     query.lean().exec(function (err, dbRun) {
@@ -613,6 +615,13 @@ privateRouter.put('/:runid', function (req, res, next) {
                 if(dbRun.manualFlag) retScoreCals = scoreCalculator.calculateMazeScoreManual(dbRun).split(",");
                 else retScoreCals = scoreCalculator.calculateMazeScore(dbRun).split(",");
 
+                if(!retScoreCals){
+                  logger.error("Value Error");
+                  return res.status(202).send({
+                    msg: "Try again later"
+                  })
+                }
+
                 dbRun.score = retScoreCals[0]
                 dbRun.foundVictims = retScoreCals[1]
                 dbRun.distKits = retScoreCals[2]
@@ -705,7 +714,7 @@ adminRouter.get('/scoresheet2', function (req, res, next) {
     },
     {
       path  : "team",
-      select: "name"
+      select: "name teamCode league"
     },
     {
       path  : "field",

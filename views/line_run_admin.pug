@@ -157,7 +157,7 @@ block content
               span(ng-if="run.status==5") {{"admin.lineRun.st5" | translate}}
               span(ng-if="run.status==6") {{"admin.lineRun.st6" | translate}}
             td(ng-style="{'background-color':statusColor(run.status)}")
-              button(uib-popover="{{run.comment}}" popover-trigger="'outsideClick'"  type="button" class="btn btn-default" ng-disabled="run.comment==''") {{"common.comment" | translate}}
+              button.btn.btn-light(uib-popover="{{run.comment}}" popover-trigger="'outsideClick'"  type="button" ng-disabled="run.comment==''") {{"common.comment" | translate}}
             td(ng-style="{'background-color':statusColor(run.status)}")
               //a(href="" ng-click='removeRun(run._id)') {{"common.delete" | translate}}
               .dropdown

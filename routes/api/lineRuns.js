@@ -123,6 +123,9 @@ function getLineRuns(req, res) {
           delete dbRuns[i].field
           delete dbRuns[i].comment
           delete dbRuns[i].sign
+        }else if(!auth.authCompetition(req.user, dbRuns[i].competition, ACCESSLEVELS.VIEW)){
+          delete dbRuns[i].comment
+          delete dbRuns[i].sign
         }
       }
       res.status(200).send(dbRuns)
@@ -159,7 +162,7 @@ function getLatestLineRun(req, res) {
   var query = lineRun.findOne(selection).sort("-updatedAt")
 
   if (req.query['populate'] !== undefined && req.query['populate']) {
-    query.populate(["round",{ path: "team", select: "name league"}, "field", "competition", {
+    query.populate(["round",{ path: "team", select: "name league teamCode"}, "field", "competition", {
       path: 'tiles',
       populate: {
         path: 'tileType'
@@ -252,7 +255,7 @@ publicRouter.get('/find/:competitionid/:field/:status', function (req, res, next
     field: field_id,
     status: status
   }, "field team competition status")
-  query.populate([{ path: "team", select: "name league"}])
+  query.populate([{ path: "team", select: "name league teamCode"}])
   query.exec(function (err, data) {
     if (err) {
       logger.error(err)
@@ -399,7 +402,8 @@ privateRouter.put('/:runid', function (req, res, next) {
         select: 'indexCount',
         path: 'tiles.tileType'
       }
-    }, "competition"])
+    }])
+    .populate("competition.rule")
     .exec(function (err, dbRun) {
       if (err) {
         logger.error(err)
@@ -482,6 +486,13 @@ privateRouter.put('/:runid', function (req, res, next) {
 
 
         let cal = scoreCalculator.calculateLineScore(dbRun);
+        if(!cal){
+          logger.error("Value Error");
+          return res.status(202).send({
+            msg: "Try again later"
+          })
+        }
+
         dbRun.score = cal.score;
         dbRun.raw_score = cal.raw_score;
         dbRun.multiplier = cal.multiplier;
@@ -491,14 +502,6 @@ privateRouter.put('/:runid', function (req, res, next) {
           dbRun.started = true
         } else {
           dbRun.started = false
-        }
-
-        if(run.tiles){
-          if(run.tiles.length == dbRun.map.indexCount){
-            for(let d in dbRun.tiles){
-              dbRun.tiles[d] = run.tiles[d];
-            }
-          }
         }
 
         dbRun.save(function (err) {
@@ -516,7 +519,6 @@ privateRouter.put('/:runid', function (req, res, next) {
               socketIo.sockets.in('fields/' +dbRun.field).emit('data', {newRun: dbRun._id})
               if(statusUpdate){
                 socketIo.sockets.in('runs/line/' + dbRun.competition._id + '/status').emit('LChanged')
-                console.log("EMIT");
               }
             }
             return res.status(200).send({
@@ -586,7 +588,7 @@ adminRouter.get('/scoresheet2', function (req, res, next) {
     },
     {
       path: "team",
-      select: "name"
+      select: "name league teamCode"
     },
     {
       path: "field",

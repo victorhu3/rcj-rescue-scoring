@@ -3,21 +3,27 @@ var app = angular.module('TeamAdmin', ['ngTouch','ngAnimate', 'ui.bootstrap', 'p
 // function referenced by the drop target
 app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$timeout', '$http','$translate', '$cookies',function ($scope, $uibModal, $log, $timeout, $http, $translate, $cookies) {
 
-    var txt_team,txt_league,txt_region;
-    $translate('common.team').then(function (val) {
-        txt_team = val;
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    $scope.total = 0;
+
+    var header_mes;
+    $translate('admin.teamBulk.headerError').then(function (val) {
+        header_mes = val;
     }, function (translationId) {
         // = translationId;
     });
-    $translate('common.league').then(function (val) {
-        txt_league = val;
+
+    let saved_mes;
+    $translate('document.saved').then(function (val) {
+        saved_mes = val;
     }, function (translationId) {
-        // = translationId;
-    });
-    $translate('common.region').then(function (val) {
-        txt_region = val;
-    }, function (translationId) {
-        // = translationId;
+    // = translationId;
     });
 
     $scope.competitionId = competitionId;
@@ -29,99 +35,116 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$timeout'
         $scope.leagues = response.data
     })
 
-    $scope.addTeam = function () {
-        $scope.processing = true;
-        $scope.total = obj.length - 1;
-        $scope.now = 0;
-        next_add();
-        /*var team = {name: $scope.teamName, league: $scope.teamLeague, competition: competitionId}
-         
-         $http.post("/api/teams/createteam", team).then(function (response) {
-         console.log(response)
-         updateTeamList()
-         }, function (error) {
-         console.log(error)
-         })*/
-    }
+    
     
     $scope.go = function (path) {
         window.location = path
     }
 
-    next_add = function () {
-        $scope.now++;
-        console.log($scope.now);
-        if ($scope.now > obj.length - 1) {
-            $scope.processing = false;
-            $scope.completed = true;
-            $scope.$apply();
+    $scope.header = [];
+
+    $scope.addBulkTeam = function(){
+        let headerCheck = {
+            "teamCode": 0,
+            "name": 0,
+            "country": 0,
+            "league": 0,
+            "email": 0,
+            "undefined": 0
+        };
+        for(let h of $scope.header){
+            headerCheck[h]++;
+        }
+        if(headerCheck["undefined"] > 0 || headerCheck["name"] > 1 || headerCheck["country"] > 1 || headerCheck["league"] > 1 || headerCheck["teamCode"] > 1 || headerCheck["name"] < 1 || headerCheck["league"] < 1){
+            Toast.fire({
+                type: 'error',
+                title: "ERROR",
+                html: header_mes
+            })
             return;
         }
 
-        var country = "";
-        if(obj[$scope.now][2]){
-            country = obj[$scope.now][2];
+        let count = 0;
+        let data = [];
+        for(let row of $scope.csv){
+            if(count){
+                let team = {
+                    "teamCode": "",
+                    "name": "",
+                    "league": "",
+                    "competition": competitionId,
+                    "country": "",
+                    "email" : []
+                };
+                for(let i=0; i<row.length; i++){
+                    if($scope.header[i] == "email"){
+                        if(row[i]) team.email.push(row[i]);
+                    }else{
+                        team[$scope.header[i]] = row[i];
+                    }
+                }
+                data.push(team);
+            }
+            count++;
         }
-
-        var team = {
-            name: obj[$scope.now][0],
-            league: obj[$scope.now][1],
-            competition: competitionId,
-            country: country
-        };
-        $http.post("/api/teams", team).then(function (response) {
-            setTimeout(next_add, 10);
+        
+        
+        $http.post("/api/teams/bulk", data).then(function (response) {
+            Toast.fire({
+                type: 'success',
+                title: saved_mes
+            })
+            $scope.total = data.length;
         }, function (error) {
             console.log(error)
+            Toast.fire({
+                type: 'error',
+                title: "ERROR",
+                html: error.data.error
+            })
         })
 
+
+
+        
     }
 
 
 
-        console.log("Ready");
-        if (window.File) {
-            var result = document.getElementById('result');
-            var select = document.getElementById('select');
+    if (window.File) {
+        var result = document.getElementById('result');
+        var select = document.getElementById('select');
 
-            // ファイルが選択されたとき
-            select.addEventListener('change', function (e) {
-                // 選択されたファイルの情報を取得
-                var fileData = e.target.files[0];
+        // ファイルが選択されたとき
+        select.addEventListener('change', function (e) {
+            // 選択されたファイルの情報を取得
+            var fileData = e.target.files[0];
 
-                var reader = new FileReader();
-                // ファイル読み取りに失敗したとき
-                reader.onerror = function () {
-                    alert('ファイル読み取りに失敗しました')
+            var reader = new FileReader();
+            // ファイル読み取りに失敗したとき
+            reader.onerror = function () {
+                alert('ファイル読み取りに失敗しました')
+            }
+            // ファイル読み取りに成功したとき
+            reader.onload = function () {
+                // 行単位で配列にする
+                $scope.csv = $.csv()(reader.result);
+                console.log($scope.csv)
+                for(let r of $scope.csv[0]){
+                    if(r.match(/TeamCode/)) $scope.header.push("teamCode");
+                    else if(r.match(/TeamName/)) $scope.header.push("name");
+                    else if(r.match(/Region/)) $scope.header.push("country");
+                    else if(r.match(/League/)) $scope.header.push("league");
+                    else if(r.match(/Email/)) $scope.header.push("email");
+                    else $scope.header.push("undefined");
                 }
-                // ファイル読み取りに成功したとき
-                reader.onload = function () {
-                    // 行単位で配列にする
-                    obj = $.csv()(reader.result);
-                    console.log(obj)
+                $scope.$apply();
+            }
 
-                    // tableで出力
-                    let insert = "<table class=\"custom\"><thead><tr><th>"+txt_team+"</th><th>"+txt_league+"</th>";
-                    if(obj[1][2]) insert += '<th>'+txt_region+'</th>';
-                    insert += '</tr></thead><tbody>';
-
-                    for (var i = 1; i < obj.length; i++) {
-                        insert += '<tr>';
-                        for (var j = 0; j < obj[i].length; j++) {
-                            insert += '<td>';
-                            insert += obj[i][j];
-                            insert += '</td>';
-                        }
-                        insert += '</tr>';
-                    }
-                    insert += '</tbody></table>';
-                    result.innerHTML = insert;
-                }
-
-                // ファイル読み取りを実行
-                reader.readAsText(fileData, 'Shift_JIS');
-            }, false);
-        }
+            // ファイル読み取りを実行
+            reader.readAsText(fileData, 'Shift_JIS');
+        }, false);
+    }
 
 
     /* Usage:

@@ -78,12 +78,7 @@ function authCompetition(user, competitionId, level) {
     return true
   }
   if (user.competitions != undefined) {
-    for (let i = 0; i < user.competitions.length; i++) {
-      const comp = user.competitions[i];
-      if (comp.id.toString() == competitionId && comp.accessLevel >= level) {
-        return true
-      }
-    }
+    return user.competitions.some((c) => c.id.toString() == competitionId && c.accessLevel >= level);
   }
   return false
 }
@@ -100,12 +95,7 @@ function competitionLevel(user,competitionId){
         return ACCESSLEVELS.SUPERADMIN;
     }
     if (user.competitions != undefined) {
-        for (let i = 0; i < user.competitions.length; i++) {
-            const comp = user.competitions[i];
-            if (comp.id.toString() == competitionId) {
-                return comp.accessLevel;
-            }
-        }
+      return user.competitions.find((c) => c.id.toString() == competitionId).accessLevel;
     }
     return ACCESSLEVELS.NONE;  
 }

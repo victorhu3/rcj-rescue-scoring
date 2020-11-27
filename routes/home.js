@@ -27,6 +27,16 @@ router.get('/:competitionid', function (req, res, next) {
   res.render('competition_home', {id: id, user: req.user, judge: auth.authCompetition(req.user,id,ACCESSLEVELS.JUDGE)})
 })
 
+router.get('/:competitionid/teams', function (req, res, next) {
+  const id = req.params.competitionid
+  
+  if (!ObjectId.isValid(id)) {
+    return next()
+  }
+
+  res.render('team_home', {id: id, user: req.user, judge: auth.authCompetition(req.user,id,ACCESSLEVELS.JUDGE), view: auth.authCompetition(req.user,id,ACCESSLEVELS.VIEW)})
+})
+
 router.get('/access_denied', function (req, res) {
   res.render('access_denied', {user: req.user});
 })

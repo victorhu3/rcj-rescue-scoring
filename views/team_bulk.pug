@@ -37,17 +37,33 @@ block content
       h3 {{"admin.teamBulk.s3T" | translate}}
       input#select(type="file" name="select")
       p {{"admin.teamBulk.s3D" | translate}}
-      #result 
+      
+      table.custom(style="margin-bottom:60px;")
+        thead
+          tr
+            th(ng-repeat="h in header track by $index")
+              select(ng-model='header[$index]' style="width:100%;")
+                option(value="teamCode") {{"common.teamCode" | translate}}
+                option(value="name") {{"common.team" | translate}}
+                option(value="country") {{"common.region" | translate}}
+                option(value="league") {{"common.league" | translate}}
+                option(value="email") {{"common.email" | translate}}
+              div(style="height:12px;")
+                span(style="font-size:10px;") {{csv[0][$index]}}
+
+        tbody
+          tr(ng-repeat="row in csv track by $index", ng-if="!$first")
+            td(ng-repeat="d in row track by $index", ng-bind="d")
+
+      div(style="text-align:center;", ng-hide="total > 0")
+        button.btn.btn-primary.btn-lg(ng-click="addBulkTeam()", ng-if="csv") {{"admin.teamBulk.exe" | translate}}
       br
-      br
-      center(ng-if="processing")
-        img(src="/images/loader2.gif")
-        p {{now}} / {{total}} {{"admin.teamBulk.inpro" | translate}}
-      center(ng-if="completed" style="color:#2ecc71;")
+      
+      center(ng-if="total > 0" style="color:#2ecc71;")
         i.far.fa-check-circle.fa-5x(aria-hidden="true")
         p {{total}} {{"admin.teamBulk.complete" | translate}}
       br
       br
-      button(ng-click="addTeam()" class='btn btn-primary') {{"admin.teamBulk.exe" | translate}}
+      
       
       
