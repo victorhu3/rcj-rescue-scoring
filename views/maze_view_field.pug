@@ -20,13 +20,13 @@ html(ng-app="ddApp")
       // Navbar content
       .col-md-6.col-sm4.col-12
         li.navbar-brand(href='#')
-          i.fas.fa-spinner.fa-spin.fa-fw
+          i.fas.fa-spinner.fa-spin.fa-fw &nbsp;
           |  {{team}}
       .col-md-3.col-sm4.col-7
-        i.fas.fa-calculator.fa-2x(aria-hidden='true')
+        i.fas.fa-calculator.fa-2x(aria-hidden='true') &nbsp;
         li.navbar-brand(href='#')  {{score}} points
       .col-md-3.col-sm4.col-5
-        i.fas.fa-stopwatch.fa-2x(aria-hidden='true')
+        i.fas.fa-stopwatch.fa-2x(aria-hidden='true') &nbsp;
         li.navbar-brand(href='#')  {{time*1000 | date:'mm:ss'}}
     .row.nav-cont
       .col-md-12.tilearea.mx-auto(ng-if='exist', style="text-align:center;")

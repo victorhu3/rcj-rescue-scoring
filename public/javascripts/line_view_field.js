@@ -90,6 +90,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
           $scope.score = 0;
           $scope.multiplier = 1.0;
           $scope.victim_list = [];
+          $scope.victimNL_G = 0;
+          $scope.victimNL_S = 0;
+          $scope.misidentNL_C = 0;
           marker = [];
           $scope.dRunId = $scope.runId;
           return;
@@ -124,6 +127,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
                 $scope.LoPs_total = 0;
                 $scope.status = data.status;
                 $scope.victim_list = data.rescueOrder;
+                $scope.victimNL_G = data.nl.greenTape;
+                $scope.victimNL_S = data.nl.silverTape;
+                $scope.misidentNL_C = data.nl.misidentification;
                 for (let i = 0; i < $scope.LoPs.length; i++) {
                     $scope.LoPs_total += $scope.LoPs[i];
                 }
@@ -154,6 +160,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             $scope.started = response.data.started;
             $scope.round = response.data.round.name;
             $scope.team = response.data.team.name;
+            $scope.league = response.data.team.league;
             $scope.competition = response.data.competition.name;
             $scope.competition_id = response.data.competition._id;
             $scope.retired = response.data.retired;
@@ -176,6 +183,9 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
             }
 
             $scope.victim_list = response.data.rescueOrder;
+            $scope.victimNL_G = response.data.nl.greenTape;
+            $scope.victimNL_S = response.data.nl.silverTape;
+            $scope.misidentNL_C = response.data.nl.misidentification;
 
 
             // Get the map
