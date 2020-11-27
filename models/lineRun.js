@@ -30,22 +30,17 @@ const lineRunSchema = new Schema({
   judges: [{type: ObjectId, ref: 'User'}],
 
   tiles             : [{
-    isDropTile: {type: Boolean, default: false},
-    scoredItems: [
+    type: new Schema({
+      isDropTile: {type: Boolean, default: false},
+      scoredItems: [
         {
             item: {type: String, default: ""},
             scored: {type: Boolean, default: false},
             count: {type: Number, default: 1}
         }
-    ]
-    //scored    : {type: Boolean, default: false}
-    /*scoredItems: {
-     obstacles   : {type: Boolean, default: false},
-     speedbumps  : {type: Boolean, default: false},
-     intersection: {type: Boolean, default: false},
-     gaps        : {type: Boolean, default: false},
-     dropTile    : {type: Boolean, default: false}
-     }*/
+      ]
+    }),
+    required: true
   }],
   LoPs              : {type: [Number], min: 0},
   evacuationLevel   : {

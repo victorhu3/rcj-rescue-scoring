@@ -615,6 +615,13 @@ privateRouter.put('/:runid', function (req, res, next) {
                 if(dbRun.manualFlag) retScoreCals = scoreCalculator.calculateMazeScoreManual(dbRun).split(",");
                 else retScoreCals = scoreCalculator.calculateMazeScore(dbRun).split(",");
 
+                if(!retScoreCals){
+                  logger.error("Value Error");
+                  return res.status(202).send({
+                    msg: "Try again later"
+                  })
+                }
+
                 dbRun.score = retScoreCals[0]
                 dbRun.foundVictims = retScoreCals[1]
                 dbRun.distKits = retScoreCals[2]

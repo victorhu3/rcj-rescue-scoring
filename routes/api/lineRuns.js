@@ -402,7 +402,8 @@ privateRouter.put('/:runid', function (req, res, next) {
         select: 'indexCount',
         path: 'tiles.tileType'
       }
-    }, "competition"])
+    }])
+    .populate("competition.rule")
     .exec(function (err, dbRun) {
       if (err) {
         logger.error(err)
@@ -411,6 +412,7 @@ privateRouter.put('/:runid', function (req, res, next) {
           err: err.message
         })
       } else if (dbRun) {
+        console.log(dbRun.tiles)
         if (!auth.authCompetition(req.user, dbRun.competition._id, ACCESSLEVELS.JUDGE)) {
           return res.status(401).send({
             msg: "You have no authority to access this api!!"
@@ -485,6 +487,13 @@ privateRouter.put('/:runid', function (req, res, next) {
 
 
         let cal = scoreCalculator.calculateLineScore(dbRun);
+        if(!cal){
+          logger.error("Value Error");
+          return res.status(202).send({
+            msg: "Try again later"
+          })
+        }
+
         dbRun.score = cal.score;
         dbRun.raw_score = cal.raw_score;
         dbRun.multiplier = cal.multiplier;
@@ -494,14 +503,6 @@ privateRouter.put('/:runid', function (req, res, next) {
           dbRun.started = true
         } else {
           dbRun.started = false
-        }
-
-        if(run.tiles){
-          if(run.tiles.length == dbRun.map.indexCount){
-            for(let d in dbRun.tiles){
-              dbRun.tiles[d] = run.tiles[d];
-            }
-          }
         }
 
         dbRun.save(function (err) {

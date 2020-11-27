@@ -188,8 +188,10 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         seconds: Math.floor(($scope.time % 60000) / 1000)
       }
     }), http_config).then(function (response) {
-      console.log(response);
-      //$scope.score = response.data.score;
+      if(response.statusCode == 202){
+        setTimeout($scope.upload_run, 100, data);
+        return;
+      }
       $scope.sync--;
     }, function (response) {
       if (response.status == 401) {
@@ -1155,6 +1157,10 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     };
     $scope.sync++;
     $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
+      if(response.statusCode == 202){
+        setTimeout($scope.saveEverything, 100);
+        return;
+      }
       $scope.score = response.data.score;
       $scope.networkError = false;
       $scope.sync = 0;
@@ -1222,6 +1228,10 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
       $scope.sync++;
       $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
+        if(response.statusCode == 202){
+          setTimeout($scope.confirm, 100);
+          return;
+        }
         $scope.score = response.data.score;
         $scope.sync--;
         $scope.go('/line/sign/' + runId + '?return=' + $scope.getParam('return'));
@@ -1256,6 +1266,10 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
 
       $scope.sync++;
       $http.put("/api/runs/line/" + runId, run, http_config).then(function (response) {
+        if(response.statusCode == 202){
+          setTimeout($scope.backApproval, 100);
+          return;
+        }
         $scope.score = response.data.score;
         $scope.sync--;
         $scope.go('/line/approval/' + runId + '?return=' + $scope.getParam('return'));
