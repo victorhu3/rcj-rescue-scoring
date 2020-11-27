@@ -783,6 +783,137 @@ privateRouter.get('/review/files/:teamId/:userName/:fileName', function (req, re
 })
 
 
+// Inspection
+privateRouter.post('/inspection/files/:teamId/:fileName', function (req, res, next) {
+    const teamId = req.params.teamId;
+    const fileName = req.params.fileName;
+    
+    if (!ObjectId.isValid(teamId)) {
+        return next()
+    }
+
+    competitiondb.team.findById(teamId)
+    .select("competition")
+    .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            let userAuth = auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.JUDGE);
+            if(userAuth){
+                fs.mkdirs(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/review/inspection", (err) => {
+                    glob.glob(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/review/inspection/" + fileName + '.*', function (er, files) {
+                        let i = files.length;
+                        if(i == 0){
+                            upload_process();
+                            return;
+                        }
+                        fs.mkdir(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/trash", (err) => {
+                            files.forEach(function(file){
+                                fs.rename(file, path.dirname(file) + '/../../trash/' + (new Date().getTime())/1000  + path.extname(file), function (err) {
+                                    if(err) logger.error(err.message);
+                                    i--;
+                                    if(i <= 0){
+                                        upload_process();
+                                        return;
+                                    }
+                                });
+                            });
+                        });
+                        
+    
+                        function upload_process(){
+                            let originalname = '';
+                            var storage = multer.diskStorage({
+                                destination: function (req, file, callback) {
+                                    callback(null, __dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/review/inspection")
+                                },
+                                filename: function (req, file, callback) {
+                                    originalname = file.originalname;
+                                    callback(null, fileName + path.extname(originalname))
+                                    
+                                }
+                            })
+        
+                            var upload = multer({
+                                storage: storage
+                            }).single('file')
+        
+                            upload(req, res, function (err) {
+                                res.status(200).send({
+                                    msg: 'File is uploaded'
+                                })                                
+                            })
+                        }
+                    }); 
+                });
+                
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
+            }
+        }
+    })
+})
+
+
+privateRouter.get('/inspection/files/:teamId/:fileName', function (req, res, next) {
+    const teamId = req.params.teamId;
+    const fileName = req.params.fileName;
+    
+    if (!ObjectId.isValid(teamId)) {
+        return next()
+    }
+
+    competitiondb.team.findById(teamId)
+    .select("competition")
+    .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+            if(!err) err = {message: 'No team found'};
+            res.status(400).send({
+                msg: "Could not get team",
+                err: err.message
+            })
+        } else if (dbTeam) {
+            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.JUDGE)){                
+                glob.glob(__dirname + "/../../documents/" + dbTeam.competition._id + "/" + teamId + "/review/inspection/" + fileName + '.*', function (er, files) {
+                    let i = files.length;
+                    if(i == 1){
+                        fs.readFile(files[0], function (err, data) {
+                            res.writeHead(200, {
+                                'Content-Type': mime.getType(path)
+                            });
+                            res.end(data);
+                        });
+                    }else{
+                        // Handle file not found
+                        const path = __dirname + "/../../public/images/NoImage.png";
+                        fs.readFile(path, function (err, data) {
+                            res.writeHead(200, {
+                                'Content-Type': 'image/png'
+                            });
+                            res.end(data);
+                        });
+                        return;
+                    }
+                    
+                }); 
+                
+                
+            }else{
+                res.status(401).send({
+                    msg: "Operation not permited"
+                })
+            }
+        }
+    })
+})
+
+
 publicRouter.all('*', function (req, res, next) {
     next()
 })

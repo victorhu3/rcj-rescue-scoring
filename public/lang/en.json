@@ -836,6 +836,10 @@
         "review":{
             "reviewer": "Logged in reviewer: ",
             "comments": "Review Comments"
+        },
+        "inspection":{
+            "do": "Inspections carried out",
+            "cancel": "Inspection cancellation"
         }
     },  
     "mail": {

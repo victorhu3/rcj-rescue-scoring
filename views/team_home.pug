@@ -79,7 +79,7 @@ block content
                 i(class="fa fa-2x fa-times" aria-hidden="true" style="color:#e74c3c;" ng-if="!team.inspected")
               td
                 if judge
-                  button.btn.btn-sm.btn-warning(type='button', ng-click="go('/document/public/' + team._id)", style="margin-right:5px;")
+                  button.btn.btn-sm.btn-warning(type='button', ng-click="go('/document/inspection/' + team._id)", style="margin-right:5px;")
                     i.fas.fa-ruler-combined &nbsp;
                     | {{"common.inspection" | translate}}
                 button.btn.btn-sm.btn-info(type='button', ng-click="go('/document/public/' + team._id)", style="margin-right:5px;", ng-if="team.document.public")

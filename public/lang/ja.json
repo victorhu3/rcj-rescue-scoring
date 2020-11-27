@@ -833,6 +833,10 @@
         "review":{
             "reviewer": "ログインしているレビュアー：",
             "comments": "レビューコメント"
+        },
+        "inspection":{
+            "do": "検査実施",
+            "cancel": "検査キャンセル"
         }
     },
     "mail": {

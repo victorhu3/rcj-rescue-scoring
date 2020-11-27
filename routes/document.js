@@ -90,6 +90,33 @@ privateRouter.get('/reviewed/:teamId', function (req, res, next) {
   )
 })
 
+privateRouter.get('/inspection/:teamId', function (req, res, next) {
+  const teamId = req.params.teamId;
+  
+  if (!ObjectId.isValid(teamId)) {
+    return next()
+  }
+
+  competitiondb.team.findById(teamId)
+  .select("competition")
+  .exec(function (err, dbTeam) {
+          if (err || dbTeam == null) {
+              if(!err) err = {message: 'No team found'};
+              res.status(400).send({
+                  msg: "Could not get team",
+                  err: err.message
+              })
+          } else if (dbTeam) {
+            if(auth.authCompetition(req.user,dbTeam.competition,ACCESSLEVELS.JUDGE)){
+              res.render('inspection', {competition: dbTeam.competition, team: teamId, user: req.user})
+            }else{
+              res.render('access_denied', {user: req.user})
+            }
+          }
+      }
+  )
+})
+
 publicRouter.get('/public/:teamId', function (req, res, next) {
   const teamId = req.params.teamId;
   
