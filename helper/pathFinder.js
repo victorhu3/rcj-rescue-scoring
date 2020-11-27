@@ -63,21 +63,24 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
 
     let startDir2 = "";
     let startPaths2 = startTile2.tileType.paths;
-    Object.keys(startPaths2).forEach(function (dir, index) {
-      let entryDir2 = rotateDir(dir, startTile2.rot);
+
+    for (const [key, value] of Object.entries(startPaths2)) {
+      if(key == "$init") continue;
+      if(!value) continue;
+
+      let entryDir2 = rotateDir(key, startTile2.rot);
       let nextTile2 = tiles[nextCoord(startTile2, entryDir2)];
       if (nextTile2 !== undefined) {
         if(!evacTile(nextTile2)){
-          startDir2 = entryDir;
-          next_Coord = nextCoord(startTile2, entryDir2);
-          
+          startDir2 = entryDir2;          
         }else{
           nextTile2.evacExit = dir2num(flipDir(exitDir(startTile2, entryDir2)));
         }
       }
-    });
+    }
 
     map.EvacuationAreaLoPIndex = chpCount;
+
     traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
     return;
   }
