@@ -21,7 +21,7 @@ block location
 block content
   .row
     .col-12
-      h1 チーム一覧 - {{competition.name}}
+      h1 {{"team_home.title" | translate}} - {{competition.name}}
       .refine
         .card.border-dark.mb-3(style='width:100%;')
           .card-header.bg-transparent.border-dark.fa-2x
@@ -84,12 +84,12 @@ block content
                     | {{"common.inspection" | translate}}
                 button.btn.btn-sm.btn-info(type='button', ng-click="go('/document/public/' + team._id)", style="margin-right:5px;", ng-if="team.document.public")
                   i.fas.fa-file-alt &nbsp;
-                  | ドキュメント
+                  | {{"team_home.document" | translate}} 
                 if judge
                   button.btn.btn-sm.btn-primary(type='button', ng-click="go('/document/review/' + team._id + '?return=/home/' + team.competition + '/teams')", style="margin-right:5px;")
                     i.fas.fa-file-alt &nbsp;
-                    | レビューする
+                    | {{"team_home.review" | translate}} 
                 if view
                   button.btn.btn-sm.btn-success(type='button', ng-click="go('/document/reviewed/' + team._id + '?return=/home/' + team.competition + '/teams')", style="margin-right:5px;")
                     i.fas.fa-file-alt &nbsp;
-                    | レビュー結果確認
+                    | {{"team_home.result" | translate}} 
