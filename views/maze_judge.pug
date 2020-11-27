@@ -146,7 +146,7 @@ html(ng-app="ddApp")
                       .input-group-prepend
                         button.btn.btn-danger(type='button', ng-click='decrement()')
                           i.fas.fa-minus(aria-hidden='true')
-                      div(style='background-color: #F2F2F2; width:100px; text-align: center;')
+                      div(style='background-color: #F2F2F2; width:calc(100% - 80px); text-align: center;')
                         span.count {{LoPs}}
                       .input-group-append
                         button.btn.btn-success(type='button', ng-click='increment()')
@@ -162,7 +162,7 @@ html(ng-app="ddApp")
                       .input-group-prepend
                         button.btn.btn-danger(type='button', ng-click='decrementMis()')
                           i.fas.fa-minus(aria-hidden='true')
-                      div(style='background-color: #F2F2F2; width:100px; text-align: center;')
+                      div(style='background-color: #F2F2F2; width:calc(100% - 80px); text-align: center;')
                         span.count {{MisIdent}}
                       .input-group-append
                         button.btn.btn-success(type='button', ng-click='incrementMis()')

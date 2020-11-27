@@ -79,19 +79,20 @@ html(ng-app="ddApp")
                 i.fas.fa-step-forward(aria-hidden='true')
                 |  {{'common.lops' | translate}}
               .card-body
-                p.card-text
-                  b {{'maze.view.total_lops' | translate}}
-                  br
-                .input-group.mb-3(style='width:100%;height:40px;')
-                  .input-group-prepend
-                    button.btn.btn-danger(type='button', disabled)
-                      i.fas.fa-minus(aria-hidden='true')
-                  div(style='background-color: #F2F2F2; width:100px; text-align: center;')
-                    span.count {{LoPs}}
-                  .input-group-append
-                    button.btn.btn-success(type='button', disabled)
-                      i.fas.fa-plus(aria-hidden='true')
-                p
+                .col-md-12(style='position: relative;')
+                  p.card-text
+                    b {{'maze.view.total_lops' | translate}}
+                    br
+                  .input-group.mb-3(style='width:100%;height:40px;')
+                    .input-group-prepend
+                      button.btn.btn-danger(type='button', disabled)
+                        i.fas.fa-minus(aria-hidden='true')
+                    div(style='background-color: #F2F2F2; width:calc(100% - 80px); text-align: center;')
+                      span.count {{LoPs}}
+                    .input-group-append
+                      button.btn.btn-success(type='button', disabled)
+                        i.fas.fa-plus(aria-hidden='true')
+                  p
               h3.card-header
                 i.fa.fa-home(aria-hidden='true')
                 |  {{'common.other' | translate}}
@@ -103,7 +104,7 @@ html(ng-app="ddApp")
                     .input-group-prepend
                       button.btn.btn-danger(type='button', disabled)
                         i.fas.fa-minus(aria-hidden='true')
-                    div(style='background-color: #F2F2F2; width:100px; text-align: center;')
+                    div(style='background-color: #F2F2F2; width:calc(100% - 80px); text-align: center;')
                       span.count {{MisIdent}}
                     .input-group-append
                       button.btn.btn-success(type='button', disabled)
