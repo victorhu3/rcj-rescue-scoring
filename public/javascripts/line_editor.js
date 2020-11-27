@@ -673,7 +673,7 @@ app.directive('tile', function () {
                 let t;
                 //Top
                 t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
-                if(t && dirEv.indexOf(0)>0){
+                if(t && dirEv.indexOf(0)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 0;
@@ -681,7 +681,7 @@ app.directive('tile', function () {
                 }
                 //Left
                 t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
-                if(t && dirEv.indexOf(270)>0){
+                if(t && dirEv.indexOf(270)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 270;
@@ -689,7 +689,7 @@ app.directive('tile', function () {
                 }
                 //Right
                 t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
-                if(t && dirEv.indexOf(90)>0){
+                if(t && dirEv.indexOf(90)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 90;
@@ -697,7 +697,7 @@ app.directive('tile', function () {
                 }
                 //Bottom
                 t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
-                if(t && dirEv.indexOf(180)>0){
+                if(t && dirEv.indexOf(180)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 180;
@@ -863,7 +863,7 @@ app.directive('tile4image', function () {
                 let t;
                 //Top
                 t = scope.$parent.tiles[tile.x+","+(tile.y-1)+","+tile.z];
-                if(t && dirEv.indexOf(0)>0){
+                if(t && dirEv.indexOf(0)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 0;
@@ -871,7 +871,7 @@ app.directive('tile4image', function () {
                 }
                 //Left
                 t = scope.$parent.tiles[(tile.x-1)+","+tile.y+","+tile.z];
-                if(t && dirEv.indexOf(270)>0){
+                if(t && dirEv.indexOf(270)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 270;
@@ -879,7 +879,7 @@ app.directive('tile4image', function () {
                 }
                 //Right
                 t = scope.$parent.tiles[(tile.x+1)+","+tile.y+","+tile.z];
-                if(t && dirEv.indexOf(90)>0){
+                if(t && dirEv.indexOf(90)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 90;
@@ -887,7 +887,7 @@ app.directive('tile4image', function () {
                 }
                 //Bottom
                 t = scope.$parent.tiles[tile.x+","+(tile.y+1)+","+tile.z];
-                if(t && dirEv.indexOf(180)>0){
+                if(t && dirEv.indexOf(180)>=0){
                     if(t.tileType._id != "58cfd6549792e9313b1610e1" && t.tileType._id != "58cfd6549792e9313b1610e2" && t.tileType._id != "58cfd6549792e9313b1610e3"){
                         //Not evacuation zone
                         rot = 180;

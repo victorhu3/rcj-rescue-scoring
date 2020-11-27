@@ -57,3 +57,4 @@ public/signage/prohibited.mp4
 package-lock.json
 
 mail.env
+tmp/course/
