@@ -43,7 +43,7 @@ function getIP(req) {
 };
 
 adminRouter.get('/templates', function (req, res, next) {
-    let path = __dirname + "/../../mailTemplates/";
+    let path = __dirname + "/../../templates/mail/";
     fs.readdir(path, {withFileTypes: true}, (err, dirents) => {
         if (err) {
             console.error(err);
@@ -67,7 +67,7 @@ adminRouter.get('/templates', function (req, res, next) {
 adminRouter.get('/templates/:fileName', function (req, res, next) {
     const fileName = req.params.fileName;
     
-    let path = __dirname + "/../../mailTemplates/" + fileName;
+    let path = __dirname + "/../../templates/mail/" + fileName;
     fs.stat(path, (err, stat) => {
 
         // Handle file not found
