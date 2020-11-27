@@ -1,21 +1,24 @@
-# ロボカップジュニア RoboCup Junior
-### Rescue Scoring System
-This is a scoring system used in RoboCupJunior's rescue line & maze competition at word wide.
+# ロボカップジュニア RoboCupJunior CMS
+### Competition Management System
+#### (former Rescue Scoring System)
+This is a Competition Management System used in RoboCupJunior's rescue line & maze competitions in word wide.
 Please refer to the [English version README](https://github.com/rrrobo/rcj-rescue-scoring-japan/blob/master/README-EN.md) for details.
 
 --
 
-### レスキュー　スコアリングシステム
-これは，ロボカップジュニアレスキュー競技のスコアリングシステムです．  
-2020ルールに対応しています．2018/2019ルールに対応していたv19系との後方互換はありません．
-2019ルールで運用する際は，v19系をご利用ください．
+### 大会管理システム(CMS)
+#### (旧：レスキュー　スコアリングシステム)
+これは，ロボカップジュニアレスキュー競技で用いられる大会管理システムです．  
 
+####　対応ルール
+ワールドリーグ Line/Maze:2020
+日本リーグ：2021
 --
 
 
 [大元のプロジェクト](https://github.com/TechnoX/rcj-rescue-scoring)からフォークして開発を進めています．
-主な変更点は以下の通りです． 
- 
+主な変更点は以下の通りです．
+
 * Line競技において，ワールドリーグと日本リーグを追加
 * Line結果画面において，ワールドリーグと日本リーグの結果を横並びで表示
 * ユーザー管理機能を強化
@@ -26,6 +29,8 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 * 大会データーのバックアップ/リストアに対応
 * トラブル発生時のハンドオーバーに対応
 * 紙のスコアシートの出力に対応
+* ドキュメント提出/レビューシステムを統合
+* システムからのメール配信が可能
 
 特別な理由がない限り，本リポジトリで提供しているバージョンを使用することをお勧めします．
 
@@ -35,11 +40,12 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 [https://rcj.cloud](https://rcj.cloud)
 
 ## 更新情報
+* [2020/11/28] ドキュメント系システムを本システムに統合しました．また，システムからのチームへのメール配信も可能になりました．
 * [2020/02/10] v20系にて2020ルールに対応しました．
 * [2019/07/17] スコアシートを出力できるようになりました．
 * [2019/03/19] 大会データをバックアップを取ることができるようになりました．また，トップページのUIを大幅に変更しました．
 * [2018/10/24] v.19系にて，2019ルールに対応しました．v.19系では，2018ルールに後方互換性があります．
-  
+
 
 ## 使用実績
 **把握している限り**の，本システムを用いて運用を行った主な大会の一覧です．派生バージョンの使用も含みます．
@@ -112,6 +118,18 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 ----------------|-------------------|
 admin | adminpass   |
 
+## メールの使用設定
+システムからメールを配信するには，使用するSMTPサーバ等の情報を設定する必要があります．
+次の内容を `process.env`　に追記してください．
+設定内容は，各自の環境に合わせて変更してください．このままコピペしても動きません！
+
+MAIL_SMTP=smtp.example.com
+MAIL_PORT=587
+MAIL_USER=smtp_user
+MAIL_PASS=smtp_password
+MAIL_FROM=fromAddress@example.com
+MAIL_SENDER=RoboCupJunior Japan
+
 ## 詳しい使用方法
 [RCJ Scoring System Community Forum](https://ask.rcj.cloud)をご覧ください．  
 現時点では，原則として，本フォーラムへのアクセスを各地の大会実行委員に相当する方に限定しています．  
@@ -143,7 +161,7 @@ Maze 審判
 <hr>
 
 ### 効果音
-以下の効果音を使用しています． 
- 
+以下の効果音を使用しています．
+
 * [MusMus](http://musmus.main.jp)
 * [魔王魂](https://maoudamashii.jokersounds.com)
