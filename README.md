@@ -109,6 +109,9 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 ### ログ用ディレクトリの作成
 `mkdir logs`
 
+### ドキュメント用ディレクトリの作成
+`mkdir documents`
+
 ### 起動
 `node server`
 
@@ -125,7 +128,7 @@ admin | adminpass   |
 設定内容は，各自の環境に合わせて変更してください．このままコピペしても動きません！
 
 MAIL_SMTP=smtp.example.com  
-MAIL_PORT=587 
+MAIL_PORT=587
 MAIL_USER=smtp_user  
 MAIL_PASS=smtp_password  
 MAIL_FROM=fromAddress@example.com  
