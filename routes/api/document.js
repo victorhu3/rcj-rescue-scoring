@@ -914,6 +914,53 @@ privateRouter.get('/inspection/files/:teamId/:fileName', function (req, res, nex
 })
 
 
+// Templates
+adminRouter.get('/templates/documentForm', function (req, res, next) {
+    let dir_path = __dirname + "/../../templates/documentForm/";
+    fs.readdir(dir_path, {withFileTypes: true}, (err, dirents) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        let d = [];
+        for (const dirent of dirents) {
+            if (!dirent.isDirectory()) {
+                let tmp = {
+                    "name": path.basename(dirent.name, '.json'),
+                    "path": dirent.name
+                };
+                d.push(tmp);
+            }
+        }
+        res.send(d);
+    });
+});
+
+adminRouter.get('/templates/documentForm/:fileName', function (req, res, next) {
+    const fileName = req.params.fileName;
+    
+    let dir_path = __dirname + "/../../templates/documentForm/" + fileName;
+    fs.stat(dir_path, (err, stat) => {
+
+        // Handle file not found
+        if (err !== null && err.code === 'ENOENT') {
+            res.status(404).send({
+                msg: "File not found"
+            })
+            return;
+        }
+
+        fs.readFile(dir_path, function (err, data) {
+            res.writeHead(200, {
+                'Content-Type': mime.getType(dir_path)
+            });
+            res.end(data);
+        });
+    });
+})
+
+
 publicRouter.all('*', function (req, res, next) {
     next()
 })

@@ -74,6 +74,14 @@ block content
             input#select(type='file', name='select')
       hr
       .row
+        .col-12
+            .input-group(style="width:100%;margin-bottom:10px;")
+                .input-group-prepend
+                    span.input-group-text {{"mail.home.loadTemplate" | translate}}
+                select.custom-select(ng-model='selectedTemplate', ng-options='template.path as template.name for template in templates', ng-change="changeTemplate()")
+                    option(value="") {{"mail.home.selectTemplate" | translate}}
+      hr
+      .row
         .col-md-12
             h3 {{"document.editor.language" | translate}}
             .input-group(style="width:100%;margin: 10px auto;", ng-repeat="lang in languages")

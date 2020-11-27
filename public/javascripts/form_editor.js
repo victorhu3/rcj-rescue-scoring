@@ -256,7 +256,20 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
         $scope.notifications.splice(number,1);
         $scope.save();
     }
-    
+
+    $scope.selectedTemplate = null;
+    $http.get("/api/document/templates/documentForm").then(function (response) {
+        $scope.templates = response.data
+    })
+
+    $scope.changeTemplate = function(){
+        if(!$scope.selectedTemplate) return;
+        $http.get(`/api/document/templates/documentForm/${$scope.selectedTemplate}`).then(function (response) {
+            $scope.notifications = response.data.notifications;
+            $scope.blocks = response.data.blocks;
+            $scope.languages = response.data.languages;
+        })
+    }
     
     
     $scope.go = function (path) {
