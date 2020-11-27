@@ -228,32 +228,35 @@ adminRouter.put('/:competitionid', function (req, res, next) {
                         dbCompetition.ranking.push(tmp);
                     }
                 }
+                if(data.documents != null){
+                    if(data.documents.enable != null) dbCompetition.documents.enable = data.documents.enable;
+                    if(data.documents.deadline != null) dbCompetition.documents.deadline = data.documents.deadline;
 
-                if(data.documents.enable != null) dbCompetition.documents.enable = data.documents.enable;
-                if(data.documents.deadline != null) dbCompetition.documents.deadline = data.documents.deadline;
-
-                if(data.documents.league != null){
-                    let updated = false;
-                    for(let l of dbCompetition.documents.leagues){
-                        if(l.league == data.documents.league){
-                            if(data.documents.notifications != null) l.notifications = data.documents.notifications;
-                            if(data.documents.blocks != null) l.blocks = data.documents.blocks;
-                            if(data.documents.languages != null) l.languages = data.documents.languages;
-                            if(data.documents.review != null) l.review = data.documents.review;
-                            updated = true;
+                    if(data.documents.league != null){
+                        let updated = false;
+                        for(let l of dbCompetition.documents.leagues){
+                            if(l.league == data.documents.league){
+                                if(data.documents.notifications != null) l.notifications = data.documents.notifications;
+                                if(data.documents.blocks != null) l.blocks = data.documents.blocks;
+                                if(data.documents.languages != null) l.languages = data.documents.languages;
+                                if(data.documents.review != null) l.review = data.documents.review;
+                                updated = true;
+                            }
                         }
-                    }
-                    if(!updated){
-                        let tmp = {
-                            league: data.documents.league,
-                            notifications: data.documents.notifications || [],
-                            blocks: data.documents.blocks || [],
-                            languages: data.documents.languages || [],
-                            review: data.documents.review || []
+                        if(!updated){
+                            let tmp = {
+                                league: data.documents.league,
+                                notifications: data.documents.notifications,
+                                blocks: data.documents.blocks,
+                                languages: data.documents.languages,
+                                review: data.documents.review
+                            }
+                            dbCompetition.documents.leagues.push(tmp);
                         }
-                        dbCompetition.documents.leagues.push(tmp);
                     }
                 }
+
+                
 
 
                 dbCompetition.save(function (err) {

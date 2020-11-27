@@ -46,7 +46,7 @@ module.exports.LEAGUES_JSON = LEAGUES_JSON;
 const competitionSchema = new Schema({
   name: {type: String, unique: true},
   rule: {type: String, enum: SUPPORT_RULES},
-  logo: {type: String, default: ""},
+  logo: {type: String, default: "/images/noLogo.png"},
   bkColor: {type: String, default: "#fff"},
   color: {type: String, default: "#000"},
   message: {type: String, default: ""},
