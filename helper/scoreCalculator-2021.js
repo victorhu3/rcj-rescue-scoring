@@ -7,7 +7,6 @@ const logger = require('../config/logger').mainLogger
  * @returns {number}
  */
 module.exports.calculateLineScore = function (run) {
-  console.log(run)
   try {
     //console.log(run);
     let score = 0;
@@ -107,7 +106,7 @@ module.exports.calculateLineScore = function (run) {
     if(run.nl){
       score += 15 * run.nl.silverTape;
       score += 30 * run.nl.greenTape;
-      score -= Math.min(5 * run.nl.misidentification, score);
+      score -= 5 * run.nl.misidentification;
     }
 
     final_score = Math.round(score * multiplier);

@@ -58,8 +58,8 @@ const lineRunSchema = new Schema({
       type: {type: String},
       effective: {type: Boolean}
   }],
-  score             : {type: Number, min: 0, default: 0},
-  raw_score         : {type: Number, min: 0, default: 0},
+  score             : {type: Number, min: -1000, default: 0},
+  raw_score         : {type: Number, min: -1000, default: 0},
   multiplier        : {type: Number, min: 1.0, default: 1.0},
   showedUp          : {type: Boolean, default: false},
   time              : {
