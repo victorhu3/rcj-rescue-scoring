@@ -10,7 +10,7 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 #### (旧：レスキュー　スコアリングシステム)
 これは，ロボカップジュニアレスキュー競技で用いられる大会管理システムです．  
 
-####　対応ルール
+#### 対応ルール
 ワールドリーグ Line/Maze:2020
 日本リーグ：2021
 --
