@@ -11,8 +11,9 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 これは，ロボカップジュニアレスキュー競技で用いられる大会管理システムです．  
 
 #### 対応ルール
-ワールドリーグ Line/Maze:2020
+ワールドリーグ Line/Maze:2020  
 日本リーグ：2021
+
 --
 
 
@@ -123,12 +124,12 @@ admin | adminpass   |
 次の内容を `process.env`　に追記してください．
 設定内容は，各自の環境に合わせて変更してください．このままコピペしても動きません！
 
-MAIL_SMTP=smtp.example.com
-MAIL_PORT=587
-MAIL_USER=smtp_user
-MAIL_PASS=smtp_password
-MAIL_FROM=fromAddress@example.com
-MAIL_SENDER=RoboCupJunior Japan
+MAIL_SMTP=smtp.example.com  
+MAIL_PORT=587 
+MAIL_USER=smtp_user  
+MAIL_PASS=smtp_password  
+MAIL_FROM=fromAddress@example.com  
+MAIL_SENDER=RoboCupJunior Japan  
 
 ## 詳しい使用方法
 [RCJ Scoring System Community Forum](https://ask.rcj.cloud)をご覧ください．  
