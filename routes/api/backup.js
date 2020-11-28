@@ -24,6 +24,7 @@ const archiver = require('archiver')
 const extract = require('extract-zip')
 const rimraf = require('rimraf')
 const auth = require('../../helper/authLevels')
+const chmodr = require('chmodr')
 
 
 const LINE_LEAGUES = competitiondb.LINE_LEAGUES
@@ -405,7 +406,11 @@ adminRouter.post('/restore', function (req, res) {
 
                 //Copy Document Folder
                 fs.copySync(`${base_tmp_path}uploads/${folder}/documents/${competition[0]._id}`, `${__dirname}/../../documents/${competition[0]._id}`);
-
+                chmodr(`${__dirname}/../../documents/${competition[0]._id}`, 0o777, (err) => {
+                    if (err) {
+                      logger.error('Failed to execute chmod', err);
+                    }
+                });
 
 
 
