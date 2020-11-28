@@ -4,6 +4,13 @@ var app = angular.module('LineEditor', ['ngTouch','lvl.services', 'ngAnimate', '
 // function referenced by the drop target
 app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', '$translate', function ($scope, $uibModal, $log, $http, $translate) {
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
     $scope.competitionId = competitionId;
     $scope.se_competition = competitionId;
     $translate('admin.lineMapEditor.import').then(function (val) {
@@ -216,12 +223,20 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
     $scope.saveMapAs = function () {
         if ($scope.startNotSet()) {
-            alert("You must define a starting && re-starting (after evacuation zone) tile by right-clicking a tile");
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: "You must define a starting && re-starting (after evacuation zone) tile by right-clicking a tile"
+            })
             return;
         }
 
         if ($scope.saveasname == $scope.name && $scope.se_competition == competitionId) {
-            alert("You must have a new name when saving as!");
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: "You must have a new name when saving as!"
+            })
             return;
         }
         var victims = {};
@@ -242,13 +257,20 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         };
 
         $http.post("/api/maps/line", map).then(function (response) {
-            alert("Created map!");
+            Toast.fire({
+                type: 'success',
+                title: "Created map!"
+            })
             //console.log(response.data);
             window.location.replace("/admin/" + $scope.se_competition + "/line/editor/" + response.data.id)
         }, function (response) {
             console.log(response);
             console.log("Error: " + response.statusText);
-            alert(response.data.msg);
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: response.data.msg
+            })
         });
     }
 
@@ -269,11 +291,18 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         let imgData = canvas.toDataURL();
         console.log(imgData);
         $http.post("/api/maps/line/image/" + mapId, {img: imgData}).then(function (response) {
-          alert("Created image!");
+          Toast.fire({
+            type: 'success',
+            title: "Created image!"
+          })
         }, function (response) {
           console.log(response);
           console.log("Error: " + response.statusText);
-          alert(response.data.msg);
+          Toast.fire({
+            type: 'error',
+            title: "Error",
+            html: response.data.msg
+        })
         });
       });
     };
@@ -303,7 +332,11 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 
     $scope.saveMap = function () {
         if ($scope.startNotSet()) {
-            alert("You must define a starting tile by right-clicking a tile");
+            Toast.fire({
+                type: 'error',
+                title: "Error",
+                html: "You must define a starting && re-starting (after evacuation zone) tile by right-clicking a tile"
+            })
             return;
         }
 
@@ -344,22 +377,34 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         console.log("Competition ID", $scope.competitionId);
         if (mapId) {
             $http.put("/api/maps/line/" + mapId, map).then(function (response) {
-                alert("Updated map");
-                console.log(response.data);
+                Toast.fire({
+                    type: 'success',
+                    title: "Updated map"
+                })
             }, function (response) {
                 console.log(response);
                 console.log("Error: " + response.statusText);
-                alert(response.data.msg);
+                Toast.fire({
+                    type: 'error',
+                    title: "Error",
+                    html: response.data.msg
+                })
             });
         } else {
             $http.post("/api/maps/line", map).then(function (response) {
-                alert("Created map!");
-                console.log(response.data);
+                Toast.fire({
+                    type: 'success',
+                    title: "Created map"
+                })
                 window.location.replace("/admin/" + competitionId + "/line/editor/" + response.data.id)
             }, function (response) {
                 console.log(response);
                 console.log("Error: " + response.statusText);
-                alert(response.data.msg);
+                Toast.fire({
+                    type: 'error',
+                    title: "Error",
+                    html: response.data.msg
+                })
             });
         }
     }
@@ -403,7 +448,11 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             var reader = new FileReader();
             // ファイル読み取りに失敗したとき
             reader.onerror = function () {
-                alert('ファイル読み取りに失敗しました')
+                Toast.fire({
+                    type: 'error',
+                    title: "File Error",
+                    html: "Failed to read files"
+                })
             }
             // ファイル読み取りに成功したとき
             reader.onload = function () {
