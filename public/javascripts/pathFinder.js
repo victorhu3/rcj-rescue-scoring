@@ -41,13 +41,19 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
     }
     let startDir2 = "";
     let startPaths2 = startTile2.tileType.paths;
-    Object.keys(startPaths2).forEach(function (dir, index) {
-      let nextTile2 = tiles[nextCoord(startTile2, rotateDir(dir, startTile2.rot))];
-      if (nextTile2 !== undefined && !evacTile(nextTile2)) {
-        startDir2 = rotateDir(dir, startTile2.rot);
-        next_Coord = nextCoord(startTile2, rotateDir(dir, startTile2.rot));
+    for (const [key, value] of Object.entries(startPaths2)) {
+      if(key == "$init") continue;
+      if(!value) continue;
+
+      let entryDir2 = rotateDir(key, startTile2.rot);
+      let nextTile2 = tiles[nextCoord(startTile2, entryDir2)];
+      if (nextTile2 !== undefined) {
+        if(evacTile(nextTile2)){
+          nextTile2.evacExit = dir2num(flipDir(exitDir(startTile2, entryDir2)));
+          startDir2 = exitDir(startTile2, entryDir2);
+        }
       }
-    });
+    }
     tiles[curTile.x + ',' + curTile.y + ',' + curTile.z].next.push(next_Coord);
     map.EvacuationAreaLoPIndex = chpCount;
     return traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
@@ -139,5 +145,18 @@ function flipDir(dir) {
       return "top";
     case "left":
       return "right";
+  }
+}
+
+function dir2num(dir){
+  switch (dir) {
+    case "top":
+      return 0;
+    case "right":
+      return 90;
+    case "bottom":
+      return 180;
+    case "left":
+      return 270;
   }
 }

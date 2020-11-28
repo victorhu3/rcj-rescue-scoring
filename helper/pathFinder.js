@@ -71,10 +71,9 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
       let entryDir2 = rotateDir(key, startTile2.rot);
       let nextTile2 = tiles[nextCoord(startTile2, entryDir2)];
       if (nextTile2 !== undefined) {
-        if(!evacTile(nextTile2)){
-          startDir2 = entryDir2;          
-        }else{
+        if(evacTile(nextTile2)){
           nextTile2.evacExit = dir2num(flipDir(exitDir(startTile2, entryDir2)));
+          startDir2 = exitDir(startTile2, entryDir2);
         }
       }
     }
