@@ -18,19 +18,19 @@ const mailSchema = new Schema({
   plain: {type: String, select: false},
   status: {type: Number},
   events: {
-    type: new Schema([{
+    type: [ new Schema({
       time: {type: Number},
       event: {type: String},
       user: {type: String}
-    }]),
+    })],
     default: [],
     select: false
   },
   replacedURL: {
-    type: new Schema([{
+    type:[new Schema({
       token: {type: String},
       url: {type: String}
-    }]),
+    })],
     default: [],
     select: false
   }

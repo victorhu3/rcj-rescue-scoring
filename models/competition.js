@@ -200,14 +200,7 @@ const teamSchema = new Schema({
   country    : {type: String, default: ""},
   checkin    : {type: Boolean, default: false},
   teamCode   : {type: String, default: ""},
-  email      : {
-    type: new Schema([{
-      type: String,
-      default: ''
-    }]),
-    select: false,
-    default: []
-  },
+  email      : {type: [String], default: [], select: false},
   document   : {
     type: new Schema({
       deadline : {type: String, default: null},

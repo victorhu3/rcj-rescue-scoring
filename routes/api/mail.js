@@ -327,7 +327,7 @@ publicRouter.get('/click/:mailId/:token', function (req, res, next) {
         } else {
             if(data[0]){
                 res.redirect(data[0].replacedURL.url);
-                mailDb.mail.findById(data[0]._id).exec(function (err, data) {
+                mailDb.mail.findById(data[0]._id).select("status events").exec(function (err, data) {
                     if (err || !data) {
                         logger.error(err);
                     } else {
@@ -361,6 +361,7 @@ publicRouter.get('/open/:mailId', function (req, res, next) {
     mailDb.mail.findOne({
         mailId: mailId
     })
+    .select("status events")
     .exec(function (err, dbMail) {
         if (err) {
             logger.error(err)
