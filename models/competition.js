@@ -200,13 +200,23 @@ const teamSchema = new Schema({
   country    : {type: String, default: ""},
   checkin    : {type: Boolean, default: false},
   teamCode   : {type: String, default: ""},
-  email      : [{type: String, default: '', select: false}],
+  email      : {
+    type: new Schema([{
+      type: String,
+      default: ''
+    }]),
+    select: false,
+    default: []
+  },
   document   : {
-    deadline : {type: String, default: null, select: false},
-    enabled  : {type: Boolean, default: true, select: false},
-    public  : {type: Boolean, default: false, select: false},
-    token    : {type: String, default: '', select: false},
-    answers  : [[{type: String, default: null, select: false}]]
+    type: new Schema({
+      deadline : {type: String, default: null},
+      enabled  : {type: Boolean, default: true},
+      public  : {type: Boolean, default: false},
+      token    : {type: String, default: ''},
+      answers  : [[{type: String, default: null}]]
+    }),
+    select: false
   }
 })
 

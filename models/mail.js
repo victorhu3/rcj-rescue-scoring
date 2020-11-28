@@ -17,15 +17,23 @@ const mailSchema = new Schema({
   html: {type: String, select: false},
   plain: {type: String, select: false},
   status: {type: Number},
-  events: [{
-    time: {type: Number, select: false},
-    event: {type: String, select: false},
-    user: {type: String, select: false}
-  }],
-  replacedURL: [{
-    token: {type: String, select: false},
-    url: {type: String, select: false}
-  }]
+  events: {
+    type: new Schema([{
+      time: {type: Number},
+      event: {type: String},
+      user: {type: String}
+    }]),
+    default: [],
+    select: false
+  },
+  replacedURL: {
+    type: new Schema([{
+      token: {type: String},
+      url: {type: String}
+    }]),
+    default: [],
+    select: false
+  }
 })
 
 
