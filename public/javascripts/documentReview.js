@@ -133,7 +133,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
             $http.get("/api/document/review/" + teamId).then(function (response) {
                 $scope.reviewComments = response.data;
-                let fil = $scope.reviewComments.filter((r) => r.reviewer._id == userId);
+                let fil = $scope.reviewComments.filter((r) => r.reviewer && r.reviewer._id == userId);
                 $scope.myComments = [];
 
                 if(fil.length == 0){

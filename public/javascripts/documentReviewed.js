@@ -85,25 +85,12 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
             $http.get("/api/document/review/" + teamId).then(function (response) {
                 $scope.reviewComments = response.data;
-                console.log($scope.reviewComments)
-                let fil = $scope.reviewComments.filter((r) => r.reviewer._id == userId);
-                $scope.myComments = [];
-
-                if(fil.length == 0){
-                    for(let b of $scope.review){
-                        let ba = [];
-                        for(let q of b.questions){
-                            if(q.type == "select"){
-                                ba.push('option0');
-                            }
-                            else{
-                                ba.push('');
-                            }
-                        }
-                        $scope.myComments.push(ba);
+                for(let c of $scope.reviewComments){
+                    if(!c.reviewer){
+                        c.reviewer = {
+                            username: c.name
+                        };
                     }
-                }else{
-                    $scope.myComments = fil[0].comments;
                 }
             })
             

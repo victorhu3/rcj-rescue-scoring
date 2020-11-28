@@ -9,14 +9,17 @@ const lineMapDb = require('../../models/lineMap')
 const lineRunDb = require('../../models/lineRun')
 const mazeMapDb = require('../../models/mazeMap')
 const mazeRunDb = require('../../models/mazeRun')
+const documentDb = require('../../models/document')
+const mailDb = require('../../models/mail')
+
+
 
 const query = require('../../helper/query-helper')
 const validator = require('validator')
 const async = require('async')
 const multer = require('multer')
 const logger = require('../../config/logger').mainLogger
-const fs = require('fs')
-const FS = require('fs-extra')
+const fs = require('fs-extra')
 const archiver = require('archiver')
 const extract = require('extract-zip')
 const rimraf = require('rimraf')
@@ -35,7 +38,7 @@ adminRouter.get('/:competition', function (req, res) {
 
     const id = req.params.competition
     const folder = Math.random().toString(32).substring(2)
-    FS.mkdirsSync(base_tmp_path +folder);
+    fs.mkdirsSync(base_tmp_path +folder);
 
     if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
         return res.status(401).send({
@@ -43,10 +46,13 @@ adminRouter.get('/:competition', function (req, res) {
         })
     }
 
-    fs.writeFileSync(base_tmp_path +folder+"/version.json", JSON.stringify({'version': 19}));
+    fs.writeFileSync(base_tmp_path +folder+"/version.json", JSON.stringify({'version': 21}));
 
     let outputCount = 0;
     var compName = "";
+
+    //Copy Document Folder
+    fs.copySync(`${__dirname}/../../documents/${id}`, `${base_tmp_path}${folder}/documents/${id}`);
 
     //Competition
     competitiondb.competition.find({
@@ -62,129 +68,171 @@ adminRouter.get('/:competition', function (req, res) {
             compName = data[0].name
             fs.writeFileSync(base_tmp_path +folder+"/competition.json", JSON.stringify(data));
             outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
-
-    //Team
-    competitiondb.team.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get a competition",
-                err: err.message
+            
+            //Team
+            competitiondb.team.find({
+                'competition': id
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/team.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
-
-    //Round
-    competitiondb.round.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get rounds",
-                err: err.message
+            .select("competition name league inspected docPublic country checkin teamCode email document")
+            .lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get a competition",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/team.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/round.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
 
-    //Field
-    competitiondb.field.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get fields",
-                err: err.message
+            //Round
+            competitiondb.round.find({
+                'competition': id
+            }).lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get rounds",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/round.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/field.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
 
-    //LineMap
-    lineMapDb.lineMap.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get fields",
-                err: err.message
+            //Field
+            competitiondb.field.find({
+                'competition': id
+            }).lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/field.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/lineMap.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
 
-    //MazeMap
-    mazeMapDb.mazeMap.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get fields",
-                err: err.message
+            //LineMap
+            lineMapDb.lineMap.find({
+                'competition': id
+            }).lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/lineMap.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/mazeMap.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
 
-    //LineRuns
-    lineRunDb.lineRun.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get fields",
-                err: err.message
+            //MazeMap
+            mazeMapDb.mazeMap.find({
+                'competition': id
+            }).lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/mazeMap.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/lineRun.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
-        }
-    })
 
-    //LineRuns
-    mazeRunDb.mazeRun.find({
-        'competition': id
-    }).lean().exec(function (err, data) {
-        if (err) {
-            logger.error(err)
-            res.status(400).send({
-                msg: "Could not get fields",
-                err: err.message
+            //LineRuns
+            lineRunDb.lineRun.find({
+                'competition': id
+            }).lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/lineRun.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
             })
-        } else {
-            fs.writeFileSync(base_tmp_path +folder+"/mazeRun.json", JSON.stringify(data));
-            outputCount++;
-            if(outputCount == 8) makeZip(res,folder,compName)
+
+            //MazeRuns
+            mazeRunDb.mazeRun.find({
+                'competition': id
+            }).lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/mazeRun.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
+            })
+
+            //Reviews
+            documentDb.review.find({
+                'competition': id
+            })
+            .populate("reviewer","username")
+            .lean().exec(function (err, data) { 
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    for(let r of data){
+                        r.name = r.reviewer.username,
+                        r.reviewer = r.reviewer._id
+                    }
+                    fs.writeFileSync(base_tmp_path +folder+"/document.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
+            })
+
+            //Mails
+            mailDb.mail.find({
+                'competition': id
+            })
+            .select("competition team mailId messageId time to subject html plain status events replacedURL")
+            .lean().exec(function (err, data) {
+                if (err) {
+                    logger.error(err)
+                    res.status(400).send({
+                        msg: "Could not get fields",
+                        err: err.message
+                    })
+                } else {
+                    fs.writeFileSync(base_tmp_path +folder+"/mail.json", JSON.stringify(data));
+                    outputCount++;
+                    if(outputCount == 10) makeZip(res,folder,compName)
+                }
+            })
         }
     })
-
 
 })
 
@@ -214,18 +262,9 @@ function makeZip(res,folder,compName){
 }
 
 
-function decodeImage(source){
-    if(source && source.data){
-        return new Buffer(source.data,'base64');
-    }
-    return null
-}
-
-
-
 adminRouter.post('/restore', function (req, res) {
     const folder = Math.random().toString(32).substring(2)
-    FS.mkdirsSync(base_tmp_path + 'uploads/');
+    fs.mkdirsSync(base_tmp_path + 'uploads/');
 
     var filePath = base_tmp_path + "uploads/" + folder + ".zip"
 
@@ -243,146 +282,144 @@ adminRouter.post('/restore', function (req, res) {
     }).single('rcjs')
 
     upload(req, res, function (err) {
-        extract(filePath, {dir: base_tmp_path + "/uploads/" + folder}, function (err) {
-
-            var updated = 0
-            //Competition
-            var competition = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/competition.json" , 'utf8'));
-            competitiondb.competition.updateOne({'_id': competition[0]._id},competition[0],{upsert: true},function (err) {
-                if (err) {
-                    logger.error(err)
-
-                } else {
+        extract(filePath, {dir: base_tmp_path + "uploads/" + folder}, function (err) {
+            try{
+                var version = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/version.json" , 'utf8'));
+                if(version.version != 21){
+                    rimraf(base_tmp_path + "uploads/" + folder, function (err) {
+                    });
+                    fs.unlink(filePath, function (err) {
+                    });
+                    res.status(500).send({msg: "Version not match"})
+                    return;
                 }
-            })
-
-            //Team
-            var team = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/team.json" , 'utf8'));
-            for(let i in team){
-                competitiondb.team.updateOne({'_id': team[i]._id},team[i],{upsert: true},function (err) {
+                var updated = 0
+                //Competition
+                var competition = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/competition.json" , 'utf8'));
+                competitiondb.competition.updateOne({'_id': competition[0]._id},competition[0],{upsert: true},function (err) {
                     if (err) {
                         logger.error(err)
+
                     } else {
                     }
                 })
-            }
 
-            //Round
-            var round = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/round.json" , 'utf8'));
-            for(let i in round){
-                competitiondb.round.updateOne({'_id': round[i]._id},round[i],{upsert: true},function (err) {
-                    if (err) {
-                        logger.error(err)
-                    } else {
-                    }
-                })
-            }
-
-            //Field
-            var field = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/field.json" , 'utf8'));
-            for(let i in field){
-                competitiondb.field.updateOne({'_id': field[i]._id},field[i],{upsert: true},function (err) {
-                    if (err) {
-                        logger.error(err)
-                    } else {
-                    }
-                })
-            }
-
-            //LineMap
-            var lineMap = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/lineMap.json" , 'utf8'));
-            for(let i in lineMap){
-                lineMapDb.lineMap.updateOne({'_id': lineMap[i]._id},lineMap[i],{upsert: true},function (err) {
-                    if (err) {
-                        logger.error(err)
-                    } else {
-                    }
-                })
-            }
-
-            //LineRun
-            var lineRun = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/lineRun.json" , 'utf8'));
-            for(let i in lineRun) {
-                //Decode images
-                if (lineRun[i].scoreSheet) {
-                    for (let j in lineRun[i].scoreSheet.LoPImages) {
-                        if (lineRun[i].scoreSheet.LoPImages[j])
-                            lineRun[i].scoreSheet.LoPImages[j].data = decodeImage(lineRun[i].scoreSheet.LoPImages[j]);
-                    }
-                    if (lineRun[i].scoreSheet.tileDataImage)
-                        lineRun[i].scoreSheet.tileDataImage.data = decodeImage(lineRun[i].scoreSheet.tileDataImage);
-                    if (lineRun[i].scoreSheet.evacuationLevelImage)
-                        lineRun[i].scoreSheet.evacuationLevelImage.data = decodeImage(lineRun[i].scoreSheet.evacuationLevelImage);
-                    if (lineRun[i].scoreSheet.evacuationBonusImage)
-                        lineRun[i].scoreSheet.evacuationBonusImage.data = decodeImage(lineRun[i].scoreSheet.evacuationBonusImage);
-                    if (lineRun[i].scoreSheet.rescuedVictimsImage)
-                        lineRun[i].scoreSheet.rescuedVictimsImage.data = decodeImage(lineRun[i].scoreSheet.rescuedVictimsImage);
-                    if (lineRun[i].scoreSheet.timeImage)
-                        lineRun[i].scoreSheet.timeImage.data = decodeImage(lineRun[i].scoreSheet.timeImage);
-                    if (lineRun[i].scoreSheet.commentFieldImage)
-                        lineRun[i].scoreSheet.commentFieldImage.data = decodeImage(lineRun[i].scoreSheet.commentFieldImage);
-                    if (lineRun[i].scoreSheet.acceptResultImage)
-                        lineRun[i].scoreSheet.acceptResultImage.data = decodeImage(lineRun[i].scoreSheet.acceptResultImage);
-                    if (lineRun[i].scoreSheet.fullSheet)
-                        lineRun[i].scoreSheet.fullSheet.data = decodeImage(lineRun[i].scoreSheet.fullSheet);
+                //Team
+                var team = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/team.json" , 'utf8'));
+                for(let i in team){
+                    competitiondb.team.updateOne({'_id': team[i]._id},team[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
                 }
 
-                lineRunDb.lineRun.updateOne({'_id': lineRun[i]._id},lineRun[i],{upsert: true},function (err) {
-                    if (err) {
-                        logger.error(err)
-                    } else {
-                    }
-                })
-            }
-
-            //MazeMap
-            var mazeMap = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/mazeMap.json" , 'utf8'));
-            for(let i in mazeMap){
-                mazeMapDb.mazeMap.updateOne({'_id': mazeMap[i]._id},mazeMap[i],{upsert: true},function (err) {
-                    if (err) {
-                        logger.error(err)
-                    } else {
-                    }
-                })
-            }
-
-            //MazeRun
-            var mazeRun = JSON.parse(fs.readFileSync( base_tmp_path + "/uploads/" + folder + "/mazeRun.json" , 'utf8'));
-            for(let i in mazeRun){
-                //Decode images
-                if(mazeRun[i].scoreSheet) {
-                    if (mazeRun[i].scoreSheet.LoPImage)
-                        mazeRun[i].scoreSheet.LoPImage.data = decodeImage(mazeRun[i].scoreSheet.LoPImage);
-                    if (mazeRun[i].scoreSheet.misidentificationImage)
-                    mazeRun[i].scoreSheet.misidentificationImage.data = decodeImage(mazeRun[i].scoreSheet.misidentificationImage);
-                    if (mazeRun[i].scoreSheet.tileDataImage)
-                        mazeRun[i].scoreSheet.tileDataImage.data = decodeImage(mazeRun[i].scoreSheet.tileDataImage);
-                    if (mazeRun[i].scoreSheet.exitBonusImage)
-                        mazeRun[i].scoreSheet.exitBonusImage.data = decodeImage(mazeRun[i].scoreSheet.exitBonusImage);
-                    if (mazeRun[i].scoreSheet.timeImage)
-                        mazeRun[i].scoreSheet.timeImage.data = decodeImage(mazeRun[i].scoreSheet.timeImage);
-                    if (mazeRun[i].scoreSheet.commentFieldImage)
-                        mazeRun[i].scoreSheet.commentFieldImage.data = decodeImage(mazeRun[i].scoreSheet.commentFieldImage);
-                    if (mazeRun[i].scoreSheet.acceptResultImage)
-                        mazeRun[i].scoreSheet.acceptResultImage.data = decodeImage(mazeRun[i].scoreSheet.acceptResultImage);
-                    if (mazeRun[i].scoreSheet.fullSheet)
-                        mazeRun[i].scoreSheet.fullSheet.data = decodeImage(mazeRun[i].scoreSheet.fullSheet);
+                //Round
+                var round = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/round.json" , 'utf8'));
+                for(let i in round){
+                    competitiondb.round.updateOne({'_id': round[i]._id},round[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
                 }
-                mazeRunDb.mazeRun.updateOne({'_id': mazeRun[i]._id},mazeRun[i],{upsert: true},function (err) {
-                    if (err) {
-                        logger.error(err)
-                    } else {
-                    }
-                })
+
+                //Field
+                var field = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/field.json" , 'utf8'));
+                for(let i in field){
+                    competitiondb.field.updateOne({'_id': field[i]._id},field[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //LineMap
+                var lineMap = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/lineMap.json" , 'utf8'));
+                for(let i in lineMap){
+                    lineMapDb.lineMap.updateOne({'_id': lineMap[i]._id},lineMap[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //LineRun
+                var lineRun = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/lineRun.json" , 'utf8'));
+                for(let i in lineRun) {
+                    lineRunDb.lineRun.updateOne({'_id': lineRun[i]._id},lineRun[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //MazeMap
+                var mazeMap = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/mazeMap.json" , 'utf8'));
+                for(let i in mazeMap){
+                    mazeMapDb.mazeMap.updateOne({'_id': mazeMap[i]._id},mazeMap[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //MazeRun
+                var mazeRun = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/mazeRun.json" , 'utf8'));
+                for(let i in mazeRun){
+                    mazeRunDb.mazeRun.updateOne({'_id': mazeRun[i]._id},mazeRun[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //Document
+                var document = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/document.json" , 'utf8'));
+                for(let i in document){
+                    documentDb.review.updateOne({'_id': document[i]._id},document[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //MailDb
+                var mail = JSON.parse(fs.readFileSync( base_tmp_path + "uploads/" + folder + "/mail.json" , 'utf8'));
+                for(let i in mail){
+                    mailDb.mail.updateOne({'_id': mail[i]._id},mail[i],{upsert: true},function (err) {
+                        if (err) {
+                            logger.error(err)
+                        } else {
+                        }
+                    })
+                }
+
+                //Copy Document Folder
+                fs.copySync(`${base_tmp_path}uploads/${folder}/documents/${competition[0]._id}`, `${__dirname}/../../documents/${competition[0]._id}`);
+
+
+
+
+                rimraf(base_tmp_path + "uploads/" + folder, function (err) {
+                });
+                fs.unlink(filePath, function (err) {
+                });
+
+                res.redirect('/admin/'+competition[0]._id)
+            }catch(e){
+                logger.error(e);
+                res.status(500).send({msg: "Illegal file"})
             }
-
-            rimraf(base_tmp_path + "/uploads/" + folder, function (err) {
-            });
-            fs.unlink(filePath, function (err) {
-            });
-
-            res.redirect('/admin/'+competition[0]._id)
-
+            
         })
 
 

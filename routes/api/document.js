@@ -519,6 +519,7 @@ privateRouter.put('/review/:teamId', function (req, res, next) {
                     }else{
                         let newReview = new documentDb.review({
                             team: teamId,
+                            competition: dbTeam.competition,
                             reviewer: req.user._id,
                             comments: comments
                         });
