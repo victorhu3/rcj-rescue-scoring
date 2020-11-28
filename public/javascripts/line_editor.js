@@ -289,14 +289,12 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
         scale: 5
       }).then(function(canvas) {
         let imgData = canvas.toDataURL();
-        console.log(imgData);
         $http.post("/api/maps/line/image/" + mapId, {img: imgData}).then(function (response) {
           Toast.fire({
             type: 'success',
             title: "Created image!"
           })
         }, function (response) {
-          console.log(response);
           console.log("Error: " + response.statusText);
           Toast.fire({
             type: 'error',
