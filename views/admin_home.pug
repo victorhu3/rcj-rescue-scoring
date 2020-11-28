@@ -68,8 +68,12 @@ block content
           hr
 
           if user.superDuperAdmin
-            button(ng-click="go('/admin/short')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.shortURL.title" | translate}}
-            button(ng-click="go('/admin/user')" class='btn btn-outline-warning btn-lg btn-block') {{"admin.home.user" | translate}}
+            button(ng-click="go('/admin/short')" class='btn btn-outline-dark btn-lg btn-block')
+              i.fas.fa-link &nbsp;
+              | {{"admin.shortURL.title" | translate}}
+            button(ng-click="go('/admin/user')" class='btn btn-outline-warning btn-lg btn-block')
+              i.fas.fa-users &nbsp;
+              | {{"admin.home.user" | translate}}
           else
             button(ng-click="go('/login')" class='btn btn-outline-dark btn-lg btn-block' disabled) {{"admin.shortURL.title" | translate}}
             button(ng-click="go('/login')" class='btn btn-outline-warning btn-lg btn-block' disabled) {{"admin.home.user" | translate}}
