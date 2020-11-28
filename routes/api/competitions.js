@@ -321,7 +321,9 @@ adminRouter.put('/:competition/teams/documents', function (req, res, next) {
         })
     }
 
-    competitiondb.team.findById(team._id).exec(function (err, dbTeam) {
+    competitiondb.team.findById(team._id)
+    .select("document.deadline document.enabled document.public")
+    .exec(function (err, dbTeam) {
         if (err) {
             logger.error(err)
             res.status(400).send({
@@ -330,8 +332,8 @@ adminRouter.put('/:competition/teams/documents', function (req, res, next) {
             })
         } else {
             if(team.document.deadline != null) dbTeam.document.deadline = team.document.deadline;
-            dbTeam.document.enabled = team.document.enabled;
-            dbTeam.document.public = team.document.public;
+            if(team.document.enabled != null) dbTeam.document.enabled = team.document.enabled;
+            if(team.document.public != null) dbTeam.document.public = team.document.public;
             dbTeam.save(function (err) {
                 if (err) {
                     logger.error(err)
@@ -424,9 +426,6 @@ publicRouter.get('/:competition/teams/:teamid', function (req, res, next) {
                 err: err.message
             })
         } else {
-            delete data.document;
-            delete data.email;
-            delete data.review;
             res.status(200).send(data)
         }
     })
