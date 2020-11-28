@@ -141,4 +141,16 @@ app.controller('TeamAdminController', ['$scope', '$uibModal', '$log', '$http', '
         }
         
     }
+
+    $scope.deadlineColour = function(deadline){
+        if(!deadline) return '';
+        let today = new Date();
+        let tomorrow = new Date();
+
+        tomorrow.setDate(today.getDate() + 1);
+
+        if(deadline > tomorrow) return '#bcffbc';
+        if(deadline > today) return '#ffffc6';
+        return '#ffcccc';
+    }
 }]);

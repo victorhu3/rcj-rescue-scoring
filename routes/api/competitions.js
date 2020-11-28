@@ -331,7 +331,7 @@ adminRouter.put('/:competition/teams/documents', function (req, res, next) {
                 err: err.message
             })
         } else {
-            if(team.document.deadline != null) dbTeam.document.deadline = team.document.deadline;
+            if(team.document.deadline != null || team.document.deadline === null) dbTeam.document.deadline = team.document.deadline;
             if(team.document.enabled != null) dbTeam.document.enabled = team.document.enabled;
             if(team.document.public != null) dbTeam.document.public = team.document.public;
             dbTeam.save(function (err) {

@@ -76,13 +76,13 @@ block content
               td(ng-bind='team.country')
               td(ng-bind='team.league')
               td
-                select.custom-select(ng-model='team.document.enabled', ng-change="save(team)")
+                select.custom-select(ng-model='team.document.enabled', ng-change="save(team)", ng-style="{backgroundColor: team.document.enabled ? '#bcffbc':'#ffcccc'}")
                   option(ng-value='true') {{'common.enable' | translate}}
                   option(ng-value='false') {{'common.disable' | translate}}
               td
-                input.form-control(type='datetime-local', ng-model='team.document.deadline',style="", ng-blur="save(team)")
+                input.form-control(type='datetime-local', ng-model='team.document.deadline',style="", ng-blur="save(team)", ng-style="{backgroundColor: deadlineColour(team.document.deadline)}")
               td
-                select.custom-select(ng-model='team.document.public', ng-change="save(team)")
+                select.custom-select(ng-model='team.document.public', ng-change="save(team)", ng-style="{backgroundColor: team.document.public ? '#bcffbc':'#ffcccc'}")
                   option(ng-value='true') {{'common.enable' | translate}}
                   option(ng-value='false') {{'common.disable' | translate}}
               td

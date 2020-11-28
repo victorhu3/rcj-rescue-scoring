@@ -52,5 +52,16 @@ app.controller("DocumentsAdminController", ['$scope', '$http', '$translate', fun
         });
     }
 
+    $scope.deadlineColour = function(deadline){
+        let today = new Date();
+        let tomorrow = new Date();
+
+        tomorrow.setDate(today.getDate() + 1);
+
+        if(deadline > tomorrow) return '#bcffbc';
+        if(deadline > today) return '#ffffc6';
+        return '#ffcccc';
+    }
+
     
 }])
