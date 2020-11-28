@@ -95,7 +95,8 @@ function competitionLevel(user,competitionId){
         return ACCESSLEVELS.SUPERADMIN;
     }
     if (user.competitions != undefined) {
-      return user.competitions.find((c) => c.id.toString() == competitionId).accessLevel;
+      let cp = user.competitions.find((c) => c.id.toString() == competitionId)
+      if(cp) return cp.accessLevel;
     }
     return ACCESSLEVELS.NONE;  
 }
