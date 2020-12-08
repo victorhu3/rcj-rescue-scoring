@@ -8,15 +8,15 @@ var app = angular.module("RunAdmin", ['ngTouch','pascalprecht.translate', 'ngCoo
   })
   
   $http.get("/api/competitions/" + competitionId +
-            "/Maze/teams").then(function (response) {
+            "/maze/teams").then(function (response) {
     $scope.teams = response.data
   })
   $http.get("/api/competitions/" + competitionId +
-            "/Maze/rounds").then(function (response) {
+            "/maze/rounds").then(function (response) {
     $scope.rounds = response.data
   })
   $http.get("/api/competitions/" + competitionId +
-            "/Maze/fields").then(function (response) {
+            "/maze/fields").then(function (response) {
     $scope.fields = response.data
   })
   $http.get("/api/competitions/" + competitionId +
