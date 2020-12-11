@@ -1392,33 +1392,6 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $timeou
   $scope.next = [];
   for (var i = 0, d; d = mtile.next[i]; i++) {
     var sp = d.split(",");
-    if(sp[0] == startTile2.x && sp[1] == startTile2.y && sp[2] == startTile2.z){
-      let t = mtiles[(mtile.x-1)+','+(mtile.y)+','+mtile.z];
-      if(t && t.evacEntrance>=0){
-          sp[0] = t.x;
-          sp[1] = t.y;
-          sp[2] = t.z;
-      }
-      t = mtiles[(mtile.x+1)+','+(mtile.y)+','+mtile.z];
-      if(t && t.evacEntrance>=0){
-          sp[0] = t.x;
-          sp[1] = t.y;
-          sp[2] = t.z;
-      }
-      t = mtiles[(mtile.x)+','+(mtile.y-1)+','+mtile.z];
-      if(t && t.evacEntrance>=0){
-          sp[0] = t.x;
-          sp[1] = t.y;
-          sp[2] = t.z;
-      }
-      t = mtiles[(mtile.x)+','+(mtile.y+1)+','+mtile.z];
-      if(t && t.evacEntrance>=0){
-          sp[0] = t.x;
-          sp[1] = t.y;
-          sp[2] = t.z;
-      }
-
-  }
 
     if (mtile.x == Number(sp[0]) && mtile.y - 1 == Number(sp[1])) {
       //console.log("TOP");
