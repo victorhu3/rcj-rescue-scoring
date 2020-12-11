@@ -46,11 +46,12 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
       if(!value) continue;
 
       let entryDir2 = rotateDir(key, startTile2.rot);
-      let nextTile2 = tiles[nextCoord(startTile2, entryDir2)];
-      if (nextTile2 !== undefined) {
-        if(evacTile(nextTile2)){
-          nextTile2.evacExit = dir2num(flipDir(exitDir(startTile2, entryDir2)));
-          startDir2 = exitDir(startTile2, entryDir2);
+      let fromTile = tiles[fromCoord(startTile2, entryDir2)];
+      if (fromTile !== undefined) {
+        if(evacTile(fromTile)){
+          fromTile.evacExit = dir2num(flipDir(entryDir2));
+          startDir2 = entryDir2;
+          break;
         }
       }
     }
@@ -95,6 +96,26 @@ function nextCoord(curTile, entryDir) {
     coord += ',' + curTile.z;
   }
   
+  return coord;
+}
+
+function fromCoord(curTile, fromDir) {
+  let coord;
+  switch (fromDir) {
+    case "top":
+      coord = curTile.x + ',' + (curTile.y - 1);
+      break;
+    case "right":
+      coord = (curTile.x + 1) + ',' + curTile.y;
+      break;
+    case "bottom":
+      coord = curTile.x + ',' + (curTile.y + 1);
+      break;
+    case "left":
+      coord = (curTile.x - 1) + ',' + curTile.y;
+      break;
+  }
+  coord += ',' + curTile.z;
   return coord;
 }
 
