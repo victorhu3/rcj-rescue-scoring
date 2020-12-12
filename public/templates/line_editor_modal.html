@@ -37,8 +37,8 @@
     <div ng-hide="tile.items.speedbumps>0 || tile.items.obstacles || tile.items.rampPoints || tile.tileType.gaps|| tile.tileType.intersections || tile.tileType.seesaw">
         <input type="checkbox" ng-model="tile.checkPoint" id="isCheckpoint"><label class="checkbox" for="isCheckpoint"> {{"admin.lineMapEditor.setCheckpoint" | translate}}</label>
     </div>
-    <input type="checkbox" ng-model="start" ng-disabled="start" id="isStartCheck"><label class="checkbox" for="isStartCheck"> {{"admin.lineMapEditor.start" | translate}}</label>
-    <input type="checkbox" ng-model="start2" ng-disabled="start2" id="isStartCheck2"><label class="checkbox" for="isStartCheck2"> {{"admin.lineMapEditor.start2" | translate}}</label>
+    <input type="checkbox" ng-model="tile.start" id="isStartCheck"><label class="checkbox" for="isStartCheck"> {{"admin.lineMapEditor.start" | translate}}</label>
+    <input type="checkbox" ng-model="tile.start2" id="isStartCheck2"><label class="checkbox" for="isStartCheck2"> {{"admin.lineMapEditor.start2" | translate}}</label>
     
     
 

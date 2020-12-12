@@ -12,14 +12,14 @@ function pathFinder (map) {
     }
   });
 
-  return traverse(startTile, startDir, tiles, map, 0, 0);
+  return traverse(startTile, startDir, tiles, map, 0, 0, false);
 };
 
 function evacTile(tile){
   return tile.tileType._id == "58cfd6549792e9313b1610e1" || tile.tileType._id == "58cfd6549792e9313b1610e2" || tile.tileType._id == "58cfd6549792e9313b1610e3";
 }
 
-function traverse(curTile, entryDir, tiles, map, index, chpCount) {
+function traverse(curTile, entryDir, tiles, map, index, chpCount, restartFlag) {
   if(curTile.checkPoint) chpCount++;
   let next_Coord = nextCoord(curTile, entryDir);
   tiles[curTile.x + ',' + curTile.y + ',' + curTile.z].index.push(index);
@@ -33,7 +33,7 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
   
   if (nextTile === undefined || evacTile(nextTile)) {
     let startTile2 = tiles[map.startTile2.x + ',' + map.startTile2.y + ',' + map.startTile2.z];
-    if(startTile2 === undefined || startTile2.index.length > 0){
+    if(startTile2 === undefined || restartFlag){
       map.EvacuationAreaLoPIndex = chpCount;
       map.indexCount = index + 1;
       map.tiles = tiles;
@@ -55,14 +55,15 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
         }
       }
     }
+    restartFlag = true;
     tiles[curTile.x + ',' + curTile.y + ',' + curTile.z].next.push(next_Coord);
     map.EvacuationAreaLoPIndex = chpCount;
-    return traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
+    return traverse(startTile2, startDir2, tiles, map, index + 1, chpCount, restartFlag);
 
   }
   tiles[curTile.x + ',' + curTile.y + ',' + curTile.z].next.push(next_Coord);
 
-  return traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1, chpCount);
+  return traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1, chpCount, restartFlag);
 }
 
 function exitDir(curTile, entryDir) {

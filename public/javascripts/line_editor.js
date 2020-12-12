@@ -506,30 +506,32 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
             size: 'sm',
             resolve: {
                 tile: function () {
-                    return $scope.tiles[x + ',' + y + ',' + $scope.z];
-                },
-                start: function () {
-                    return $scope.startTile.x == x && $scope.startTile.y == y &&
-                        $scope.startTile.z == $scope.z;
-                },
-                start2: function () {
-                    return $scope.startTile2.x == x && $scope.startTile2.y == y &&
-                      $scope.startTile2.z == $scope.z;
+                    let t = $scope.tiles[x + ',' + y + ',' + $scope.z];
+                    t.start = $scope.startTile.x == x && $scope.startTile.y == y && $scope.startTile.z == $scope.z;
+                    t.start2 = $scope.startTile2.x == x && $scope.startTile2.y == y && $scope.startTile2.z == $scope.z;
+                    return t;
                 }
             }
         });
 
         modalInstance.result.then(function (response) {
-            console.log(response);
             if (response[0]) {
                 $scope.startTile.x = x;
                 $scope.startTile.y = y;
                 $scope.startTile.z = $scope.z;
+            }else if($scope.startTile.x == x && $scope.startTile.y == y && $scope.startTile.z == $scope.z){
+                $scope.startTile.x = -1;
+                $scope.startTile.y = -1;
+                $scope.startTile.z = -1;
             }
             if (response[1]) {
                 $scope.startTile2.x = x;
                 $scope.startTile2.y = y;
                 $scope.startTile2.z = $scope.z;
+            }else if($scope.startTile2.x == x && $scope.startTile2.y == y && $scope.startTile2.z == $scope.z){
+                $scope.startTile2.x = -1;
+                $scope.startTile2.y = -1;
+                $scope.startTile2.z = -1;
             }
             $scope.updateTileIndex();
         }, function () {
@@ -543,12 +545,10 @@ app.controller('LineEditorController', ['$scope', '$uibModal', '$log', '$http', 
 // Please note that $uibModalInstance represents a modal window (instance) dependency.
 // It is not the same as the $uibModal service used above.
 
-app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, tile, start, start2) {
+app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, tile) {
     $scope.tile = tile;
-    $scope.start = start;
-    $scope.start2 = start2;
     $scope.ok = function () {
-        $uibModalInstance.close([$scope.start, $scope.start2]);
+        $uibModalInstance.close([$scope.tile.start, $scope.tile.start2]);
     };
 
     $scope.cancel = function () {

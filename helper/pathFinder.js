@@ -21,7 +21,7 @@ module.exports.findPath = function (map) {
       }
     });
 
-    traverse(startTile, startDir, tiles, map, 0, 0);
+    traverse(startTile, startDir, tiles, map, 0, 0, false);
   }
 };
 
@@ -37,7 +37,7 @@ function evacTile(tile){
  * @param map
  * @param index {Number}
  */
-function traverse(curTile, entryDir, tiles, map, index, chpCount) {
+function traverse(curTile, entryDir, tiles, map, index, chpCount, restartFlag) {
   if(curTile.checkPoint) chpCount++;
   let next_Coord = nextCoord(curTile, entryDir);
   curTile.index.push(index);
@@ -54,7 +54,7 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
     }
     let startTile2 = tiles[map.startTile2.x + ',' + map.startTile2.y + ',' +
     map.startTile2.z];
-    if(!startTile2 || startTile2.index.length > 0){
+    if(!startTile2 || restartFlag){
       map.EvacuationAreaLoPIndex = chpCount;
       map.indexCount = index + 1;
       return;
@@ -78,16 +78,16 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount) {
         }
       }
     }
-
+    restartFlag = true;
     map.EvacuationAreaLoPIndex = chpCount;
 
-    traverse(startTile2, startDir2, tiles, map, index + 1, chpCount);
+    traverse(startTile2, startDir2, tiles, map, index + 1, chpCount, restartFlag);
     return;
   }
   curTile.next.push(next_Coord);
 
 
-  traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1, chpCount);
+  traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1, chpCount, restartFlag);
 }
 
 function exitDir(curTile, entryDir) {
