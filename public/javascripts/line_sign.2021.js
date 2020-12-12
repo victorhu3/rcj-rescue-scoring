@@ -399,7 +399,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         playSound(sClick);
         $scope.z = z;
         $timeout($scope.tile_size, 100);
-
+        $timeout($scope.tile_size, 2000);
     }
 
     $scope.tileRot = function (r){
