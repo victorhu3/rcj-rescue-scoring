@@ -1027,107 +1027,35 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, mtile, 
         rot += sRotate;
         return rot%360;
     }
+    function dir2num(dir){
+        switch (dir) {
+            case "top":
+            return 0;
+            case "right":
+            return 90;
+            case "bottom":
+            return 180;
+            case "left":
+            return 270;
+        }
+    }
     $scope.next = [];
-    for (var i = 0, d; d = mtile.next[i]; i++) {
-        var sp = d.split(",");
-
-        if(sp[0] == startTile2.x && sp[1] == startTile2.y && sp[2] == startTile2.z){
-            let t = mtiles[(mtile.x-1)+','+(mtile.y)+','+mtile.z];
-            if(t.evacEntrance>=0){
-                sp[0] = t.x;
-                sp[1] = t.y;
-                sp[2] = t.z;
-            }
-            t = mtiles[(mtile.x+1)+','+(mtile.y)+','+mtile.z];
-            if(t.evacEntrance>=0){
-                sp[0] = t.x;
-                sp[1] = t.y;
-                sp[2] = t.z;
-            }
-            t = mtiles[(mtile.x)+','+(mtile.y-1)+','+mtile.z];
-            if(t.evacEntrance>=0){
-                sp[0] = t.x;
-                sp[1] = t.y;
-                sp[2] = t.z;
-            }
-            t = mtiles[(mtile.x)+','+(mtile.y+1)+','+mtile.z];
-            if(t.evacEntrance>=0){
-                sp[0] = t.x;
-                sp[1] = t.y;
-                sp[2] = t.z;
-            }
-
+    for(let i in mtile.next_dir){
+        let nd = (dir2num(mtile.next_dir[i]) + sRotate) % 360;
+        switch (nd) {
+          case 0:
+            $scope.next.top = mtile.index[i];
+            break;
+          case 90:
+            $scope.next.right = mtile.index[i];
+            break;
+          case 180:
+            $scope.next.bottom = mtile.index[i];
+            break;
+          case 270:
+            $scope.next.left = mtile.index[i];
+            break;
         }
-        if ((mtile.x == Number(sp[0]) && mtile.y - 1 == Number(sp[1]))) {
-            //console.log("TOP");
-            switch(sRotate){
-                case 0:
-                    $scope.next.top = mtile.index[i];
-                    break;
-                case 90:
-                    $scope.next.right = mtile.index[i];
-                    break;
-                case 180:
-                    $scope.next.bottom = mtile.index[i];
-                    break;
-                case 270:
-                    $scope.next.left = mtile.index[i];
-                    break;
-            }
-
-        }
-        else if (mtile.x + 1 == Number(sp[0]) && mtile.y == Number(sp[1])) {
-            //console.log("RIGHT");
-            switch(sRotate){
-                case 0:
-                    $scope.next.right = mtile.index[i];
-                    break;
-                case 90:
-                    $scope.next.bottom = mtile.index[i];
-                    break;
-                case 180:
-                    $scope.next.left = mtile.index[i];
-                    break;
-                case 270:
-                    $scope.next.top = mtile.index[i];
-                    break;
-            }
-        }
-        else if (mtile.x == Number(sp[0]) && mtile.y + 1 == Number(sp[1])) {
-            //console.log("BOTTOM");
-            switch(sRotate){
-                case 0:
-                    $scope.next.bottom = mtile.index[i];
-                    break;
-                case 90:
-                    $scope.next.left = mtile.index[i];
-                    break;
-                case 180:
-                    $scope.next.top = mtile.index[i];
-                    break;
-                case 270:
-                    $scope.next.right = mtile.index[i];
-                    break;
-            }
-        }
-        else if (mtile.x - 1 == Number(sp[0]) && mtile.y == Number(sp[1])) {
-            //console.log("LEFT");
-            switch(sRotate){
-                case 0:
-                    $scope.next.left = mtile.index[i];
-                    break;
-                case 90:
-                    $scope.next.top = mtile.index[i];
-                    break;
-                case 180:
-                    $scope.next.right = mtile.index[i];
-                    break;
-                case 270:
-                    $scope.next.bottom = mtile.index[i];
-                    break;
-            }
-        }
-
     }
 
     $scope.dirStatus = function (tile) {
