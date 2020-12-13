@@ -75,6 +75,7 @@ const lineMapSchema = new Schema({
     },
     index    : {type: [Number], min: 0},
     next     : {type: [String]},
+    next_dir : {type: [String]},
     levelUp  : {type: String, enum: ["top", "right", "bottom", "left"]},
     levelDown: {type: String, enum: ["top", "right", "bottom", "left"]},
     checkPoint: {

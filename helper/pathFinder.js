@@ -7,6 +7,7 @@ module.exports.findPath = function (map) {
       let tile = map.tiles[i];
       tile.index = [];
       tile.next = [];
+      tile.next_dir = [];
       tiles[tile.x + ',' + tile.y + ',' + tile.z] = tile;
     }
 
@@ -60,6 +61,7 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount, restartFlag) {
       return;
     }
     curTile.next.push(map.startTile2.x + ',' + map.startTile2.y + ',' + map.startTile2.z);
+    curTile.next_dir.push(exitDir(curTile, entryDir));
 
     let startDir2 = "";
     let startPaths2 = startTile2.tileType.paths;
@@ -74,6 +76,7 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount, restartFlag) {
         if(evacTile(fromTile)){
           fromTile.evacExit = dir2num(flipDir(entryDir2));
           startDir2 = entryDir2;
+          
           break;
         }
       }
@@ -85,6 +88,7 @@ function traverse(curTile, entryDir, tiles, map, index, chpCount, restartFlag) {
     return;
   }
   curTile.next.push(next_Coord);
+  curTile.next_dir.push(exitDir(curTile, entryDir));
 
 
   traverse(nextTile, flipDir(exitDir(curTile, entryDir)), tiles, map, index + 1, chpCount, restartFlag);
