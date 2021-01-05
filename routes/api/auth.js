@@ -1,17 +1,18 @@
-//========================================================================
+//= =======================================================================
 //                          Libraries
-//========================================================================
+//= =======================================================================
 
-var express = require('express')
-var router = express.Router()
-var validator = require('validator')
-var userdb = require('../../models/user')
-var passport = require('passport')
-var logger = require('../../config/logger').mainLogger;
+const express = require('express');
 
-//========================================================================
+const router = express.Router();
+const validator = require('validator');
+const passport = require('passport');
+const userdb = require('../../models/user');
+const logger = require('../../config/logger').mainLogger;
+
+//= =======================================================================
 //                          auth(mixed) Api endpoints
-//========================================================================
+//= =======================================================================
 
 /**
  * @api {post} /auth/login Request login
@@ -29,34 +30,32 @@ var logger = require('../../config/logger').mainLogger;
  * @apiSuccess (400) {String}   msg Bottled message
  */
 router.post('/login', function (req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
-  
+  const { username } = req.body;
+  const { password } = req.body;
+
   if (!validator.isAscii(password) || !validator.isAscii(username)) {
-    return res.status(400).send({msg: "Invalid characters"})
+    return res.status(400).send({ msg: 'Invalid characters' });
   }
 
-  else {
-    passport.authenticate('local', function (err, user, info) {
+  passport.authenticate('local', function (err, user, info) {
+    if (err) {
+      // return next(err);
+      logger.error(err);
+      return res.status(400).send({ msg: err });
+    }
+    if (!user) {
+      return res.status(400).send({ msg: 'Login failed' });
+    }
+    req.logIn(user, function (err) {
       if (err) {
-        //return next(err);
-        logger.error(err)
-        return res.status(400).send({msg: err})
+        logger.error(err);
+        return res.status(400).send({ msg: err });
       }
-      if (!user) {
-        return res.status(400).send({msg: "Login failed"})
-      }
-      req.logIn(user, function (err) {
-        if (err) {
-          logger.error(err)
-          return res.status(400).send({msg: err})
-        }
-        res.locals.user = username
-        return res.send({msg: "Login successful"})
-      });
-    })(req, res);
-  }
-})
+      res.locals.user = username;
+      return res.send({ msg: 'Login successful' });
+    });
+  })(req, res);
+});
 
 /**
  * @api {get} /auth/logout Request logout
@@ -69,7 +68,7 @@ router.post('/login', function (req, res) {
  */
 router.get('/logout', function (req, res) {
   req.logout();
-  res.send({msg: "Logout successful", status: true});
+  res.send({ msg: 'Logout successful', status: true });
 });
 
 module.exports = router;

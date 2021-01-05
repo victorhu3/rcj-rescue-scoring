@@ -1,98 +1,98 @@
-//========================================================================
+//= =======================================================================
 //                          Libraries
-//========================================================================
+//= =======================================================================
 
-var express = require('express')
-var publicRouter = express.Router()
-var privateRouter = express.Router()
-var adminRouter = express.Router()
-var competitiondb = require('../../models/competition')
-var query = require('../../helper/query-helper')
-var validator = require('validator')
-var async = require('async')
-var ObjectId = require('mongoose').Types.ObjectId
-var logger = require('../../config/logger').mainLogger
-var fs = require('fs')
-//========================================================================
+const express = require('express');
+
+const publicRouter = express.Router();
+const privateRouter = express.Router();
+const adminRouter = express.Router();
+const query = require('../../helper/query-helper');
+const validator = require('validator');
+const async = require('async');
+const { ObjectId } = require('mongoose').Types;
+const logger = require('../../config/logger').mainLogger;
+const fs = require('fs');
+const competitiondb = require('../../models/competition');
+//= =======================================================================
 //                          /maps Api endpoints
-//========================================================================
-
+//= =======================================================================
 
 publicRouter.get('/', function (req, res) {
-  query.doFindResultSortQuery(req, res, null, null, competitiondb.field)
-})
+  query.doFindResultSortQuery(req, res, null, null, competitiondb.field);
+});
 
 publicRouter.get('/:fieldid', function (req, res, next) {
-  var id = req.params.fieldid
-  
+  const id = req.params.fieldid;
+
   if (!ObjectId.isValid(id)) {
-    return next()
+    return next();
   }
-  
-  query.doIdQuery(req, res, id, "", competitiondb.field)
-})
+
+  query.doIdQuery(req, res, id, '', competitiondb.field);
+});
 
 publicRouter.get('/:fieldid/runs', function (req, res, next) {
-  var id = req.params.fieldid
-  
+  const id = req.params.fieldid;
+
   if (!ObjectId.isValid(id)) {
-    return next()
+    return next();
   }
-  
-  competitiondb.run.find({field: id}, function (err, data) {
+
+  competitiondb.run.find({ field: id }, function (err, data) {
     if (err) {
-      logger.error(err)
-      res.status(400).send({msg: "Could not get runs", err: err.message})
+      logger.error(err);
+      res.status(400).send({ msg: 'Could not get runs', err: err.message });
     } else {
-      res.status(200).send(data)
+      res.status(200).send(data);
     }
-  })
-})
+  });
+});
 
 adminRouter.delete('/:fieldid', function (req, res, next) {
-  var id = req.params.fieldid
-  
+  const id = req.params.fieldid;
+
   if (!ObjectId.isValid(id)) {
-    return next()
+    return next();
   }
-  
-  competitiondb.field.deleteOne({_id: id}, function (err) {
+
+  competitiondb.field.deleteOne({ _id: id }, function (err) {
     if (err) {
-      logger.error(err)
-      res.status(400).send({msg: "Could not remove field", err: err.message})
+      logger.error(err);
+      res.status(400).send({ msg: 'Could not remove field', err: err.message });
     } else {
-      res.status(200).send({msg: "Field has been removed!"})
+      res.status(200).send({ msg: 'Field has been removed!' });
     }
-  })
-})
+  });
+});
 
 adminRouter.post('/', function (req, res) {
-  var field = req.body
-  
-  var newField = new competitiondb.field({
-    name       : field.name,
+  const field = req.body;
+
+  const newField = new competitiondb.field({
+    name: field.name,
     competition: field.competition,
-    league     : field.league
-  })
-  
+    league: field.league,
+  });
+
   newField.save(function (err, data) {
     if (err) {
-      logger.error(err)
-      res.status(400).send({msg: "Error saving field", err: err.message})
+      logger.error(err);
+      res.status(400).send({ msg: 'Error saving field', err: err.message });
     } else {
-      res.location("/api/fields/" + data._id)
-      res.status(201).send({msg: "New field has been saved", id: data._id})
+      res.location(`/api/fields/${data._id}`);
+      res.status(201).send({ msg: 'New field has been saved', id: data._id });
     }
-  })
-})
+  });
+});
 
 publicRouter.all('*', function (req, res, next) {
-  next()
-})
+  next();
+});
 privateRouter.all('*', function (req, res, next) {
-  next()
-})
+  next();
+});
 
-module.exports.public = publicRouter
-module.exports.private = privateRouter
-module.exports.admin = adminRouter
+module.exports.public = publicRouter;
+module.exports.private = privateRouter;
+module.exports.admin = adminRouter;

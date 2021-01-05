@@ -7,19 +7,18 @@
  * @module helper/crypto
  */
 
-var crypto = require('crypto');
+const crypto = require('crypto');
 
-var cryptoSettings = {
-  method      : 'sha512',
+const cryptoSettings = {
+  method: 'sha512',
   maxStrLength: 100,
-  maxLength   : 128,
-  saltLength  : 16
-}
+  maxLength: 128,
+  saltLength: 16,
+};
 
-var saltIt = function (salt, data) {
+const saltIt = function (salt, data) {
   return salt + data + salt;
-}
-
+};
 
 /**
  * @callback generateHashWithSaltCb
@@ -36,20 +35,23 @@ var saltIt = function (salt, data) {
  * @param {String} stringToHash The string to be hashed
  * @param {parseValuesCb} cb The callback function
  */
-var generateHashWithSalt = function (stringToHash, cb) {
+const generateHashWithSalt = function (stringToHash, cb) {
   if (stringToHash == null) return;
   if (stringToHash.length > cryptoSettings.maxStrLength) {
-    return cb({
-      err: "The string you are trying to hash is too large"
-    }, null, null);
-  } else {
-    
-    var salt = crypto.randomBytes(cryptoSettings.saltLength);
-    generateHash(saltIt(salt, stringToHash), function (hashedString) {
-      cb(null, hashedString, salt);
-    })
+    return cb(
+      {
+        err: 'The string you are trying to hash is too large',
+      },
+      null,
+      null
+    );
   }
-}
+
+  const salt = crypto.randomBytes(cryptoSettings.saltLength);
+  generateHash(saltIt(salt, stringToHash), function (hashedString) {
+    cb(null, hashedString, salt);
+  });
+};
 
 /**
  * @callback generateHashCb
@@ -62,10 +64,10 @@ var generateHashWithSalt = function (stringToHash, cb) {
  * @param {generateHashCb} cb The callback function
  */
 var generateHash = function (stringToHash, cb) {
-  var hashMethod = crypto.createHash(cryptoSettings.method);
-  var hash = hashMethod.update(stringToHash);
+  const hashMethod = crypto.createHash(cryptoSettings.method);
+  const hash = hashMethod.update(stringToHash);
   return cb(hash.digest('hex'));
-}
+};
 
 /**
  * @callback compareHashCb
@@ -80,14 +82,14 @@ var generateHash = function (stringToHash, cb) {
  * @param {String} salt The salt used for the hashedString
  * @param {compareHashCb} cb The callback function
  */
-var compareHash = function (hashedString, compareValue, salt, cb) {
+const compareHash = function (hashedString, compareValue, salt, cb) {
   generateHash(saltIt(salt, compareValue), function (res) {
     if (res === hashedString) {
       return cb(true);
     }
     return cb(false);
-  })
-}
+  });
+};
 
 /**
  * @callback generateUniqueToken
@@ -99,12 +101,12 @@ var compareHash = function (hashedString, compareValue, salt, cb) {
  * @alias module:helper/crypto.generateUniqueToken
  * @param {generateUniqueToken} cb The callback function
  */
-var generateUniqueToken = function (cb) {
-  var date = Date.now();
+const generateUniqueToken = function (cb) {
+  const date = Date.now();
   generateHashWithSalt(date.toString(), function (err, hashedString, salt) {
     return cb(hashedString);
-  })
-}
+  });
+};
 
 module.exports.generateHashWithSalt = generateHashWithSalt;
 module.exports.generateUniqueToken = generateUniqueToken;
