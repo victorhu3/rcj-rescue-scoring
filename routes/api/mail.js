@@ -20,6 +20,8 @@ const auth = require('../../helper/authLevels');
 const logger = require('../../config/logger').mainLogger;
 const query = require('../../helper/query-helper');
 const mailDb = require('../../models/mail');
+const sanitizeFilename = require('sanitize-filename');
+const {escapeRegExp} = require('lodash');
 
 const S = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const N = 32;
@@ -70,7 +72,7 @@ adminRouter.get('/templates', function (req, res, next) {
 adminRouter.get('/templates/:fileName', function (req, res, next) {
   const { fileName } = req.params;
 
-  const path = `${__dirname}/../../templates/mail/${fileName}`;
+  const path = `${__dirname}/../../templates/mail/${sanitizeFilename(fileName)}`;
   fs.stat(path, (err, stat) => {
     // Handle file not found
     if (err !== null && err.code === 'ENOENT') {
@@ -141,11 +143,11 @@ adminRouter.post('/send', function (req, res, next) {
           .join('');
 
         html = html.replace(
-          new RegExp(match[0], 'g'),
+          new RegExp(escapeRegExp(match[0]), 'g'),
           `href="${req.headers.origin}/api/mail/click/${mailId}/${token}"`
         );
         html4text = html4text.replace(
-          new RegExp(match[2], 'g'),
+          new RegExp(escapeRegExp(match[2]), 'g'),
           `${req.headers.origin}/api/mail/click/${mailId}/${token}`
         );
 

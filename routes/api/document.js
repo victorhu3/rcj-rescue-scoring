@@ -34,6 +34,8 @@ let read = require('fs-readdir-recursive');
 const logger = require('../../config/logger').mainLogger;
 const query = require('../../helper/query-helper');
 const documentDb = require('../../models/document');
+const escape = require('escape-html');
+const sanitize = require("sanitize-filename");
 
 read = gracefulFs.gracefulify(read);
 
@@ -244,7 +246,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
 
           if (deadline >= timestamp || userAuth) {
             glob.glob(
-              `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/${fileName}.*`,
+              `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/${sanitize(fileName)}.*`,
               function (er, files) {
                 let i = files.length;
                 if (i == 0) {
@@ -298,7 +300,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                     const ft = mime.getType(originalname);
 
                     if (ft.includes('video')) {
-                      const filepath = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/${fileName}`;
+                      const filepath = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/${sanitize(fileName)}`;
                       fs.unlink(`${filepath}-thumbnail.png`, function (err) {
                         try {
                           const original = ffmpeg(
@@ -309,7 +311,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                             .screenshots({
                               count: 1,
                               folder: `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}`,
-                              filename: `${fileName}-thumbnail.png`,
+                              filename: `${sanitize(fileName)}-thumbnail.png`,
                               size: '640x?',
                             })
                             .on('error', function (err) {
@@ -332,7 +334,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                       req,
                       dbTeam.competition._id,
                       dbTeam._id,
-                      `File uploaded! File name: ${fileName}`
+                      `File uploaded! File name: ${sanitize(fileName)}`
                     );
                   });
                 }
@@ -346,7 +348,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
               req,
               dbTeam.competition._id,
               dbTeam._id,
-              `They have attempted to upload a file, but it has expired the deadline. File name: ${fileName}`
+              `They have attempted to upload a file, but it has expired the deadline. File name: ${sanitize(fileName)}`
             );
           }
         } else {
@@ -357,7 +359,7 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
             req,
             dbTeam.competition._id,
             dbTeam._id,
-            `They have attempted to upload a file, but this operation is not allowed. File name: ${fileName}`
+            `They have attempted to upload a file, but this operation is not allowed. File name: ${sanitize(fileName)}`
           );
         }
       }
@@ -405,7 +407,7 @@ publicRouter.get('/files/:teamId/:token', function (req, res, next) {
             const d = [];
             for (const dirent of dirents) {
               if (!dirent.isDirectory()) {
-                d.push(dirent.name);
+                d.push(escape(dirent.name));
               }
             }
             res.send(d);
@@ -451,7 +453,7 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
             ACCESSLEVELS.VIEW
           )
         ) {
-          const path = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/${fileName}`;
+          const path = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/${sanitize(fileName)}`;
           fs.stat(path, (err, stat) => {
             // Handle file not found
             if (err !== null && err.code === 'ENOENT') {
@@ -693,7 +695,7 @@ privateRouter.post(
               `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}`,
               (err) => {
                 glob.glob(
-                  `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}/${fileName}.*`,
+                  `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}/${sanitize(fileName)}.*`,
                   function (er, files) {
                     let i = files.length;
                     if (i == 0) {
@@ -747,7 +749,7 @@ privateRouter.post(
                         const ft = mime.getType(originalname);
 
                         if (ft.includes('video')) {
-                          const filepath = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}/${fileName}`;
+                          const filepath = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}/${sanitize(fileName)}`;
                           fs.unlink(
                             `${filepath}-thumbnail.png`,
                             function (err) {
@@ -760,7 +762,7 @@ privateRouter.post(
                                   .screenshots({
                                     count: 1,
                                     folder: `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}`,
-                                    filename: `${fileName}-thumbnail.png`,
+                                    filename: `${sanitize(fileName)}-thumbnail.png`,
                                     size: '640x?',
                                   })
                                   .on('error', function (err) {
@@ -786,7 +788,7 @@ privateRouter.post(
                           req,
                           dbTeam.competition._id,
                           dbTeam._id,
-                          `Reviewer: ${req.user.username}  File uploaded! File name: ${fileName}`
+                          `Reviewer: ${req.user.username}  File uploaded! File name: ${sanitize(fileName)}`
                         );
                       });
                     }
@@ -870,7 +872,7 @@ privateRouter.get(
               ACCESSLEVELS.VIEW
             )
           ) {
-            const path = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${userName}/${fileName}`;
+            const path = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${userName}/${sanitize(fileName)}`;
             fs.stat(path, (err, stat) => {
               // Handle file not found
               if (err !== null && err.code === 'ENOENT') {
@@ -972,7 +974,7 @@ privateRouter.post(
               `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/inspection`,
               (err) => {
                 glob.glob(
-                  `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/inspection/${fileName}.*`,
+                  `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/inspection/${sanitize(fileName)}.*`,
                   function (er, files) {
                     let i = files.length;
                     if (i == 0) {
@@ -1068,7 +1070,7 @@ privateRouter.get(
             )
           ) {
             glob.glob(
-              `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/inspection/${fileName}.*`,
+              `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/inspection/${sanitize(fileName)}.*`,
               function (er, files) {
                 const i = files.length;
                 if (i == 1) {
@@ -1113,8 +1115,8 @@ adminRouter.get('/templates/documentForm', function (req, res, next) {
     for (const dirent of dirents) {
       if (!dirent.isDirectory()) {
         const tmp = {
-          name: path.basename(dirent.name, '.json'),
-          path: dirent.name,
+          name: escape(path.basename(dirent.name, '.json')),
+          path: escape(dirent.name),
         };
         d.push(tmp);
       }
@@ -1126,7 +1128,7 @@ adminRouter.get('/templates/documentForm', function (req, res, next) {
 adminRouter.get('/templates/documentForm/:fileName', function (req, res, next) {
   const { fileName } = req.params;
 
-  const dir_path = `${__dirname}/../../templates/documentForm/${fileName}`;
+  const dir_path = `${__dirname}/../../templates/documentForm/${sanitize(fileName)}`;
   fs.stat(dir_path, (err, stat) => {
     // Handle file not found
     if (err !== null && err.code === 'ENOENT') {
