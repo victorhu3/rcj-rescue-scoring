@@ -1,7 +1,7 @@
 FROM ryorobo/rcj-scoring-base:latest
 
-COPY . /opt/rcj-scoring-system/
-WORKDIR /opt/rcj-scoring-system
+COPY . /opt/rcj-cms/
+WORKDIR /opt/rcj-cms
 
 RUN npm run build
 
