@@ -1,3 +1,4 @@
+//hellooooo
 // register the directive with your app module
 var app = angular.module('SimEditor', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
 
@@ -731,11 +732,10 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         for(let x=1,l=$scope.length*2+1;x<l;x+=2){
             let row = [];
             for(let z=1,m=$scope.width*2+1;z<m;z+=2){
-                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false]);
+                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false, 0]);
             }
             walls.push(row);
         }
-
         for(let y=1,l=$scope.length*2+1;y<l;y+=2){
             for(let x=1,m=$scope.width*2+1;x<m;x+=2){
 
@@ -748,6 +748,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 
                 let humanType = 0; // 1 - harmed, 2 - unharmed, 3 - stable, 4 - thermal
                 let humanPlace = 0;
+                let curveDir = 0; // 1 - NE, 2 - SE, 3 - SW, 4 - NW
 
                 if(thisCell.tile && thisCell.tile.victims){
                     if(thisCell.tile.victims.top){
@@ -841,9 +842,18 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                         }
                     }
                 }
-
+                if (thisCell.tile && thisCell.tile.curve) {
+                    if (thisCell.tile.curve.top && thisCell.tile.curve.right)
+                        curveDir = 1;
+                    else if (thisCell.tile.curve.bottom && thisCell.tile.curve.right)
+                        curveDir = 2;
+                    else if (thisCell.tile.curve.bottom && thisCell.tile.curve.left)
+                        curveDir = 3;
+                    else if (thisCell.tile.curve.top && thisCell.tile.curve.left)
+                        curveDir = 4;
+                }
                 if(thisCell.tile){
-                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle)]
+                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir]
                 }
 
             }
@@ -879,8 +889,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         TexturedBackgroundLight {
         }
         `;
-
-        const protoTilePart = ({name, x, z, fl, tw, rw, bw, lw, tlc, blc, brc, trc, tex, rex, bex, lex, notch, notchR, start, trap, checkpoint, swamp, width, height, id, xScale, yScale, zScale}) => `
+        const protoTilePart = ({name, x, z, fl, tw, rw, bw, lw, tlc, blc, brc, trc, tex, rex, bex, lex, notch, notchR, start, trap, checkpoint, swamp, width, height, id, xScale, yScale, zScale, curve}) => `
         DEF ${name} worldTile {
             xPos ${x}
             zPos ${z}
@@ -909,6 +918,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             xScale ${xScale}
             yScale ${yScale}
             zScale ${zScale}
+            curveDir ${curve}
           }
         `;
 
@@ -1031,7 +1041,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 if(notchData[0]) notch = "left"
                 if(notchData[1]) notch = "right"
                 //Create a new tile with all the data
-                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2]});
+                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], curve: walls[z][x][10]});
                 tile = tile.replace(/true/g, "TRUE")
                 tile = tile.replace(/false/g, "FALSE")
                 allTiles = allTiles + tile

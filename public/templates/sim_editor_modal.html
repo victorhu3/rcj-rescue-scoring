@@ -18,7 +18,7 @@
   </ul>
 
   <input type="checkbox" ng-model="isStart" ng-disabled="isStart" ng-change="startChanged()" id="isStart"><label class="checkbox" for="isStart">{{"admin.simMapEditor.start" | translate}}</label>
-
+  
   <h5>{{"admin.simMapEditor.placement" | translate}}</h5>
   <h5>{{"admin.simMapEditor.oneVictim" | translate}}</h5>
   <table>
@@ -29,6 +29,7 @@
       <th width="12%">H</th>
       <th width="12%">S</th>
       <th width="12%">U</th>
+      <th width="12%">Curved Wall</th>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.top" | translate}}</th>
@@ -37,6 +38,7 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <td><input type="checkbox" ng-model="cell.tile.curve.top" id="curveTop"><label class="checkbox" for="curveTop"></label></td>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.bottom" | translate}}</th>
@@ -45,6 +47,7 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <td><input type="checkbox" ng-model="cell.tile.curve.bottom" id="curveBottom"><label class="checkbox" for="curveBottom"></label></td>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.left" | translate}}</th>
@@ -53,6 +56,7 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <td><input type="checkbox" ng-model="cell.tile.curve.left" id="curveLeft"><label class="checkbox" for="curveLeft"></label></td>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.right" | translate}}</th>
@@ -61,6 +65,7 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <td><input type="checkbox" ng-model="cell.tile.curve.right" id="curveRight"><label class="checkbox" for="curveRight"></label></td>
     </tr>
   </table>
   

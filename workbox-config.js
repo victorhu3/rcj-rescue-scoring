@@ -9,7 +9,7 @@ module.exports = {
     "images/**/*"
   ],
     "swDest": "public/sw.js",
-    importWorkboxFrom: 'local',
+    //importWorkboxFrom: 'local',
     skipWaiting: true,
     // Define runtime caching rules.
     runtimeCaching: [
@@ -18,7 +18,7 @@ module.exports = {
             urlPattern: /\.(?:js|css|scss|woff2)$/,
 
             // Apply a cache-first strategy.
-            handler: 'cacheFirst',
+            handler: 'CacheFirst',
     },
   ],
 };
