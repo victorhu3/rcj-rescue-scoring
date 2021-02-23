@@ -86,6 +86,10 @@ block content
                                     img.tile-image(ng-src='/images/u_bottom.png', ng-show="cells[c+','+r+','+z].tile.victims.bottom == 'U'")
                                     img.tile-image(ng-src='/images/u_left.png', ng-show="cells[c+','+r+','+z].tile.victims.left == 'U'")
                                     img.tile-image(ng-src='/images/obstacleM.png', ng-show="cells[c+','+r+','+z].tile.obstacle")
+                                    img.tile-image(ng-src='/images/curved_NE.png', ng-show="cells[c+','+r+','+z].tile.curve.top && cells[c+','+r+','+z].tile.curve.right")
+                                    img.tile-image(ng-src='/images/curved_SE.png', ng-show="cells[c+','+r+','+z].tile.curve.bottom && cells[c+','+r+','+z].tile.curve.right")
+                                    img.tile-image(ng-src='/images/curved_SW.png', ng-show="cells[c+','+r+','+z].tile.curve.bottom && cells[c+','+r+','+z].tile.curve.left")
+                                    img.tile-image(ng-src='/images/curved_NW.png', ng-show="cells[c+','+r+','+z].tile.curve.top && cells[c+','+r+','+z].tile.curve.left")
         hr
         //.row
             .col-6
