@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
+const crypto = require('crypto')
 
 const logger = require('../config/logger').mainLogger
 const env = require('node-env-file')
@@ -118,6 +119,30 @@ const competitionSchema = new Schema({
         }]
       }]
     }]
+  },
+  application: {
+    type: [new Schema({
+      'league': {type: String, enum: LEAGUES},
+      'enable': {type: Boolean,  default: false},
+      'deadline': {type: Number, default: 0},
+      'passCode': {type: String, default: function(){
+        return crypto.randomBytes(8).toString('base64').substring(0, 8);
+      }},
+      'ageAsOf': {type: Number, default: 0},
+      'minAge': {type: Number, default: 0},
+      'maxAge': {type: Number, default: 100},
+      'notifications':[{
+        'color' : {type: String, default: '273c75'},
+        'bkColor' : {type: String, default: 'ccffff'},
+        'i18n':[{
+          'language' : {type: String, default: ''},
+          'title' : {type: String, default: ''},
+          'description' : {type: String, default: ''}
+        }]
+      }]
+    })],
+    default: [],
+    select: false
   }
 })
 
@@ -201,6 +226,14 @@ const teamSchema = new Schema({
   checkin    : {type: Boolean, default: false},
   teamCode   : {type: String, default: ""},
   email      : {type: [String], default: [], select: false},
+  members    : {
+    type: new Schema([{
+      name : {type: String, default: ''},
+      birthDay: {type: Number, default: 0},
+      agreement: {type: Boolean, default: false}
+    }]),
+    select: false
+  },
   document   : {
     type: new Schema({
       deadline : {type: String, default: null},

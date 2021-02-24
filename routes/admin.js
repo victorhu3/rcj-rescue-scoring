@@ -233,6 +233,31 @@ router.get('/:competitionid/documents/:lid/preview', function (req, res, next) {
   else res.render('access_denied', { user: req.user });
 });
 
+router.get('/:competitionid/application', function (req, res, next) {
+  const id = req.params.competitionid;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
+    res.render('application_admin', { id, user: req.user });
+  else res.render('access_denied', { user: req.user });
+});
+
+router.get('/:competitionid/application/:league', function (req, res, next) {
+  const id = req.params.competitionid;
+  const league = req.params.league;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
+    res.render('application_admin_league', { id, league, user: req.user });
+  else res.render('access_denied', { user: req.user });
+});
+
 router.get('/handover', function (req, res, next) {
   res.render('runs_handover', { user: req.user });
 });
