@@ -11,6 +11,7 @@ const validator = require('validator');
 const async = require('async');
 const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const competitiondb = require('../../models/competition');
 const lineMapDb = require('../../models/lineMap');
 const lineRunDb = require('../../models/lineRun');
@@ -360,6 +361,88 @@ adminRouter.put('/:competition/teams/documents', function (req, res, next) {
         if (team.document.public != null)
           dbTeam.document.public = team.document.public;
         dbTeam.save(function (err) {
+          if (err) {
+            logger.error(err);
+            return res.status(400).send({
+              err: err.message,
+              msg: 'Could not save changes',
+            });
+          }
+          return res.status(200).send({
+            msg: 'Saved changes',
+          });
+        });
+      }
+    });
+});
+
+adminRouter.get('/:competition/application', function (req, res, next) {
+  const id = req.params.competition;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
+    return res.status(401).send({
+      msg: 'You have no authority to access this api',
+    });
+  }
+
+  competitiondb.competition
+    .findById(id)
+    .select(
+      'name application'
+    )
+    .lean()
+    .exec(function (err, data) {
+      if (err) {
+        logger.error(err);
+        res.status(400).send({
+          msg: 'Could not get teams',
+          err: err.message,
+        });
+      } else {
+        res.status(200).send(data);
+      }
+    });
+});
+
+adminRouter.put('/:competition/application', function (req, res, next) {
+  const id = req.params.competition;
+  const application = req.body;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (!auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN)) {
+    return res.status(401).send({
+      msg: 'You have no authority to access this api',
+    });
+  }
+
+  competitiondb.competition
+    .findById(id)
+    .select('application')
+    .exec(function (err, dbCompetition) {
+      if (err) {
+        logger.error(err);
+        res.status(400).send({
+          msg: 'Could not get teams',
+          err: err.message,
+        });
+      } else {
+        for(let ap of application){
+          let ind = dbCompetition.application.findIndex((a) => a.league === ap.league);
+          if(ind == -1){
+            dbCompetition.application.push(ap);
+          }else{
+            dbCompetition.application[ind] = ap;
+          }
+        }
+        
+        dbCompetition.save(function (err) {
           if (err) {
             logger.error(err);
             return res.status(400).send({
@@ -800,6 +883,11 @@ adminRouter.post('/', function (req, res) {
       const userid = req.user._id;
       const competitionid = data._id;
       const aLevel = ACCESSLEVELS.ADMIN;
+
+      const path = `${__dirname}/../../documents/${competitionid}`;
+      mkdirp(path, function (err) {
+        if (err) logger.error(err);
+      });
 
       userdb.user.findById(userid).exec(function (err, dbUser) {
         if (err) {

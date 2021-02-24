@@ -86,10 +86,12 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
     })
 
     $http.get("/api/competitions/" + competitionId + "/documents/" + leagueId).then(function (response) {
-        $scope.blocks = response.data.blocks;
-        $scope.notifications = response.data.notifications;
-        $scope.languages = response.data.languages;
-        console.log($scope.languages);
+        if(response.data.blocks) $scope.blocks = response.data.blocks;
+        else $scope.blocks = []
+        if(response.data.notifications) $scope.notifications = response.data.notifications;
+        else $scope.notifications = []
+        if(response.data.languages) $scope.languages = response.data.languages;
+        else $scope.languages = []
         if($scope.languages == null || $scope.languages.length != availableLangs.length){
             $scope.languages = [];
             for(let l of availableLangs){
