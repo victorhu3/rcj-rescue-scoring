@@ -94,6 +94,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
     $scope.updateTime = new Date().getTime()/1000;
 
     $scope.videoRefresh = false;
+    $scope.rangeS =  (start, end) => [...Array((end - start) + 1)].map((_, i) => start + i);
 
     $scope.comments = "";
 

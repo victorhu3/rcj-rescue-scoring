@@ -119,6 +119,9 @@ block content
                                     div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
                                 div(ng-if="question.type=='select'")
                                     select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                                div(ng-if="question.type=='scale'")
+                                    .btn-group
+                                        button.btn.btn-outline-primary(type='button', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
                                 div(ng-if="question.type=='picture'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                         .col-12
@@ -150,6 +153,8 @@ block content
                                 hr(ng-if="!$last")
             #COMMENTS(style="padding:5px 15px 0 0;margin-right: -15px;")
                 div(style="margin: 0 5px;")
+                    div(ng-if="scaleFlag", style="margin: 10px 0")
+                        i.fas.fa-calculator.fa-2x(aria-hidden='true') &nbsp; {{calcScore()}} {{'common.point' | translate}}
                     div(ng-repeat="(blockIndex, block) in review track by $index")
                         .card(ng-style="{border: '3px solid #' + block.color}", style="margin-bottom:20px;")
                             h5.card-header(ng-bind="langContent(block.i18n, 'title')")
@@ -177,6 +182,23 @@ block content
                                                 i.fas.fa-user-edit &nbsp;
                                                 | {{review.reviewer.username}}
                                             select.custom-select(ng-model='review.comments[blockIndex][questionIndex]', ng-options="option.value as option.text for option in langArray(question.i18n, 'options')", disabled, style="margin-bottom:10px;")
+                                    div(ng-if="question.type=='scale'")
+                                        table.custom(style="overflow: scroll;")
+                                            thead 
+                                                tr 
+                                                    th
+                                                        i.fas.fa-user-edit &nbsp;
+                                                        | {{"document.review.user" | translate}}
+                                                    th {{"document.review.rating" | translate}}
+                                            tbody
+                                                tr(ng-repeat="review in reviewComments track by $index")
+                                                    td(ng-bind="review.reviewer.username")
+                                                    td(ng-bind="review.comments[blockIndex][questionIndex]")
+                                                tr
+                                                    td(style="background-color: #FFA9A9;") {{"document.review.ratingAve" | translate}}
+                                                    td(ng-bind="calcAve(blockIndex, questionIndex)" style="background-color: #FFA9A9;")
+
+
                                     div(ng-if="question.type=='picture'")
                                         div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
                                             span
@@ -221,6 +243,7 @@ block content
                                                             | {{"document.form.uploaded" | translate}}
 
                                     hr(ng-if="!$last")
+                    
             #DRUG
                 i.fas.fa-ellipsis-v(style="margin-top:10vh;")
                 i.fas.fa-ellipsis-v(style="margin-top:30vh;")

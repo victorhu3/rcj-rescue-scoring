@@ -95,6 +95,8 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
 
     $scope.videoRefresh = false;
 
+    $scope.rangeS =  (start, end) => [...Array((end - start) + 1)].map((_, i) => start + i);
+
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
     })

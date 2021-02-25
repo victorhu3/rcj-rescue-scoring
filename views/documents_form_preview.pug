@@ -112,6 +112,9 @@ block content
                         ng-quill-editor(ng-model="answers[blockIndex][questionIndex]")
                     div(ng-if="question.type=='select'")
                         select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-blur="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                    div(ng-if="question.type=='scale'")
+                        .btn-group
+                            button.btn.btn-outline-primary(type='button', ng-click='answers[blockIndex][questionIndex] = ans', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}} 
                     .d-sm-flex.flex-row(ng-if="question.type=='picture'")
                         div
                             button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='image/*' ngf-max-size='5MB')

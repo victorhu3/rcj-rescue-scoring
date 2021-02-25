@@ -126,6 +126,13 @@ block content
                             select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
                         else
                             select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                    div(ng-if="question.type=='scale'")
+                        if editable
+                            .btn-group
+                                button.btn.btn-outline-primary(type='button', ng-click='answers[blockIndex][questionIndex] = ans; save()', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
+                        else
+                            .btn-group
+                                button.btn.btn-outline-primary(type='button', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
                     div(ng-if="question.type=='picture'")
                         .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                             .col-12

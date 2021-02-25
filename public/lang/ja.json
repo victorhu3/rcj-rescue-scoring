@@ -794,6 +794,7 @@
             "questionType": "設問タイプ",
             "writing": "記述式",
             "select": "選択式",
+            "scale": "評価尺度",
             "picture": "画像",
             "video": "動画",
             "pdf": "PDFファイル",
@@ -806,7 +807,9 @@
             "hints": "ヒント",
             "choices": "選択肢",
             "fileName": "ファイル名",
-            "extension": "拡張子はシステムによって自働付加されますので，ここで指定しないでください．"
+            "extension": "拡張子はシステムによって自働付加されますので，ここで指定しないでください．",
+            "least": "最低",
+            "most": "最高"
         },
         "review_editor": {
             "title": "ドキュメント　レビューフォームエディタ",
@@ -833,7 +836,10 @@
         },
         "review":{
             "reviewer": "ログインしているレビュアー：",
-            "comments": "レビューコメント"
+            "comments": "レビューコメント",
+            "user": "レビュアー",
+            "rating": "評点",
+            "ratingAve": "評点平均"
         },
         "inspection":{
             "do": "検査実施",

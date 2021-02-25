@@ -127,6 +127,7 @@ block content
                                         select.custom-select(ng-model='question.type', ng-blur="save()")
                                             option(value='input') {{"document.editor.writing" | translate}}
                                             option(value='select') {{"document.editor.select" | translate}}
+                                            option(value='scale') {{"document.editor.scale" | translate}}
                                             option(value='pdf') {{"document.editor.pdf" | translate}}
                                             option(value='picture') {{"document.editor.picture" | translate}}
                                             option(value='movie') {{"document.editor.video" | translate}}
@@ -181,6 +182,18 @@ block content
                                         div(style="text-align : center;margin:20px;")
                                             button.btn.btn-success(type='button', ng-click='addOption($parent.$parent.$parent.$index, $parent.$parent.$index, $parent.$index)')
                                                 i.fas.fa-plus
+                                    div(ng-if="question.type == 'scale'", style="margin-top:10px;")
+                                        span {{"document.editor.scale" | translate}}
+                                        br
+                                        .input-group(style="margin 0 auto;")
+                                            .input-group-prepend
+                                                span.input-group-text {{"document.editor.least" | translate}}
+                                            input.form-control(type='number', ng-model='question.scale.least', ng-blur="save()")
+                                        br
+                                        .input-group(style="margin 0 auto;")
+                                            .input-group-prepend
+                                                span.input-group-text {{"document.editor.most" | translate}}
+                                            input.form-control(type='number', ng-model='question.scale.most', ng-blur="save()")
                                     div(ng-if="question.type == 'pdf' || question.type == 'picture' || question.type == 'movie' || question.type == 'zip'", style="margin-top:10px;")
                                         .input-group(style="margin 0 auto;")
                                             .input-group-prepend

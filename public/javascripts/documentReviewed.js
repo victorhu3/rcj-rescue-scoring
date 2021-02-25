@@ -47,7 +47,11 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
     $scope.videoRefresh = false;
 
+    $scope.rangeS =  (start, end) => [...Array((end - start) + 1)].map((_, i) => start + i);
+
     $scope.comments = "";
+
+    $scope.scaleFlag = false;
 
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
@@ -90,6 +94,21 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
                         c.reviewer = {
                             username: c.name
                         };
+                    }
+                }
+
+                $scope.rating=[];
+                if(!$scope.reviewComments) return 0;
+                for(let c of $scope.reviewComments){
+                    for(let b in c.comments){
+                        for(let q in c.comments[b]){
+                            if(c.comments[b][q] == '' || $scope.review[b].questions[q].type != 'scale') continue;
+                            let r = Number(c.comments[b][q]);
+                            if(!$scope.rating[b]) $scope.rating[b] = [];
+                            if(!$scope.rating[b][q]) $scope.rating[b][q] = [];
+                            $scope.rating[b][q].push(r);
+                            $scope.scaleFlag = true;
+                        }
                     }
                 }
             })
@@ -163,6 +182,28 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
         if($scope.getParam("return")) $scope.go($scope.getParam("return"));
         else window.history.back(-1);
         return false;
+    }
+
+
+    const sum  = function(arr) {  
+        return arr.reduce(function(prev, current, i, arr) {
+            return prev+current;
+        });
+    };
+    $scope.calcAve = function(blockIndex, questionIndex){
+        if(!$scope.rating) return 0;
+        if($scope.rating[blockIndex][questionIndex].length == 0) return 0;
+        return sum($scope.rating[blockIndex][questionIndex]) / $scope.rating[blockIndex][questionIndex].length;
+    }
+    $scope.calcScore = function(){
+        let score = 0;
+        for(let b in $scope.rating){
+            for(let q in $scope.rating[b]){
+                if($scope.review[b].questions[q].type != 'scale') continue;
+                score += $scope.calcAve(b, q);
+            }
+        }
+        return score;
     }
 
 

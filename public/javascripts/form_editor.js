@@ -180,7 +180,11 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
             i18n: i18n,
             type: type,
             required: true,
-            fileName: ''
+            fileName: '',
+            scale: {
+                least: 1,
+                most: 5
+            }
         };
         $scope.blocks[block].questions.splice(number,0,tmp);
         $scope.save();
