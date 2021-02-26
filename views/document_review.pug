@@ -195,7 +195,7 @@ block content
                                         select.custom-select(ng-model='myComments[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
                                     div(ng-if="question.type=='scale'")
                                         .btn-group
-                                            button.btn.btn-outline-primary(type='button', ng-click='myComments[blockIndex][questionIndex] = ans; save();', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: myComments[blockIndex][questionIndex] == ans}')  {{ans}}
+                                            button.btn.btn-outline-primary(type='button', ng-click='scaleAnswer(blockIndex, questionIndex, ans);', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: myComments[blockIndex][questionIndex] == ans}')  {{ans}}
                                     div(ng-if="question.type=='picture'")
                                         .row(ng-if="checkUploadedReview(question.fileName)", style="width:100%;")
                                             .col-12

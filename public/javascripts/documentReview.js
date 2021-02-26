@@ -191,6 +191,12 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
         });
     }
 
+    $scope.scaleAnswer = function(b, q, a){
+        if(!$scope.myComments[b]) $scope.myComments[b] = [];
+        $scope.myComments[b][q] = a;
+        $scope.save();
+    }
+
     $scope.langContent = function(data, target){
         if(data[target]) return data[target];
         data[target] = $sce.trustAsHtml(data.filter( function( value ) {
