@@ -765,13 +765,17 @@
             "access": "アクセス有効化",
             "team": "チーム設定",
             "question": "質問設定",
-            "review": "レビュー設定"
+            "review": "レビュー設定",
+            "result": "評価結果"
         },
         "teamAdmin":{
             "title": "チーム個別設定",
             "access": "アクセス可否",
             "log": "ログ",
             "public": "一般公開"
+        },
+        "result": {
+            "title": "レビュー結果確認"
         },
         "editor": {
             "title": "ドキュメント　フォームエディタ",

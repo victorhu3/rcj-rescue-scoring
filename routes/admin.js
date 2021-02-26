@@ -170,6 +170,27 @@ router.get('/:competitionid/documents/teams', function (req, res, next) {
   else res.render('access_denied', { user: req.user });
 });
 
+router.get('/:competitionid/documents/:lid/results', function (req, res, next) {
+  const id = req.params.competitionid;
+  const { lid } = req.params;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (
+    LEAGUES.filter(function (elm) {
+      return elm.indexOf(lid) != -1;
+    }).length == 0
+  ) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
+    res.render('documents_result', { id, lid, user: req.user });
+  else res.render('access_denied', { user: req.user });
+});
+
 router.get('/:competitionid/documents/:lid/form', function (req, res, next) {
   const id = req.params.competitionid;
   const { lid } = req.params;

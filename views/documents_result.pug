@@ -1,0 +1,80 @@
+//- -*- tab-width: 2 -*-
+extends includes/layout
+
+block vars
+  - var ngAppDef = 'DocumentResult'
+
+append scripts
+  script.
+    var competitionId = "#{id}"
+    var leagueId = "#{lid}"
+  script(src='/javascripts/documents_result.js')
+
+
+
+block location
+    a.breadcrumb-item(ng-click="go('/home')") Home
+    a.breadcrumb-item(ng-click="go('/admin')") Admin
+    a.breadcrumb-item(ng-click="go('/admin/' + competition._id)") {{competition.name}}
+    a.breadcrumb-item(ng-click="go('/admin/' + competition._id + '/documents')") Document settings
+    span.breadcrumb-item.active Results
+
+
+
+block content
+  .row
+    .col-12
+      h1 {{'document.result.title' | translate}} - {{competition.name}}
+      .refine
+        .card.border-dark.mb-3(style='width:100%;')
+          .card-header.bg-transparent.border-dark.fa-2x
+            i.fas.fa-search(aria-hidden='true') &nbsp;
+            | {{'common.refine' | translate}}
+          .card-body.text-dark
+            h6.card-title {{"common.teamCode" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-list-ol(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.teamCode" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineCode')
+            hr
+            h6.card-title {{"common.team" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-users(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.team" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineRegion')
+            hr
+            h6.card-title {{"common.region" | translate}}
+            .input-group
+              .input-group-prepend
+                span.input-group-text
+                  i.fas.fa-globe-asia(aria-hidden='true')
+              input.form-control(type='text', placeholder='{{"common.region" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineName')
+            hr
+            h6.card-title {{"common.league" | translate}}
+            span(ng-repeat='(key, value) in Rleagues track by key')
+              input(type='checkbox' ng-model='Rleagues[key]' id="checkL_{{key}}")
+              label.checkbox(for="checkL_{{key}}") {{key}}
+            
+      
+      
+      table.custom(style="margin-bottom:20px;")
+        thead
+            tr
+              th {{"common.teamCode" | translate}}
+              th {{"common.team" | translate}}
+              th {{"common.region" | translate}}
+              th {{"common.league" | translate}}
+              th(ng-repeat="b in scaleBlock" ng-bind="langContent(review[b].i18n, 'title')")
+              th {{"common.score" | translate}}
+              
+        tbody
+            tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[teamCode, name]"')
+              td(ng-bind='team.teamCode')
+              td
+                a(ng-click="go('/document/reviewed/' + team._id + '?return=/admin/' + team.competition + '/documents/' + team.league + '/results')" ng-bind='team.name' style="color: #006699;") 
+              td(ng-bind='team.country')
+              td(ng-bind='team.league')
+              td(ng-repeat="b in scaleBlock" ng-bind="rateScoreAve(team._id, b)" style="background-color: #CCFFFF;")
+              td(ng-if="scaleBlock.length>0" ng-bind="rateScoreTotal(team._id)" style="background-color: #33CCFF	;")

@@ -29,6 +29,8 @@ const { time } = require('console');
 
 const competitiondb = require('../../models/competition');
 const { LEAGUES_JSON } = competitiondb;
+const { LEAGUES } = competitiondb;
+
 const dateformat = require('dateformat');
 let read = require('fs-readdir-recursive');
 const logger = require('../../config/logger').mainLogger;
@@ -571,6 +573,38 @@ privateRouter.get('/review/:teamId', function (req, res, next) {
   });
 });
 
+adminRouter.get('/reviews/:competition', function (req, res, next) {
+  const { competition } = req.params;
+
+  if (!ObjectId.isValid(competition)) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, competition, ACCESSLEVELS.ADMIN)) {
+    documentDb.review
+      .find({
+        competition
+      })
+      .populate('reviewer', 'username')
+      .populate('team', 'league')
+      .exec(function (err, dbReview) {
+        if (err) {
+          if (!err) err = { message: 'No review found' };
+          res.status(400).send({
+            msg: 'Could not get review',
+            err: err.message,
+          });
+        } else if (dbReview) {
+          res.send(dbReview);
+        }
+      });
+  } else {
+    res.status(401).send({
+      msg: 'Operation not permited',
+    });
+  }
+});
+
 privateRouter.put('/review/:teamId', function (req, res, next) {
   const { teamId } = req.params;
   const comments = req.body;
@@ -663,6 +697,8 @@ privateRouter.put('/review/:teamId', function (req, res, next) {
     }
   });
 });
+
+
 
 privateRouter.post(
   '/review/files/:teamId/:fileName',

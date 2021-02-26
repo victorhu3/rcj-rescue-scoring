@@ -764,10 +764,11 @@
         "admin":{
             "title": "Document submission system settings",
             "overall": "General settings",
-            "access": "Access Activation",
+            "access": "Access activation",
             "team": "Team setting",
-            "question": "Question Setting",
-            "review": "Review Setting"
+            "question": "Question setting",
+            "review": "Review setting",
+            "result": "Review results"
         },
         "teamAdmin":{
             "title": "Individual team settings",
