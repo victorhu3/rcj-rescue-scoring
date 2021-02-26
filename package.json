@@ -25,6 +25,7 @@
     "expect": "^24.9.0",
     "expect.js": "^0.3.1",
     "express": "^4.17.1",
+    "express-rate-limit": "^5.2.6",
     "express-session": "^1.17.0",
     "extract-zip": "^1.6.7",
     "file-type": "^13.1.1",

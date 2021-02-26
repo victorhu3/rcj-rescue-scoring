@@ -6,7 +6,8 @@
 var env = require('node-env-file')
 env('process.env')
 
-var express = require('express')
+var express = require('express');
+var RateLimit = require('express-rate-limit');
 var morgan = require('morgan');
 const compression = require('compression')
 var path = require('path')
@@ -30,6 +31,11 @@ var MongoStore = require('connect-mongo')(session)
 
 var bodyParser = require('body-parser');
 
+const limiter = new RateLimit({
+    windowMs: 1*60*1000, // 1 minute
+    max: 200
+});
+  
 //========================================================================
 //                          Routes require
 //========================================================================
@@ -132,6 +138,8 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+// apply rate limiter to all requests
+app.use(limiter);
 
 
 //========================================================================
