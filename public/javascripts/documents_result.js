@@ -7,7 +7,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
         showConfirmButton: false,
         timer: 3000
     });
-      
+
     let saved_mes;
     $translate('document.saved').then(function (val) {
         saved_mes = val;
@@ -32,7 +32,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
     $scope.Rleagues = {};
     $http.get("/api/teams/leagues").then(function (response) {
         $scope.leagues = response.data;
-        
+
         for(let l of $scope.leagues){
             $scope.Rleagues[l] = false;
         }
@@ -47,7 +47,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
             });
             console.log($scope.teams)
             $scope.showCode = false;
-            
+
         })
     }
 
@@ -68,11 +68,11 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
                 $scope.scaleBlock.push(b)
             }
         }
-        console.log($scope.scaleBlock)
 
         $http.get("/api/document/reviews/" + competitionId).then(function (response) {
+          console.log(response.data)
             $scope.reviewCommentsTeams = response.data.filter(function(value) {
-                return value.team.league == leagueId;
+                return value.team && value.team.league == leagueId;
             });
             console.log($scope.reviewCommentsTeams)
 
@@ -96,7 +96,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
             }
             console.log($scope.rating)
         })
-        
+
         //Check 1st lang
         for(let l of $scope.languages){
             if(l.language == $scope.displayLang && l.enable) return;
@@ -112,9 +112,8 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
     })
 
     $scope.langContent = function(data, target){
-        console.log(data)
         data[target] = $sce.trustAsHtml(data.filter( function( value ) {
-            return value.language == $scope.displayLang;        
+            return value.language == $scope.displayLang;
         })[0][target]);
 
         return(data[target]);
@@ -122,13 +121,14 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
 
     const average = function(arr) {
         if (typeof arr !== 'object' || arr.length === 0) return false;
-     
+
         var key, totalNumber = 0;
         for (key in arr) totalNumber = totalNumber + Number(arr[key]);
-     
+
         return totalNumber / arr.length;
     };
     $scope.rateScoreAve = function(team, block){
+      if(!$scope.rating || !$scope.rating[team]) return 0;
         let score = 0;
         for(let q of $scope.rating[team][block]){
             score += average(q)
@@ -175,13 +175,13 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
         $http.get(logUrl).then(function (response) {
             let log = response.data.split(/\r?\n/g);
             log = log.reverse().join('<br>');
-            
+
             Swal.fire({
                 title: 'Log Viewer',
                 html: "<div style='text-align:left;max-height:calc(100vh - 200px);overflow:auto;'>" + log + "</div>",
                 width: "100%",
                 height: "100%",
-                showCloseButton: true, 
+                showCloseButton: true,
             })
         }, function (response) {
             Toast.fire({
@@ -190,7 +190,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
                 html: response.data.msg
             })
         })
-        
+
     }
 
     $scope.copy = function(team){
@@ -208,7 +208,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
                 title: "Not supported!"
             });
         }
-        
+
     }
 
     $scope.deadlineColour = function(deadline){

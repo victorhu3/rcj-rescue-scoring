@@ -583,7 +583,8 @@ adminRouter.get('/reviews/:competition', function (req, res, next) {
   if (auth.authCompetition(req.user, competition, ACCESSLEVELS.ADMIN)) {
     documentDb.review
       .find({
-        competition
+        competition,
+        team: { $ne: null }
       })
       .populate('reviewer', 'username')
       .populate('team', 'league')
