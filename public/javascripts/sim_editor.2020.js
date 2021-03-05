@@ -27,7 +27,9 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
     $scope.dice = [];
     $scope.saveasname ="";
     $scope.finished = true;
-
+    $scope.selectRoom = -1;
+    $scope.roomTiles = [[], [], []];
+    $scope.roomColors = ["red", "green", "blue"]
 
     $scope.range = function (n) {
         arr = [];
@@ -71,7 +73,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             $scope.cells[index].virtualWall = false;
             $scope.cells[index].reachable= false;
         }
-
+        
         // Set to virtual wall around the black tile
         /*for (var index in $scope.cells) {
             if($scope.cells[index].tile){
@@ -732,7 +734,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         for(let x=1,l=$scope.length*2+1;x<l;x+=2){
             let row = [];
             for(let z=1,m=$scope.width*2+1;z<m;z+=2){
-                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false, 0]);
+                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false, 0, '']);
             }
             walls.push(row);
         }
@@ -749,6 +751,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 let humanType = 0; // 1 - harmed, 2 - unharmed, 3 - stable, 4 - thermal
                 let humanPlace = 0;
                 let curveDir = 0; // 1 - NE, 2 - SE, 3 - SW, 4 - NW
+                let floorColor = '0.635 0.635 0.635';
 
                 if(thisCell.tile && thisCell.tile.victims){
                     if(thisCell.tile.victims.top){
@@ -852,8 +855,13 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     else if (thisCell.tile.curve.top && thisCell.tile.curve.left)
                         curveDir = 4;
                 }
+                if (thisCell.tile && thisCell.tile.color) {
+                    floorColor = '';
+                    for (i = 1; i < 7; i += 2)
+                        floorColor += str(parseInt('0x' + thisCell.tile.color.substring(i, i + 2)) / 255.0) + ' '
+                }
                 if(thisCell.tile){
-                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir]
+                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir, floorColor]
                 }
 
             }
@@ -889,7 +897,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         TexturedBackgroundLight {
         }
         `;
-        const protoTilePart = ({name, x, z, fl, tw, rw, bw, lw, tlc, blc, brc, trc, tex, rex, bex, lex, notch, notchR, start, trap, checkpoint, swamp, width, height, id, xScale, yScale, zScale, curve}) => `
+        const protoTilePart = ({name, x, z, fl, tw, rw, bw, lw, tlc, blc, brc, trc, tex, rex, bex, lex, notch, notchR, start, trap, checkpoint, swamp, width, height, id, xScale, yScale, zScale, curve, color}) => `
         DEF ${name} worldTile {
             xPos ${x}
             zPos ${z}
@@ -919,6 +927,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             yScale ${yScale}
             zScale ${zScale}
             curveDir ${curve}
+            tileColor ${color}
           }
         `;
 
@@ -1041,7 +1050,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 if(notchData[0]) notch = "left"
                 if(notchData[1]) notch = "right"
                 //Create a new tile with all the data
-                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], curve: walls[z][x][10]});
+                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], curve: walls[z][x][10], color: walls[z][x][11]});
                 tile = tile.replace(/true/g, "TRUE")
                 tile = tile.replace(/false/g, "FALSE")
                 allTiles = allTiles + tile
@@ -1198,10 +1207,25 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             }, false);
         }
 
+    $scope.selectRoom1 = function() {
+        var room1Button = document.getElementById('room1Button');
+        if ($scope.selectRoom != 0) {
+            $scope.selectRoom = 0;
+            room1Button.innerHTML = "Selecting Room 1 Tiles...";
+            room1Button.style.backgroundColor = "red";
+        }
+        else {
+            $scope.selectRoom = -1;
+            room1Button.innerHTML = "Select Room 1 Tiles";
+            room1Button.style.backgroundColor = "#ffc107";
+        }
+    }
 
     $scope.cellClick = function (x, y, z, isWall, isTile) {
 
         var cell = $scope.cells[x + ',' + y + ',' + z];
+        var halfWallTile;
+        var intx = parseInt(x), inty = parseInt(y);
         console.log(cell)
 
         // If wall
@@ -1212,19 +1236,43 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     halfWall: 0
                 };
             } else {
-                if(cell.isWall){
-                    cell.isWall = false;
-                    /*cell.halfWall = 1;
-                }else if(cell.halfWall == 1){
-                    cell.halfWall = 2;
-                }else if(cell.halfWall == 2){
-                    cell.halfWall = 0;*/
-                }else{
-                    cell.isWall = true;
+                halfWallTile = false;
+                if (intx % 2 == 0) {
+                    if (intx != 0)
+                        halfWallTile = ($scope.roomTiles[0].indexOf(String(intx - 1) + ',' + y + ',' + z) > -1);
+                    if (!halfWallTile && intx != $scope.width * 2)
+                        halfWallTile = ($scope.roomTiles[0].indexOf(String(intx + 1) + ',' + y + ',' + z) > -1);
+                }
+                else {
+                    if (inty != 0)
+                        halfWallTile = ($scope.roomTiles[0].indexOf(x + ',' + String(inty - 1) + ',' + z) > -1);
+                    if (!halfWallTile && inty != $scope.height * 2)
+                        halfWallTile = ($scope.roomTiles[0].indexOf(x + ',' + String(inty + 1) + ',' + z) > -1);
+                }
+                if (halfWallTile) {
+                    if(cell.isWall){
+                        cell.isWall = false;
+                        cell.halfWall = 1;
+                    }else if(cell.halfWall == 1){
+                        cell.halfWall = 2;
+                    }else if(cell.halfWall == 2){
+                        cell.halfWall = 0;
+                    }else{
+                        cell.isWall = true;
+                    }
+                }
+                else {
+                    if(cell.isWall){
+                        cell.isWall = false;
+                    }else{
+                        cell.isWall = true;
+                    }
                 }
             }
         } else if (isTile) {
-            if (!cell) {
+            if ($scope.selectRoom != -1)
+                $scope.roomTiles[$scope.selectRoom].push(x+','+y+','+z);
+            else if (!cell) {
                 $scope.cells[x + ',' + y + ',' + z] = {
                     isTile: true,
                     tile: {
@@ -1238,24 +1286,26 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
     }
 
     $scope.open = function (x, y, z) {
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: '/templates/sim_editor_modal.html',
-            controller: 'ModalInstanceCtrl',
-            size: 'sm',
-            scope: $scope,
-            resolve: {
-                x: function () {
-                    return x;
-                },
-                y: function () {
-                    return y;
-                },
-                z: function () {
-                    return z;
+        if ($scope.selectRoom == -1) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: '/templates/sim_editor_modal.html',
+                controller: 'ModalInstanceCtrl',
+                size: 'sm',
+                scope: $scope,
+                resolve: {
+                    x: function () {
+                        return x;
+                    },
+                    y: function () {
+                        return y;
+                    },
+                    z: function () {
+                        return z;
+                    }
                 }
-            }
-        });
+            });
+        }
     };
 }]);
 
@@ -1282,8 +1332,17 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, x, y, z
     }
 
     $scope.blackChanged = function () {
-        $scope.$parent.recalculateLinear();
+       $scope.$parent.recalculateLinear();
     }
+
+    $scope.colorChanged = function () {
+        var i;
+        for (var index in $scope.cells) {
+            i = (parseInt(index.charAt(2)) - 1) / 2 * $scope.width + (parseInt(index.charAt(0)) - 1) / 2;
+            if ($scope.cells[index].tile && $scope.cells[index].tile.color)
+                $(".tile").get(i).style.setProperty("--tileColor", $scope.cells[index].tile.color);
+        }
+     }
 
     $scope.range = function (n) {
         arr = [];

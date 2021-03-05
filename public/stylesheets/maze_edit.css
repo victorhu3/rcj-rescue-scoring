@@ -32,7 +32,8 @@ tr td:nth-child(even) {
 }
 
 .tile {
-    background-color: #b4ffd5;
+    --tileColor: #b4ffd5;
+    background-color: var(--tileColor);
 }
 
 .tile.linear {
@@ -54,6 +55,7 @@ tr td:nth-child(even) {
 .tile.swamp {
     background-color: #CD853F;
 }
+  
 
 .tile-image-container {
     position: relative;

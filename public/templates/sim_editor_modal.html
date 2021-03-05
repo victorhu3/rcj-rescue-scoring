@@ -15,6 +15,9 @@
     <li>
       <input type="checkbox" ng-model="cell.tile.obstacle" id="isObstacle"><label class="checkbox" for="isObstacle">{{"admin.simMapEditor.obstacle" | translate}}</label>
     </li>
+    <li>
+      {{"admin.simMapEditor.cellColor" | translate}}<input type="color" ng-model="cell.tile.color" id="cellColor" ng-change="colorChanged()"><label class="color" for="cellColor"></label>
+    </li>
   </ul>
 
   <input type="checkbox" ng-model="isStart" ng-disabled="isStart" ng-change="startChanged()" id="isStart"><label class="checkbox" for="isStart">{{"admin.simMapEditor.start" | translate}}</label>
