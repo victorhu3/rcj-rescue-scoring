@@ -97,19 +97,32 @@ adminRouter.post('/send', function (req, res, next) {
   if (
     process.env.MAIL_SMTP &&
     process.env.MAIL_PORT &&
-    process.env.MAIL_USER &&
-    process.env.MAIL_PASS &&
     process.env.MAIL_FROM
   ) {
-    smtp = nodemailer.createTransport({
-      host: process.env.MAIL_SMTP,
-      port: process.env.MAIL_PORT,
-      secure: process.env.MAIL_PORT == 465,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+
+    let smtp_conf;
+    if(process.env.MAIL_USER && process.env.MAIL_PASS){
+      smtp_conf = {
+        host: process.env.MAIL_SMTP,
+        port: process.env.MAIL_PORT,
+        secure: process.env.MAIL_PORT == 465,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      };
+    }else{
+      //No auth
+      smtp_conf = {
+        host: process.env.MAIL_SMTP,
+        port: process.env.MAIL_PORT,
+        use_authentication: false,
+        tls: {
+            rejectUnauthorized: false
+        }
+      };
+    }
+    smtp = nodemailer.createTransport(smtp_conf);
   } else {
     res.status(500).send({
       msg: 'Please check smtp parameters',
