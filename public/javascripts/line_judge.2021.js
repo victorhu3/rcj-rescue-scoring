@@ -649,7 +649,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     } else if(type == "D") {
       tmp.type = "D";
       if ($scope.count_victim_list("D") >= $scope.maxDeadVictims) return;
-      if ($scope.count_victim_list("L") >= 1) { // At least one live victim rescued
+      if ($scope.count_victim_list("L") >= $scope.maxLiveVictims) { // All live victim rescued
 
       } else {
         tmp.effective = false;
