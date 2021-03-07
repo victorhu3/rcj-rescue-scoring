@@ -850,7 +850,8 @@
             "hints": "@:document.editor.hints",
             "selectFile": "Select a file",
             "overwrite": "A file has already been uploaded. When you upload a new file, it will overwrite the old one.",
-            "uploaded": "Uploaded files"
+            "uploaded": "Uploaded files",
+            "cantplay": "If the video does not play properly, click here to downloading it."
         },
         "review":{
             "reviewer": "Logged in reviewer: ",

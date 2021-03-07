@@ -162,6 +162,8 @@ block content
                                 div(style="text-align:center;margin:10px 0px;")
                                     video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                         source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+                                    br
+                                    a(ng-href="{{getVideoLink(getVideoList(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                         if editable  
                             .d-sm-flex.flex-row

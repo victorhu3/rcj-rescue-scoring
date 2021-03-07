@@ -143,6 +143,8 @@ block content
                                             div(style="text-align:center;margin:10px 0px;")
                                                 video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                                     source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+                                                br
+                                                a(ng-href="{{getVideoLink(getVideoList(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                                 div(ng-if="question.type=='pdf'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
@@ -224,6 +226,8 @@ block content
                                                 div(style="text-align:center;margin:10px 0px;")
                                                     video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLinkReview(question.fileName)}}")
                                                         source(ng-src="{{getVideoLinkReview(v)}}", ng-repeat="v in getVideoListReview(question.fileName)")
+                                                    br
+                                                    a(ng-href="{{getVideoLinkReview(getVideoListReview(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                                         .d-sm-flex.flex-row
                                             div
@@ -327,6 +331,9 @@ block content
                             div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
                         div(ng-if="question.type=='select'")
                             select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                        div(ng-if="question.type=='scale'")
+                            .btn-group
+                                button.btn.btn-outline-primary(type='button', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
                         div(ng-if="question.type=='picture'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                 .col-12
@@ -339,6 +346,8 @@ block content
                                     div(style="text-align:center;margin:10px 0px;")
                                         video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                             source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+                                        br
+                                        a(ng-href="{{getVideoLink(getVideoList(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                         div(ng-if="question.type=='pdf'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
@@ -389,6 +398,9 @@ block content
                                 ng-quill-editor(ng-model="myComments[blockIndex][questionIndex]")
                             div(ng-if="question.type=='select'")
                                 select.custom-select(ng-model='myComments[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                            div(ng-if="question.type=='scale'")
+                                .btn-group
+                                    button.btn.btn-outline-primary(type='button', ng-click='scaleAnswer(blockIndex, questionIndex, ans);', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: myComments[blockIndex][questionIndex] == ans}')  {{ans}}
                             div(ng-if="question.type=='picture'")
                                 .row(ng-if="checkUploadedReview(question.fileName)", style="width:100%;")
                                     .col-12
@@ -417,7 +429,8 @@ block content
                                         div(style="text-align:center;margin:10px 0px;")
                                             video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLinkReview(question.fileName)}}")
                                                 source(ng-src="{{getVideoLinkReview(v)}}", ng-repeat="v in getVideoListReview(question.fileName)")
-
+                                            br
+                                            a(ng-href="{{getVideoLinkReview(getVideoListReview(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
                                 .d-sm-flex.flex-row
                                     div
                                         button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='500MB')
