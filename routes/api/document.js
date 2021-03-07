@@ -320,15 +320,6 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                               console.log(`an error happened: ${err.message}`);
                             });
 
-                          if (ft != 'video/mp4') {
-                            original
-                              .output(`${filepath}.mp4`)
-                              .on('error', function (err) {
-                                console.log(
-                                  `an error happened: ${err.message}`
-                                );
-                              });
-                          }
                         } catch (err) {}
                       });
                     }
@@ -808,15 +799,7 @@ privateRouter.post(
                                     );
                                   });
 
-                                if (ft != 'video/mp4') {
-                                  original
-                                    .output(`${filepath}.mp4`)
-                                    .on('error', function (err) {
-                                      console.log(
-                                        `an error happened: ${err.message}`
-                                      );
-                                    });
-                                }
+                                
                               } catch (err) {}
                             }
                           );

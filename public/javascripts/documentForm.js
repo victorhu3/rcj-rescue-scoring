@@ -280,6 +280,14 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
         let res = $scope.uploaded.filter(function(value) {
             return new RegExp(name+'\\.').test(value);
         });
+        res.sort(function(first, second){
+            if ( first.match(/.mp4/)) {
+                return -1;
+            }
+            if ( second.match(/.mp4/)) {
+                return -1;
+            }
+        });
         return res;
     }
 
