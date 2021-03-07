@@ -187,13 +187,23 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
     const sum  = function(arr) {  
         return arr.reduce(function(prev, current, i, arr) {
+            if(isNaN(current)) return prev;
             return prev+current;
         });
     };
+
+    const isNumberCount = function(arr){
+        let count = 0;
+        for(let a of arr){
+            if(!isNaN(a)) count += 1;
+        }
+        return count;
+    }
+
     $scope.calcAve = function(blockIndex, questionIndex){
         if(!$scope.rating) return 0;
         if($scope.rating[blockIndex][questionIndex].length == 0) return 0;
-        return sum($scope.rating[blockIndex][questionIndex]) / $scope.rating[blockIndex][questionIndex].length;
+        return sum($scope.rating[blockIndex][questionIndex]) / isNumberCount($scope.rating[blockIndex][questionIndex]);
     }
     $scope.calcScore = function(){
         let score = 0;
