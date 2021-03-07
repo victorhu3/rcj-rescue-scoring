@@ -139,6 +139,24 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
         window.scrollTo(0,0);
     }
 
+    $scope.validEmail = function(mail){
+        function MailCheck(mail) {
+            var mail_regex1 = new RegExp( '(?:[-!#-\'*+/-9=?A-Z^-~]+\.?(?:\.[-!#-\'*+/-9=?A-Z^-~]+)*|"(?:[!#-\[\]-~]|\\\\[\x09 -~])*")@[-!#-\'*+/-9=?A-Z^-~]+(?:\.[-!#-\'*+/-9=?A-Z^-~]+)*' );
+            var mail_regex2 = new RegExp( '^[^\@]+\@[^\@]+$' );
+            if( mail.match( mail_regex1 ) && mail.match( mail_regex2 ) ) {
+                if( mail.match( /[^a-zA-Z0-9\!\"\#\$\%\&\'\(\)\=\~\|\-\^\\\@\[\;\:\]\,\.\/\\\<\>\?\_\`\{\+\*\} ]/ ) ) { return false; }
+                if( !mail.match( /\.[a-z]+$/ ) ) { return false; }
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if(!mail || mail.length == 0) return false;
+        for(let m of mail){
+            if(MailCheck(m)) return true;
+        }
+    }
+
     $scope.newMail = function(team){
         $scope.toTeam = [team];
         prepareVariable();

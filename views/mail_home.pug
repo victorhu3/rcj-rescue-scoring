@@ -27,7 +27,7 @@ block location
 block content
   .row
     .col-12
-      div(ng-if="mode=='select'")
+      div(ng-show="mode=='select'")
         h1 {{"mail.home.title" | translate}} - {{competition.name}}
         .refine
           .card.border-dark.mb-3(style='width:100%;')
@@ -47,14 +47,14 @@ block content
                 .input-group-prepend
                   span.input-group-text
                     i.fas.fa-users(aria-hidden='true')
-                input.form-control(type='text', placeholder='{{"common.team" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineRegion')
+                input.form-control(type='text', placeholder='{{"common.team" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineName')
               hr
               h6.card-title {{"common.region" | translate}}
               .input-group
                 .input-group-prepend
                   span.input-group-text
                     i.fas.fa-globe-asia(aria-hidden='true')
-                input.form-control(type='text', placeholder='{{"common.region" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineName')
+                input.form-control(type='text', placeholder='{{"common.region" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineRegion')
               hr
               h6.card-title {{"common.league" | translate}}
               span(ng-repeat='(key, value) in Rleagues track by key')
@@ -83,7 +83,7 @@ block content
           tbody
               tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
                 td
-                  input(type='checkbox', ng-model='team.checked', style="display:initial;", ng-if="team.email.length > 0")
+                  input(type='checkbox', ng-model='team.checked', style="display:initial;", ng-if="validEmail(team.email)")
                 td(ng-bind='team.teamCode')
                 td(ng-bind='team.name')
                 td(ng-bind='team.country')
@@ -93,7 +93,7 @@ block content
                     span(ng-bind="em")
                     br
                 td
-                  button.btn.btn-sm.btn-secondary(type='button', ng-click="newMail(team)", ng-if="team.email.length > 0")
+                  button.btn.btn-sm.btn-secondary(type='button', ng-click="newMail(team)", ng-if="validEmail(team.email)")
                     i.fas.fa-envelope-open-text &nbsp;
                     | {{"mail.home.newMail" | translate}}
       div(ng-show="mode=='write'")
