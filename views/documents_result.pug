@@ -52,10 +52,12 @@ block content
                   i.fas.fa-globe-asia(aria-hidden='true')
               input.form-control(type='text', placeholder='{{"common.region" | translate}}', aria-label='Username', aria-describedby='basic-addon1' ng-model='refineName')
             hr
-            h6.card-title {{"common.league" | translate}}
-            span(ng-repeat='(key, value) in Rleagues track by key')
-              input(type='checkbox' ng-model='Rleagues[key]' id="checkL_{{key}}")
-              label.checkbox(for="checkL_{{key}}") {{key}}
+            h6.card-title {{"common.sort" | translate}}
+            div(style="margin:10px;")
+              button(ng-click="changeSort(b)" class='btn btn-sm' ng-class="activeSortKey == b ? 'btn-warning' : 'btn-outline-dark'" style="margin: 5px;" ng-repeat="b in scaleBlock track by $index" ng-bind="blockTitle[$index]") 
+              button(ng-click="changeSort(-1)" class='btn btn-sm' ng-class="activeSortKey == -1 ? 'btn-warning' : 'btn-outline-dark'" style="margin: 5px;")
+                i.fas.fa-calculator &nbsp;
+                | {{"common.totalScore" | translate}}
             
       
       
@@ -66,15 +68,17 @@ block content
               th {{"common.team" | translate}}
               th {{"common.region" | translate}}
               th {{"common.league" | translate}}
-              th(ng-repeat="b in scaleBlock" ng-bind="langContent(review[b].i18n, 'title')")
-              th {{"common.score" | translate}}
+              th(ng-repeat="b in scaleBlock track by $index" ng-bind="blockTitle[$index]" ng-style="{backgroundColor: activeSortKey == b ? '#f1c40f':'#3498db'}")
+              th(ng-style="{backgroundColor: activeSortKey == -1 ? '#f1c40f':'#e74c3c'}")
+                i.fas.fa-calculator &nbsp;
+                | {{"common.totalScore" | translate}}
               
         tbody
-            tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[teamCode, name]"')
+            tr(ng-repeat='team in teams | filter:list_filter')
               td(ng-bind='team.teamCode')
               td
                 a(ng-click="go('/document/reviewed/' + team._id + '?return=/admin/' + team.competition + '/documents/' + team.league + '/results')" ng-bind='team.name' style="color: #006699;") 
               td(ng-bind='team.country')
               td(ng-bind='team.league')
-              td(ng-repeat="b in scaleBlock" ng-bind="rateScoreAve(team._id, b)" style="background-color: #CCFFFF;")
-              td(ng-if="scaleBlock.length>0" ng-bind="rateScoreTotal(team._id)" style="background-color: #33CCFF	;")
+              td(ng-repeat="b in scaleBlock" ng-bind="rateScoreAve(team._id, b)" ng-style="{backgroundColor: activeSortKey == b ? '#f6e58d':'#dff9fb'}")
+              td(ng-if="scaleBlock.length>0" ng-bind="rateScoreTotal(team._id)" ng-style="{backgroundColor: activeSortKey == -1 ? '#f6e58d':'#ff7979'}")

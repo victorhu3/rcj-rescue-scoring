@@ -45,9 +45,23 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
             $scope.teams = response.data.filter(function(value) {
                 return value.league == leagueId;
             });
-            console.log($scope.teams)
+            $scope.teams.sort(function(a, b) {
+                if(!a.teamCode && !b.teamCode){
+                    if (a.name > b.name) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }else{
+                    if (a.teamCode > b.teamCode) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+                
+            });
             $scope.showCode = false;
-
         })
     }
 
@@ -56,6 +70,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
         $scope.review = response.data.review;
 
         $scope.scaleBlock = [];
+        $scope.blockTitle = [];
         for(let b in $scope.review){
             let blockFlag = false;
             for(let q of $scope.review[b].questions){
@@ -66,8 +81,10 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
             }
             if(blockFlag){
                 $scope.scaleBlock.push(b)
+                $scope.blockTitle.push($scope.langContent($scope.review[b].i18n ,'title'))
             }
         }
+        console.log($scope.blockTitle)
 
         $http.get("/api/document/reviews/" + competitionId).then(function (response) {
           console.log(response.data)
@@ -128,7 +145,7 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
         return totalNumber / arr.length;
     };
     $scope.rateScoreAve = function(team, block){
-      if(!$scope.rating || !$scope.rating[team]) return 0;
+      if(!$scope.rating || !$scope.rating[team] || !$scope.rating[team][block]) return 0;
         let score = 0;
         for(let q of $scope.rating[team][block]){
             score += average(q)
@@ -139,87 +156,56 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
     $scope.rateScoreTotal = function(team){
         let score = 0;
         for(let b of $scope.scaleBlock){
-            score += $scope.rateScoreAve(team, b)
+            score += $scope.rateScoreAve(team, b);
         }
         return(score);
+    }
+
+    $scope.activeSortKey = -2;
+    $scope.changeSort = function(block){
+        let s = function(a, b){
+            if(block == -1){
+                return $scope.rateScoreTotal(b._id) - $scope.rateScoreTotal(a._id);
+            }else{
+                return $scope.rateScoreAve(b._id, block) - $scope.rateScoreAve(a._id, block);
+            }
+        }
+
+        $scope.teams.sort(function(a, b) {
+            if(!a.teamCode && !b.teamCode){
+                if (a.name > b.name) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }else{
+                if (a.teamCode > b.teamCode) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+            
+        });
+        if($scope.activeSortKey == block){
+            $scope.activeSortKey = -2;
+        }else{
+            $scope.teams.sort(s);
+            $scope.activeSortKey =  block;
+        }
     }
 
     $scope.go = function (path) {
         window.location = path
     }
 
-    var showAllLeagues = true;
     $scope.refineName = "";
     $scope.refineCode = "";
     $scope.refineRegion = "";
 
-    $scope.$watch('Rleagues', function (newValue, oldValue) {
-        showAllLeagues = true
-        //console.log(newValue)
-        for (let league in newValue) {
-            if (newValue.hasOwnProperty(league)) {
-                if (newValue[league]) {
-                    showAllLeagues = false
-                    return
-                }
-            }
-        }
-    }, true);
-
     $scope.list_filter = function (value, index, array) {
-        return (showAllLeagues || $scope.Rleagues[value.league])  && (~value.name.indexOf($scope.refineName)) && (~value.teamCode.indexOf($scope.refineCode)) && (~value.country.indexOf($scope.refineRegion))
+        return (~value.name.indexOf($scope.refineName)) && (~value.teamCode.indexOf($scope.refineCode)) && (~value.country.indexOf($scope.refineRegion))
     }
 
-    $scope.openLog = function(team){
-        let logUrl = "/api/document/files/" + team._id + "/" + team.document.token + "/log.txt";
-        $http.get(logUrl).then(function (response) {
-            let log = response.data.split(/\r?\n/g);
-            log = log.reverse().join('<br>');
-
-            Swal.fire({
-                title: 'Log Viewer',
-                html: "<div style='text-align:left;max-height:calc(100vh - 200px);overflow:auto;'>" + log + "</div>",
-                width: "100%",
-                height: "100%",
-                showCloseButton: true,
-            })
-        }, function (response) {
-            Toast.fire({
-                type: 'error',
-                title: "Error: " + response.statusText,
-                html: response.data.msg
-            })
-        })
-
-    }
-
-    $scope.copy = function(team){
-        let link = `${location.protocol}//${location.host}/document/${team._id}/${team.document.token}`;
-        if(navigator.clipboard){
-            navigator.clipboard.writeText(link);
-            Toast.fire({
-                type: 'success',
-                title: "Copied!",
-                html: link
-            });
-        }else{
-            Toast.fire({
-                type: 'error',
-                title: "Not supported!"
-            });
-        }
-
-    }
-
-    $scope.deadlineColour = function(deadline){
-        if(!deadline) return '';
-        let today = new Date();
-        let tomorrow = new Date();
-
-        tomorrow.setDate(today.getDate() + 1);
-
-        if(deadline > tomorrow) return '#bcffbc';
-        if(deadline > today) return '#ffffc6';
-        return '#ffcccc';
-    }
+  
 }]);

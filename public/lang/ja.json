@@ -136,7 +136,9 @@
         "edit": "編集",
         "copy": "コピー",
         "inspection": "検査",
-        "checkin": "チェックイン"
+        "checkin": "チェックイン",
+        "totalScore": "合計得点",
+        "sort": "ソート"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
