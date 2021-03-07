@@ -858,7 +858,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 if (thisCell.tile && thisCell.tile.color) {
                     floorColor = '';
                     for (i = 1; i < 7; i += 2)
-                        floorColor += str(parseInt('0x' + thisCell.tile.color.substring(i, i + 2)) / 255.0) + ' '
+                        floorColor += String(parseInt('0x' + thisCell.tile.color.substring(i, i + 2)) / 255.0) + ' '
                 }
                 if(thisCell.tile){
                     walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir, floorColor]
@@ -1270,8 +1270,11 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 }
             }
         } else if (isTile) {
-            if ($scope.selectRoom != -1)
+            if ($scope.selectRoom != -1) {
                 $scope.roomTiles[$scope.selectRoom].push(x+','+y+','+z);
+                var i = (parseInt(y - 1) / 2 * $scope.width + (parseInt(x - 1) / 2));
+                $(".tile").get(i).style.setProperty("--tileColor", "red");
+            }
             else if (!cell) {
                 $scope.cells[x + ',' + y + ',' + z] = {
                     isTile: true,
