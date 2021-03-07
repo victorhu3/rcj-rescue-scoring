@@ -91,6 +91,44 @@ adminRouter.get('/templates/:fileName', function (req, res, next) {
   });
 });
 
+adminRouter.post('/templates/:fileName', function (req, res, next) {
+  const { fileName } = req.params;
+
+  const path = `${__dirname}/../../templates/mail/${sanitizeFilename(fileName)}`;
+  fs.writeFile(path, req.body.content, function (err) {
+    if (err) {
+      res.status(404).send({
+        msg: 'File could not create',
+      });
+      return;
+    }else{
+      res.status(200).send({
+        msg: 'Success',
+        name: fileName
+      });
+    }
+  });
+});
+
+adminRouter.delete('/templates/:fileName', function (req, res, next) {
+  const { fileName } = req.params;
+
+  const path = `${__dirname}/../../templates/mail/${sanitizeFilename(fileName)}`;
+  fs.unlink(path, function (err) {
+    if (err) {
+      res.status(404).send({
+        msg: 'File could not delete',
+      });
+      return;
+    }else{
+      res.status(200).send({
+        msg: 'Successfully deleted',
+        name: fileName
+      });
+    }
+  });
+});
+
 adminRouter.post('/send', function (req, res, next) {
   const teams = req.body;
   let smtp;

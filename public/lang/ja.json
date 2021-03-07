@@ -753,6 +753,19 @@
             "exportW": "このマップをErebus用ワールドファイルにエクスポート",
             "oneVictim": "１体の被災者のみ配置できます",
             "obstacle": "障害物"
+        },
+        "mailTemplates": {
+            "title": "メールテンプレート編集",
+            "create": "新規作成",
+            "subject": "件題",
+            "delete": "削除",
+            "edit": "編集",
+            "4duplicate": "複製するには，元のテンプレートの編集画面から，件題を変更して保存してください．",
+            "js": {
+                "complete": "保存完了",
+                "completeMes": "テンプレートを保存しました",
+                "deleted": "正常に削除しました"
+            }
         }
     },
     "document": {

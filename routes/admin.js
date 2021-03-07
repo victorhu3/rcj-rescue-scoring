@@ -29,6 +29,18 @@ router.get('/restore', function (req, res) {
   res.render('admin_restore', { user: req.user });
 });
 
+router.get('/mailTemplates', function (req, res) {
+  res.render('mail_templates', { user: req.user });
+});
+
+router.get('/mailTemplates/editor', function (req, res) {
+  res.render('mail_template_editor', { user: req.user, subject: ""});
+});
+
+router.get('/mailTemplates/editor/:subject', function (req, res) {
+  res.render('mail_template_editor', { user: req.user, subject: req.params.subject});
+});
+
 router.get('/:competitionid', function (req, res, next) {
   const id = req.params.competitionid;
 

@@ -65,6 +65,9 @@ block content
           button(ng-click="go('/admin/restore')" class='btn btn-outline-dark btn-lg btn-block')
             i.fas.fa-download &nbsp;
             | {{"admin.home.restore" | translate}}
+          button(ng-click="go('/admin/mailTemplates')" class='btn btn-outline-primary btn-lg btn-block')
+            i.fas.fa-mail-bulk &nbsp;
+            | {{"admin.mailTemplates.title" | translate}}
           hr
 
           if user.superDuperAdmin
