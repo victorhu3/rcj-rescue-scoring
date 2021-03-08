@@ -858,10 +858,10 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 if (thisCell.tile && thisCell.tile.color) {
                     floorColor = '';
                     for (i = 1; i < 7; i += 2)
-                        floorColor += String(parseInt('0x' + thisCell.tile.color.substring(i, i + 2)) / 255.0) + ' '
+                        floorColor += String(parseInt('0x' + thisCell.tile.color.substring(i, i + 2)) / 255.0) + ' ';
                 }
                 if(thisCell.tile){
-                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir, floorColor]
+                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir, floorColor];
                 }
 
             }
@@ -1212,12 +1212,26 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         if ($scope.selectRoom != 0) {
             $scope.selectRoom = 0;
             room1Button.innerHTML = "Selecting Room 1 Tiles...";
-            room1Button.style.backgroundColor = "red";
+            room1Button.style.backgroundColor = "#359ef4";
         }
         else {
             $scope.selectRoom = -1;
-            room1Button.innerHTML = "Select Room 1 Tiles";
+            room1Button.innerHTML = "Select Room 1 Tiles (Half-Walls)";
             room1Button.style.backgroundColor = "#ffc107";
+        }
+    }
+
+    $scope.selectRoom2 = function() {
+        var room2Button = document.getElementById('room2Button');
+        if ($scope.selectRoom != 1) {
+            $scope.selectRoom = 1;
+            room2Button.innerHTML = "Selecting Room 2 Tiles...";
+            room2Button.style.backgroundColor = "#ed9aef";
+        }
+        else {
+            $scope.selectRoom = -1;
+            room2Button.innerHTML = "Select Room 2 Tiles (Curved Walls)";
+            room2Button.style.backgroundColor = "#ffc107";
         }
     }
 
@@ -1271,9 +1285,28 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             }
         } else if (isTile) {
             if ($scope.selectRoom != -1) {
-                $scope.roomTiles[$scope.selectRoom].push(x+','+y+','+z);
-                var i = (parseInt(y - 1) / 2 * $scope.width + (parseInt(x - 1) / 2));
-                $(".tile").get(i).style.setProperty("--tileColor", "red");
+                var undo = false;
+                for (a = 0; a < 2; a++) {
+                    if ($scope.roomTiles[a]) {
+                        for (b = 0; b < $scope.roomTiles[a].length; b++) {
+                            if ($scope.roomTiles[a][b] == x+','+y+','+z) {
+                                var i = (parseInt(y - 1) / 2 * $scope.width + (parseInt(x - 1) / 2));
+                                $(".tile").get(i).style.setProperty("--tileColor", "#b4ffd5");
+                                $scope.roomTiles[a].splice(b, 1);
+                                console.log($scope.roomTiles[a]);
+                                undo = true;
+                            }
+                        }
+                    }
+                }
+                if (!undo) {
+                    $scope.roomTiles[$scope.selectRoom].push(x+','+y+','+z);
+                    var i = (parseInt(y - 1) / 2 * $scope.width + (parseInt(x - 1) / 2));
+                    if ($scope.selectRoom == 0)
+                        $(".tile").get(i).style.setProperty("--tileColor", "#359ef4");
+                    else
+                        $(".tile").get(i).style.setProperty("--tileColor", "#ed9aef");
+                }
             }
             else if (!cell) {
                 $scope.cells[x + ',' + y + ',' + z] = {
