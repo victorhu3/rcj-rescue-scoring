@@ -110,18 +110,22 @@ block content
               th
         tbody
             tr(ng-repeat='user in users')
-              td(ng-bind='user.username')
               td
-                span(ng-if="user.nowAuth <= 0") {{"admin.authority.level0" | translate}}
-                span(ng-if="user.nowAuth == 1") {{"admin.authority.level1" | translate}}
-                span(ng-if="user.nowAuth == 5") {{"admin.authority.level5" | translate}}
-                span(ng-if="user.nowAuth >= 10") {{"admin.authority.level10" | translate}}
+                i.fas.fa-user-tie(ng-if="!user.admin && !user.superDuperAdmin") &nbsp;
+                i.fas.fa-user-shield(ng-if="user.admin") &nbsp;
+                | {{user.username}}
               td
-                button(ng-click='updateAuthority(user._id , 0)' style="width:100%;" type="button" class="btn btn-secondary") {{"admin.authority.doLevel0" | translate}}
+                span(ng-if="user.superDuperAdmin") {{"admin.users.super" | translate}}
+                span(ng-if="!user.superDuperAdmin && user.nowAuth <= 0") {{"admin.authority.level0" | translate}}
+                span(ng-if="!user.superDuperAdmin && user.nowAuth == 1") {{"admin.authority.level1" | translate}}
+                span(ng-if="!user.superDuperAdmin && user.nowAuth == 5") {{"admin.authority.level5" | translate}}
+                span(ng-if="!user.superDuperAdmin && user.nowAuth >= 10") {{"admin.authority.level10" | translate}}
               td
-                button(ng-click='updateAuthority(user._id , 1)' style="width:100%;" type="button" class="btn btn-info") {{"admin.authority.doLevel1" | translate}}
+                button(ng-click='updateAuthority(user._id , 0)' style="width:100%;" type="button" class="btn btn-secondary" ng-disabled="user.superDuperAdmin") {{"admin.authority.doLevel0" | translate}}
               td
-                button(ng-click='updateAuthority(user._id , 5)' style="width:100%;" type="button" class="btn btn-primary") {{"admin.authority.doLevel5" | translate}}
+                button(ng-click='updateAuthority(user._id , 1)' style="width:100%;" type="button" class="btn btn-info" ng-disabled="user.superDuperAdmin") {{"admin.authority.doLevel1" | translate}}
               td
-                button(ng-click='updateAuthority(user._id , 10)' style="width:100%;" type="button" class="btn btn-success") {{"admin.authority.doLevel10" | translate}}
+                button(ng-click='updateAuthority(user._id , 5)' style="width:100%;" type="button" class="btn btn-primary" ng-disabled="user.superDuperAdmin") {{"admin.authority.doLevel5" | translate}}
+              td
+                button(ng-click='updateAuthority(user._id , 10)' style="width:100%;" type="button" class="btn btn-success" ng-disabled="user.superDuperAdmin || !user.admin") {{"admin.authority.doLevel10" | translate}}
       br
