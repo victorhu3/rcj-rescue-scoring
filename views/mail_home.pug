@@ -63,7 +63,7 @@ block content
               
         
         div(style="margin-bottom:10px;")
-            button(ng-click="selectAll()" class='btn btn-primary' style="margin: 5px;") {{"common.selectAll" | translate}}
+            button(ng-click="selectAll()" class='btn' ng-class="selectedAll ? 'btn-primary':'btn-outline-primary'" style="margin: 5px;") {{"common.selectAll" | translate}}
             button.btn.btn-secondary(type='button', ng-click="newEmail2SelectedTeam()" style="margin: 5px;")
                     i.fas.fa-envelope-open-text &nbsp;
                     | {{"mail.home.newMailBulk" | translate}}

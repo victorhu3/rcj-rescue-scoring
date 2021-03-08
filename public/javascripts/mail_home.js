@@ -98,10 +98,22 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
         window.location = path
     }
 
+    $scope.selectedAll = false;
     $scope.selectAll = function () {
-        angular.forEach($scope.teams, function (team) {
-            if($scope.list_filter(team) && team.email.length>0) team.checked = true;
-        });
+        if($scope.selectedAll){
+            angular.forEach($scope.teams, function (team) {
+                team.checked = false;
+            });
+            $scope.selectedAll = false;
+        }else{
+            angular.forEach($scope.teams, function (team) {
+                if($scope.list_filter(team) && $scope.validEmail(team.email)){
+                    team.checked = true;
+                    $scope.selectedAll = true;
+                }
+            });
+        }
+        
     }
 
     $scope.newEmail2SelectedTeam = function () {
