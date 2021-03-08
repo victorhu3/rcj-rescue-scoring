@@ -63,13 +63,16 @@ block content
               
         
         div(style="margin-bottom:10px;")
-            button(ng-click="selectAll()" class='btn' ng-class="selectedAll ? 'btn-primary':'btn-outline-primary'" style="margin: 5px;") {{"common.selectAll" | translate}}
+            button(ng-click="selectAll()" class='btn' ng-class="selectedAll ? 'btn-primary':'btn-outline-primary'" style="margin: 5px;")
+              i.far.fa-check-square(ng-if="selectedAll") &nbsp;
+              i.far.fa-square(ng-if="!selectedAll") &nbsp;
+              | {{"common.selectAll" | translate}}
             button.btn.btn-secondary(type='button', ng-click="newEmail2SelectedTeam()" style="margin: 5px;")
-                    i.fas.fa-envelope-open-text &nbsp;
-                    | {{"mail.home.newMailBulk" | translate}}
+              i.fas.fa-envelope-open-text &nbsp;
+              | {{"mail.home.newMailBulk" | translate}}
             button.btn.btn-warning(type='button', ng-click="go('/admin/' + competition._id + '/mails/sent')" style="margin: 5px;")
-                    i.fas.fa-mail-bulk &nbsp;
-                    | {{"mail.home.deliveryStatus" | translate}}
+              i.fas.fa-mail-bulk &nbsp;
+              | {{"mail.home.deliveryStatus" | translate}}
         table.custom(style="margin-bottom:20px;")
           thead
               tr
