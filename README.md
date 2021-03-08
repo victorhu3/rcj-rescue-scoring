@@ -11,7 +11,7 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 これは，ロボカップジュニアレスキュー競技で用いられる大会管理システムです．  
 
 #### 対応ルール
-ワールドリーグ Line/Maze:2020  
+ワールドリーグ Line/Maze:2021   
 日本リーグ：2021
 
 --
@@ -25,7 +25,7 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 * ユーザー管理機能を強化
 * マップの回転機能を追加
 * インタビュー機能を追加
-* 2020ルールに対応
+* 2021ルールに対応
 * ラインのタイルセットの在庫管理に対応
 * 大会データーのバックアップ/リストアに対応
 * トラブル発生時のハンドオーバーに対応
@@ -41,6 +41,7 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 [https://rcj.cloud](https://rcj.cloud)
 
 ## 更新情報
+* [2021/03/07] 2021ルールに正式に対応しました．
 * [2020/11/28] ドキュメント系システムを本システムに統合しました．また，システムからのチームへのメール配信も可能になりました．
 * [2020/02/10] v20系にて2020ルールに対応しました．
 * [2019/07/17] スコアシートを出力できるようになりました．
@@ -84,6 +85,10 @@ Please refer to the [English version README](https://github.com/rrrobo/rcj-rescu
 * RoboCup 2019 Sydney Australia
 * ロボカップジュニア2020 大阪中央ノード大会
 * ロボカップジュニア2020 関西ブロック大会
+
+### 2021年ルール対応版
+* ロボカップジュニア2021 東海ブロック大会
+* ロボカップジュニア 日本大会2021 オンライン
 
 ## 使用方法
 ### Dockerを利用（推奨）
