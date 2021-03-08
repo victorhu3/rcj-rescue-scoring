@@ -67,7 +67,7 @@ block content
               i.far.fa-check-square(ng-if="selectedAll") &nbsp;
               i.far.fa-square(ng-if="!selectedAll") &nbsp;
               | {{"common.selectAll" | translate}}
-            button.btn.btn-secondary(type='button', ng-click="newEmail2SelectedTeam()" style="margin: 5px;")
+            button.btn.btn-success(type='button', ng-click="newEmail2SelectedTeam()" style="margin: 5px;")
               i.fas.fa-envelope-open-text &nbsp;
               | {{"mail.home.newMailBulk" | translate}}
             button.btn.btn-warning(type='button', ng-click="go('/admin/' + competition._id + '/mails/sent')" style="margin: 5px;")
@@ -96,7 +96,7 @@ block content
                     span(ng-bind="em")
                     br
                 td
-                  button.btn.btn-sm.btn-secondary(type='button', ng-click="newMail(team)", ng-if="validEmail(team.email)")
+                  button.btn.btn-sm.btn-success(type='button', ng-click="newMail(team)", ng-if="validEmail(team.email)")
                     i.fas.fa-envelope-open-text &nbsp;
                     | {{"mail.home.newMail" | translate}}
       div(ng-show="mode=='write'")
