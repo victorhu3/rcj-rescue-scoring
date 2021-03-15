@@ -30,6 +30,22 @@ app.constant('NG_QUILL_CONFIG', {
       imageResize: {
       },
       imageDropAndPaste: {
+      },
+      imageUpload: {
+        url: `/api/document/files/usercontent/${teamId}/${token}`, // server url. If the url is empty then the base64 returns
+        method: 'POST', // change query method, default 'POST'
+        name: 'image', // custom form name
+        withCredentials: false, // withCredentials
+        headers: {}, // add custom headers, example { token: 'your-token'}
+        // personalize successful callback and call next function to insert new url to the editor
+        callbackOK: (serverResponse, next) => {
+            next(serverResponse.url);
+        },
+        // personalize failed callback
+        callbackKO: serverError => {
+            console.log(serverError)
+            alert(serverError.type);
+        }
       }
     },
     theme: 'snow',
