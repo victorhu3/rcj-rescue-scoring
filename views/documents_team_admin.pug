@@ -70,7 +70,7 @@ block content
               th {{'document.teamAdmin.public' | translate}}
               th {{'common.operation' | translate}}
         tbody
-            tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[name]"')
+            tr(ng-repeat='team in teams | filter:list_filter | orderBy:"[teamCode, name]"')
               td(ng-bind='team.teamCode')
               td(ng-bind='team.name')
               td(ng-bind='team.country')
