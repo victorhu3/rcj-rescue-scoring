@@ -1,6 +1,6 @@
 // register the directive with your app module
 var app = angular.module('DocumentForm', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize', 'ngFileUpload']);
-
+let uploading_mes;
 app.constant('NG_QUILL_CONFIG', {
     /*
      * @NOTE: this config/output is not localizable.
@@ -40,11 +40,26 @@ app.constant('NG_QUILL_CONFIG', {
         // personalize successful callback and call next function to insert new url to the editor
         callbackOK: (serverResponse, next) => {
             next(serverResponse.url);
+            Swal.close()
         },
         // personalize failed callback
         callbackKO: serverError => {
             console.log(serverError)
-            alert(serverError.type);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: serverError.type
+            })
+        },
+        checkBeforeSend: (file, next) => {
+            Swal.fire({
+                title: uploading_mes,
+                allowOutsideClick : false,
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            next(file); // go back to component and send to the server
         }
       }
     },
@@ -92,6 +107,12 @@ app.controller('DocumentFormController', ['$scope', '$uibModal', '$log', '$http'
     let hints_mes;
     $translate('document.form.hints').then(function (val) {
         hints_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    $translate('document.form.uploading').then(function (val) {
+        uploading_mes = val;
     }, function (translationId) {
     // = translationId;
     });
