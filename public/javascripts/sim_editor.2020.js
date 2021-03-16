@@ -1,4 +1,3 @@
-//hellooooo
 // register the directive with your app module
 var app = angular.module('SimEditor', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies']);
 
@@ -734,7 +733,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         for(let x=1,l=$scope.length*2+1;x<l;x+=2){
             let row = [];
             for(let z=1,m=$scope.width*2+1;z<m;z+=2){
-                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false, 0, '']);
+                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false, 0, 0, '']);
             }
             walls.push(row);
         }
@@ -750,7 +749,6 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 
                 let humanType = 0; // 1 - harmed, 2 - unharmed, 3 - stable, 4 - thermal
                 let humanPlace = 0;
-                let curveDir = 0; // 1 - NE, 2 - SE, 3 - SW, 4 - NW
                 let floorColor = '0.635 0.635 0.635';
 
                 if(thisCell.tile && thisCell.tile.victims){
@@ -845,23 +843,13 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                         }
                     }
                 }
-                if (thisCell.tile && thisCell.tile.curve) {
-                    if (thisCell.tile.curve.top && thisCell.tile.curve.right)
-                        curveDir = 1;
-                    else if (thisCell.tile.curve.bottom && thisCell.tile.curve.right)
-                        curveDir = 2;
-                    else if (thisCell.tile.curve.bottom && thisCell.tile.curve.left)
-                        curveDir = 3;
-                    else if (thisCell.tile.curve.top && thisCell.tile.curve.left)
-                        curveDir = 4;
-                }
                 if (thisCell.tile && thisCell.tile.color) {
                     floorColor = '';
                     for (i = 1; i < 7; i += 2)
                         floorColor += String(parseInt('0x' + thisCell.tile.color.substring(i, i + 2)) / 255.0) + ' ';
                 }
                 if(thisCell.tile){
-                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), curveDir, floorColor];
+                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), thisCell.curveDir, thisCell.halfWall, floorColor];
                 }
 
             }
@@ -1284,7 +1272,16 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 }
             }
         } else if (isTile) {
-            if ($scope.selectRoom != -1) {
+            if (!cell) {
+                cell = $scope.cells[x + ',' + y + ',' + z] = {
+                    isTile: true,
+                    tile: {
+                        changeFloorTo: z,
+                        halfTile: 0
+                    }
+                };
+            }
+            if ($scope.selectRoom != -1 && cell) {
                 var undo = false;
                 for (a = 0; a < 2; a++) {
                     if ($scope.roomTiles[a]) {
@@ -1294,6 +1291,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                                 $(".tile").get(i).style.setProperty("--tileColor", "#b4ffd5");
                                 $scope.roomTiles[a].splice(b, 1);
                                 console.log($scope.roomTiles[a]);
+                                $scope.cells[x+','+y+','+z].tile.halfTile = 0;
                                 undo = true;
                             }
                         }
@@ -1306,15 +1304,8 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                         $(".tile").get(i).style.setProperty("--tileColor", "#359ef4");
                     else
                         $(".tile").get(i).style.setProperty("--tileColor", "#ed9aef");
+                    $scope.cells[x+','+y+','+z].tile.halfTile = 1;
                 }
-            }
-            else if (!cell) {
-                $scope.cells[x + ',' + y + ',' + z] = {
-                    isTile: true,
-                    tile: {
-                        changeFloorTo: z
-                    }
-                };
             }
             $scope.open(x, y, z);
         }
@@ -1377,6 +1368,38 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, x, y, z
             i = (parseInt(index.charAt(2)) - 1) / 2 * $scope.width + (parseInt(index.charAt(0)) - 1) / 2;
             if ($scope.cells[index].tile && $scope.cells[index].tile.color)
                 $(".tile").get(i).style.setProperty("--tileColor", $scope.cells[index].tile.color);
+        }
+     }
+
+     $scope.isHalfWall = function(r, c) {
+        var ind = -1, tmp = r * 10 + c;
+        if (tmp == 12) ind = 0;
+        else if (tmp == 23) ind = 1;
+        else if (tmp == 32) ind = 2;
+        else if (tmp == 21) ind = 3;
+        if (((r % 2 == 1) ^ (c % 2 == 1)) && (r != 0 && c != 0 && r != 4 && c != 4) && 
+            $scope.cell && $scope.cell.tile && $scope.cell.tile.curve != undefined && $scope.cell.tile.halfWall[ind])
+            return 1;
+        return 0;
+     }
+     
+     $scope.innerTileClick = function(r, c) {
+        var ind = -1, tmp = r * 10 + c;
+        if (tmp == 12) ind = 0;
+        else if (tmp == 23) ind = 1;
+        else if (tmp == 32) ind = 2;
+        else if (tmp == 21) ind = 3;
+        if ($scope.cell && $scope.cell.tile) {
+            if ($scope.cell.tile.curve == undefined) {
+                $scope.cell.tile.halfWall = [0, 0, 0, 0];
+                $scope.cell.tile.curve = [0, 0, 0, 0]; //NW quadrant, NE, SW, SE
+            }
+            if (r % 2 == 1 && c % 2 == 1) { //curved
+                quad = parseInt(r / 2) * 2 + parseInt(c / 2);
+                $scope.cell.tile.curve[quad] = ($scope.cell.tile.curve[quad] + 1) % 5;
+            }
+            else if (((r % 2 == 1) ^ (c % 2 == 1)) && (r != 0 && c != 0 && r != 4 && c != 4)) //half wall
+                $scope.cell.tile.halfWall[ind] = 1 - $scope.cell.tile.halfWall[ind];
         }
      }
 

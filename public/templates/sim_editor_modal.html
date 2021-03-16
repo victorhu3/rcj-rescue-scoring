@@ -1,3 +1,6 @@
+<!--
+  http://localhost:3000/service/editor/simulation/2020
+-->
 <div class="modal-header">
   <h3 class="modal-title">{{"admin.simMapEditor.item" | translate}}</h3>
 </div>
@@ -32,7 +35,6 @@
       <th width="12%">H</th>
       <th width="12%">S</th>
       <th width="12%">U</th>
-      <th width="12%">Curved Wall</th>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.top" | translate}}</th>
@@ -41,7 +43,6 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="checkbox" ng-model="cell.tile.curve.top" id="curveTop"><label class="checkbox" for="curveTop"></label></td>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.bottom" | translate}}</th>
@@ -50,7 +51,6 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="checkbox" ng-model="cell.tile.curve.bottom" id="curveBottom"><label class="checkbox" for="curveBottom"></label></td>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.left" | translate}}</th>
@@ -59,7 +59,6 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="checkbox" ng-model="cell.tile.curve.left" id="curveLeft"><label class="checkbox" for="curveLeft"></label></td>
     </tr>
     <tr>
       <th class="col">{{"admin.simMapEditor.right" | translate}}</th>
@@ -68,10 +67,22 @@
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="checkbox" ng-model="cell.tile.curve.right" id="curveRight"><label class="checkbox" for="curveRight"></label></td>
     </tr>
   </table>
-  
+  <div id="halfTileSlot" ng-if="cell && cell.tile && cell.tile.halfTile">
+    <h4>Inner Tile Walls</h4>
+    <table>
+      <tr ng-repeat="r in range(5)">
+        <td ng-repeat="c in range(5)" ng-click="innerTileClick(r, c)" ng-class="{'tile': (r % 2 == 1 && c % 2 == 1), 'wall': isHalfWall(r, c)}">
+            <img ng-src='/images/curvedWall/curved_NE.png' width="40" height="40" ng-show="r % 2 == 1 && c % 2 == 1 && cell.tile.curve[(r - 1) + (c - 1) / 2] == 1">
+            <img ng-src='/images/curvedWall/curved_SE.png' width="40" height="40" ng-show="r % 2 == 1 && c % 2 == 1 && cell.tile.curve[(r - 1) + (c - 1) / 2] == 2">
+            <img ng-src='/images/curvedWall/curved_SW.png' width="40" height="40" ng-show="r % 2 == 1 && c % 2 == 1 && cell.tile.curve[(r - 1) + (c - 1) / 2] == 3">
+            <img ng-src='/images/curvedWall/curved_NW.png' width="40" height="40" ng-show="r % 2 == 1 && c % 2 == 1 && cell.tile.curve[(r - 1) + (c - 1) / 2] == 4">
+        </td>
+    </tr>
+    <!--div ng-mo></div!-->
+    </table>
+  </div>
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
