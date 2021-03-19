@@ -607,6 +607,17 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         return corners;
     }
 
+    function checkAllIntersections() {
+
+        for(let i = 0; i < $scope.length+1; i++) {
+            for(let j = 0; j < $scope.width + 1; j++) {
+
+
+            }
+        }
+
+    }
+
     function checkForExternalWalls(pos, walls){
         let thisWall = walls[pos[1]][pos[0]];
         if(!thisWall[0]) return [false, false, false, false];
@@ -639,6 +650,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         return externalsNeeded
     }
 
+    /*
     function checkForNotch (pos, walls){
         //Variables to store if each notch is needed
         let needLeft = false;
@@ -714,7 +726,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 
         //Return information about needed notches
         return [needLeft, needRight, rotation]
-    }
+    }*/
 
     function u2f(v){
         if(v) return true;
@@ -734,7 +746,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         for(let x=1,l=$scope.length*2+1;x<l;x+=2){
             let row = [];
             for(let z=1,m=$scope.width*2+1;z<m;z+=2){
-                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false, 0, '']);
+                row.push([false, [0, 0, 0, 0], false, false, false, false, 0, 0, false, false, 0, '']);
             }
             walls.push(row);
         }
@@ -742,11 +754,11 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             for(let x=1,m=$scope.width*2+1;x<m;x+=2){
 
                 let thisCell = $scope.cells[x+','+y+',0'];
-                let arWall = [false, false, false, false];
-                if($scope.cells[(x)+','+(y-1)+',0'] && $scope.cells[(x)+','+(y-1)+',0'].isWall) arWall[0] = true;
-                if($scope.cells[(x+1)+','+(y)+',0'] && $scope.cells[(x+1)+','+(y)+',0'].isWall) arWall[1] = true;
-                if($scope.cells[(x)+','+(y+1)+',0'] && $scope.cells[(x)+','+(y+1)+',0'].isWall) arWall[2] = true;
-                if($scope.cells[(x-1)+','+(y)+',0'] && $scope.cells[(x-1)+','+(y)+',0'].isWall) arWall[3] = true;
+                let arWall = [0, 0, 0, 0];
+                if($scope.cells[(x)+','+(y-2)+',0'] == null && $scope.cells[(x)+','+(y-1)+',0'] && $scope.cells[(x)+','+(y-1)+',0'].isWall) arWall[0] = 1;
+                if($scope.cells[(x+1)+','+(y)+',0'] && $scope.cells[(x+1)+','+(y)+',0'].isWall) arWall[1] = 1;
+                if($scope.cells[(x)+','+(y+1)+',0'] && $scope.cells[(x)+','+(y+1)+',0'].isWall) arWall[2] = 1;
+                if($scope.cells[(x-2)+','+(y)+',0'] == null && $scope.cells[(x - 1)+','+(y)+',0'] && $scope.cells[(x-1)+','+(y)+',0'].isWall) arWall[3] = 1;
 
                 let humanType = 0; // 1 - harmed, 2 - unharmed, 3 - stable, 4 - thermal
                 let humanPlace = 0;
@@ -897,7 +909,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         TexturedBackgroundLight {
         }
         `;
-        const protoTilePart = ({name, x, z, fl, tw, rw, bw, lw, tlc, blc, brc, trc, tex, rex, bex, lex, notch, notchR, start, trap, checkpoint, swamp, width, height, id, xScale, yScale, zScale, curve, color}) => `
+        const protoTilePart = ({name, x, z, fl, tw, rw, bw, lw, tex, rex, bex, lex, start, trap, checkpoint, swamp, width, height, id, xScale, yScale, zScale, curve, color}) => `
         DEF ${name} worldTile {
             xPos ${x}
             zPos ${z}
@@ -906,16 +918,10 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             rightWall ${rw}
             bottomWall ${bw}
             leftWall ${lw}
-            topLeftCorner ${tlc}
-            bottomLeftCorner ${blc}
-            bottomRightCorner ${brc}
-            topRightCorner ${trc}
             topExternal ${tex}
             rightExternal ${rex}
-            bottomExternal ${bex}
             leftExternal ${lex}
-            notch "${notch}"
-            notchRotation ${notchR}
+            bottomExternal ${bex}
             start ${start}
             trap ${trap}
             checkpoint ${checkpoint}
@@ -1034,23 +1040,65 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         let humanId = 0
         let obstacleId = 0;
 
+        //Resolve corners
+        for(let x = 0; x < $scope.length+1; x++) {
+            for(let z = 0; z<$scope.width+1; z++) {
+                
+                let verticalWalls = 0;
+                let horizontalWalls = 0;
+                let topLeft = false;
+
+                if((walls[x-1] != null && walls[x-1][z] != null && walls[x-1][z][1][3] > 0) || (walls[x-1] != null && walls[x-1][z-1] != null && walls[x-1][z-1][1][1] > 0)) verticalWalls++; //North wall
+                if((walls[x] != null && walls[x][z] != null && walls[x][z][1][0] > 0) || (walls[x-1] != null && walls[x-1][z] != null && walls[x-1][z][1][2] > 0)) horizontalWalls++;
+                if((walls[x] != null && walls[x][z] != null && walls[x][z][1][3] > 0) || (walls[x] != null && walls[x][z-1] != null && walls[x][z-1][1][1] > 0)) verticalWalls++;
+                if((walls[x-1] != null && walls[x-1][z-1] != null && walls[x-1][z-1][1][2] > 0) || (walls[x] != null && walls[x][z-1] != null && walls[x][z-1][1][0] > 0)) horizontalWalls++;
+
+                //Very special case for top left corner
+                if((walls[x] != null && walls[x][z] != null && walls[x][z][1][0] > 0) || (walls[x] != null && walls[x][z] != null && walls[x][z][1][3] > 0)) topLeft = true;
+
+
+                if(horizontalWalls > 0 && verticalWalls > 0) {
+                    
+                    //North wall
+                    if((walls[x-1] != null && walls[x-1][z] && walls[x-1][z][1][3] > 0)) walls[x-1][z][1][3] = (walls[x-1][z][1][3]) * 3;
+                    else if(walls[x-1] != null && walls[x-1][z-1] && walls[x-1][z-1][1][1] > 0) walls[x-1][z-1][1][1] = (walls[x-1][z-1][1][1]) * 3;
+
+                    if((walls[x-1] != null && walls[x-1][z] && walls[x-1][z][1][2] > 0)) walls[x-1][z][1][2] = (walls[x-1][z][1][2]) * 2;
+                    else if(walls[x] != null && walls[x][z] && walls[x][z][1][0] > 0) walls[x][z][1][0] = (walls[x][z][1][0]) * 2;
+
+                    if((walls[x] != null && walls[x][z-1] && walls[x][z-1][1][1] > 0)) walls[x][z-1][1][1] = (walls[x][z-1][1][1]) * 2;
+                    else if(walls[x] != null && walls[x][z] && walls[x][z][1][3] > 0) walls[x][z][1][3] = (walls[x][z][1][3]) * 2;
+
+                    if((walls[x] != null && walls[x][z-1] && walls[x][z-1][1][0] > 0)) walls[x][z-1][1][0] = (walls[x][z-1][1][0]) * 3;
+                    else if(walls[x-1] != null && walls[x-1][z-1] && walls[x-1][z-1][1][2] > 0) walls[x-1][z-1][1][2] = (walls[x-1][z-1][1][2]) * 3;
+
+                    if(topLeft && horizontalWalls == 1 && verticalWalls == 1) {
+                        // If the left and top walls aren't the only horizontal and vertical walls
+
+                        walls[x][z][1][0] /= 2;
+                        walls[x][z][1][3] /= 2;
+                    }
+                }
+                
+            }
+        }
+
         //String to hold all the humans
         let allHumans = ""
         for(let x=0;x<$scope.width;x++){
             for(let z=0;z<$scope.length;z++){
                 //Check which corners and external walls and notches are needed
-                let corners = checkForCorners([x, z], walls)
+                //let corners = checkForCorners([x, z], walls)
                 let externals = checkForExternalWalls([x, z], walls)
-                let notchData = checkForNotch([x, z], walls)
-                let notch = ""
+
+                //if(corners[1] == 1) corners[1] = true;
+                //if(corners[1] == 0) corners[1] = false;
+                
                 //Name to be given to the tile
                 let tileName = "TILE"
                 if(walls[z][x][4]) tileName = "START_TILE"
-                //Set notch string to correct value
-                if(notchData[0]) notch = "left"
-                if(notchData[1]) notch = "right"
                 //Create a new tile with all the data
-                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], curve: walls[z][x][10], color: walls[z][x][11]});
+                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw:walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], curve: walls[z][x][10], color: walls[z][x][11]});
                 tile = tile.replace(/true/g, "TRUE")
                 tile = tile.replace(/false/g, "FALSE")
                 allTiles = allTiles + tile
