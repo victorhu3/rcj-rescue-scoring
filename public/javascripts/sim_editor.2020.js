@@ -74,6 +74,9 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             if ($scope.cells[index].tile && $scope.cells[index].tile.curve == undefined) {
                 $scope.cells[index].tile.halfWallIn = [0, 0, 0, 0];
                 $scope.cells[index].tile.curve = [0, 0, 0, 0]; //NW quadrant, NE, SW, SE
+                $scope.cells[index].tile.halfWallVic = [];
+                for (var i in $scope.range(16))
+                    $scope.cells[index].tile.halfWallVic.push('');
             }
         }
         
@@ -736,7 +739,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         for(let x=1,l=$scope.length*2+1;x<l;x+=2){
             let row = [];
             for(let z=1,m=$scope.width*2+1;z<m;z+=2){
-                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false,'', '', '', '']);
+                row.push([false, [false, false, false, false], false, false, false, false, 0, 0, false, false,'', '', '', [], '']);
             }
             walls.push(row);
         }
@@ -866,7 +869,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     curveWallVar = '[' + thisCell.tile.curve.toString() + ']';
                 }
                 if(thisCell.tile){
-                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), halfWallOutVar, halfWallInVar, curveWallVar, floorColor];
+                    walls[(y-1)/2][(x-1)/2] = [u2f(thisCell.reachable), arWall, u2f(thisCell.tile.checkpoint), u2f(thisCell.tile.black), x == $scope.startTile.x && y == $scope.startTile.y, u2f(thisCell.tile.swamp), humanType, humanPlace, u2f(thisCell.isLinear), u2f(thisCell.tile.obstacle), halfWallOutVar, halfWallInVar, curveWallVar, thisCell.tile.halfWallVic, floorColor];
                 }
             }
         }
@@ -1025,6 +1028,10 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
 
         //Rotations of humans for each wall
         let humanRotation = [3.14, 1.57, 0, -1.57]
+        let halfWallVicPos = [[-0.074, -0.1375], [0, -0.074], [-0.074, 0], [-0.1375, -0.074], 
+                            [0.074, -0.1375], [0.1375, -0.074], [0.074, 0], [0, -0.074], 
+                            [-0.074, 0], [0, 0.074], [-0.074, 0.1375], [-0.1375, 0.074],
+                            [0.074, 0], [0.1375, 0.074], [0.074, 0.1375], [0, 0.074]];
         //Offsets for visual and thermal humans
         let humanOffset = [[0, -0.1375 * tileScale[2]], [0.1375 * tileScale[0], 0], [0, 0.1375 * tileScale[2]], [-0.1375 * tileScale[0], 0]]
         let humanOffsetThermal = [[0, -0.136 * tileScale[2]], [0.136 * tileScale[0], 0], [0, 0.136 * tileScale[2]], [-0.136 * tileScale[0], 0]]
@@ -1056,7 +1063,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                 if(notchData[0]) notch = "left"
                 if(notchData[1]) notch = "right"
                 //Create a new tile with all the data
-                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], halfOut: walls[z][x][10], halfIn: walls[z][x][11], curve: walls[z][x][12], color: walls[z][x][13]});
+                tile = protoTilePart({name: tileName, x: x, z: z, fl: walls[z][x][0] && !walls[z][x][3], tw: walls[z][x][1][0], rw: walls[z][x][1][1], bw: walls[z][x][1][2], lw: walls[z][x][1][3], trc: corners[0], brc: corners[1], blc: corners[2], tlc: corners[3], tex: externals[0], rex: externals[1], bex: externals[2], lex: externals[3], notch: notch, notchR: notchData[2], start: walls[z][x][4], trap: walls[z][x][3], checkpoint: walls[z][x][2], swamp: walls[z][x][5], width: width, height: height, id: tileId, xScale: tileScale[0], yScale: tileScale[1], zScale: tileScale[2], halfOut: walls[z][x][10], halfIn: walls[z][x][11], curve: walls[z][x][12], color: walls[z][x][14]});
                 tile = tile.replace(/true/g, "TRUE")
                 tile = tile.replace(/false/g, "FALSE")
                 allTiles = allTiles + tile
@@ -1120,6 +1127,23 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                         allHumans = allHumans + visualHumanPart({x: humanPos[0], z: humanPos[1], rot: humanRot, id: humanId, type: humanTypesVisual[walls[z][x][6] - 1], score: score})
                     }
                     humanId = humanId + 1
+                }
+                //Half Wall Humans
+                for (var i in $scope.range(16)) {
+                    if (walls[z][x][13][i] != '') {
+                        let humanPos = [(x * 0.3 * tileScale[0]) + startX , (z * 0.3 * tileScale[2]) + startZ]
+                        let score = 30
+                        if(walls[z][x][8]) score = 10
+                        if (walls[z][x][13][i] == 4) {
+                            allHumans = allHumans + thermalHumanPart({x: humanPos[0] + halfWallVicPos[i][0] * tileScale[0], z: humanPos[1] + halfWallVicPos[i][1] * tileScale[2], rot: humanRotation[i % 4], id: humanId, score: score})
+                            console.log(z, x, walls[z][x][13][i])
+                        }
+                        else {
+                            allHumans = allHumans + visualHumanPart({x: halfWallVicPos[i][0], z: halfWallVicPos[i][1], rot: humanRotation[i % 4], id: humanId, type: humanTypesVisual[walls[z][x][13][i] - 1], score: score})
+                            console.log(z, x, walls[z][x][13][i])
+                        }
+                        humanId = humanId + 1
+                    }
                 }
                 //Obstacle
                 if(walls[z][x][9] != 0){
