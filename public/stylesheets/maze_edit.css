@@ -36,6 +36,10 @@ tr td:nth-child(even) {
     background-color: var(--tileColor);
 }
 
+.inner-tile {
+    background-color: #b4ffd5;
+}
+
 .tile.linear {
     background-color: #fffdea;
 }
