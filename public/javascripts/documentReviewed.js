@@ -102,7 +102,10 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
                 for(let c of $scope.reviewComments){
                     for(let b in c.comments){
                         for(let q in c.comments[b]){
-                            if(c.comments[b][q] == '' || $scope.review[b].questions[q].type != 'scale') continue;
+                            if($scope.review[b].questions[q].type != 'scale') continue;
+                            if(c.comments[b][q] == ''){
+                                c.comments[b][q] = Number($scope.review[b].questions[q].scale.least);
+                            }
                             let r = Number(c.comments[b][q]);
                             if(!$scope.rating[b]) $scope.rating[b] = [];
                             if(!$scope.rating[b][q]) $scope.rating[b][q] = [];
@@ -201,8 +204,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
     }
 
     $scope.calcAve = function(blockIndex, questionIndex){
-        if(!$scope.rating) return 0;
-        if($scope.rating[blockIndex][questionIndex].length == 0) return 0;
+        if(!$scope.rating || !$scope.rating[blockIndex] || !$scope.rating[blockIndex][questionIndex] || $scope.rating[blockIndex][questionIndex].length == 0 ) return 0;
         return sum($scope.rating[blockIndex][questionIndex]) / isNumberCount($scope.rating[blockIndex][questionIndex]);
     }
     $scope.calcScore = function(){

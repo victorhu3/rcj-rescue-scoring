@@ -102,8 +102,10 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
                 for(let b in c.comments){
                     for(let q in c.comments[b]){
                         if(!$scope.review[b].questions[q]) continue;
-                        if(c.comments[b][q] == '' || isNaN(c.comments[b][q]) || $scope.review[b].questions[q].type != 'scale') continue;
-
+                        if($scope.review[b].questions[q].type != 'scale' || isNaN(c.comments[b][q]) ) continue;
+                        if(c.comments[b][q] == ''){
+                            c.comments[b][q] = Number($scope.review[b].questions[q].scale.least);
+                        }
                         let r = Number(c.comments[b][q]);
                         if(!$scope.rating[teamId][b]) $scope.rating[teamId][b] = [];
                         if(!$scope.rating[teamId][b][q]) $scope.rating[teamId][b][q] = [];
@@ -111,7 +113,6 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
                     }
                 }
             }
-            console.log($scope.rating)
         })
 
         //Check 1st lang
