@@ -198,7 +198,9 @@ block content
                                                     th {{"document.review.rating" | translate}}
                                             tbody
                                                 tr(ng-repeat="review in reviewComments track by $index")
-                                                    td(ng-bind="review.reviewer.username")
+                                                    td
+                                                        span {{review.reviewer.username}} &nbsp;
+                                                        i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                                     td(ng-bind="review.comments[blockIndex][questionIndex]")
                                                 tr
                                                     td(style="background-color: #FFA9A9;") {{"document.review.ratingAve" | translate}}

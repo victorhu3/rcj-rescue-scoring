@@ -138,7 +138,8 @@
         "inspection": "Inspection",
         "checkin": "Check in",
         "totalScore": "Total score",
-        "sort": "Sorting"
+        "sort": "Sorting",
+        "deleted": "Successfully deleted!"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -861,7 +862,13 @@
             "comments": "Review Comments",
             "user": "Reviewer",
             "rating": "Rating",
-            "ratingAve": "Rating average"
+            "ratingAve": "Rating average",
+            "deleteReview": "Delete review",
+            "deleteType": "Please select the type of deletion.",
+            "deletePart": "Partial deletion",
+            "deleteWhole": "Whole deletion",
+            "deletePartMes": "Partial deletion of this review. This operation cannot be undone.",
+            "deleteWholeMes": "Whole deletion of this review. This operation cannot be undone."
         },
         "inspection":{
             "do": "Inspections carried out",

@@ -138,7 +138,8 @@
         "inspection": "検査",
         "checkin": "チェックイン",
         "totalScore": "合計得点",
-        "sort": "ソート"
+        "sort": "ソート",
+        "deleted": "正常に削除しました"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -862,7 +863,13 @@
             "comments": "レビューコメント",
             "user": "レビュアー",
             "rating": "評点",
-            "ratingAve": "評点平均"
+            "ratingAve": "評点平均",
+            "deleteReview": "レビュー削除",
+            "deleteType": "削除の種類を選んでください．",
+            "deletePart": "部分削除",
+            "deleteWhole": "全体削除",
+            "deletePartMes": "このレビューを部分削除します．この操作は取り消しできません．",
+            "deleteWholeMes": "このレビューを全体削除します．この操作は取り消しできません．"
         },
         "inspection":{
             "do": "検査実施",
