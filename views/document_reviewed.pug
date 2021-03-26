@@ -180,13 +180,17 @@ block content
                                         div(ng-repeat="review in reviewComments track by $index")
                                             span
                                                 i.fas.fa-user-edit &nbsp;
-                                                | {{review.reviewer.username}}
+                                                | {{review.reviewer.username}} &nbsp;
+                                                if admin
+                                                    i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                             div(style="border: solid 1px #666;margin-bottom:10px;", ng-bind-html="trust(review.comments[blockIndex][questionIndex])")
                                     div(ng-if="question.type=='select'")
                                         div(ng-repeat="review in reviewComments track by $index")
                                             span
                                                 i.fas.fa-user-edit &nbsp;
-                                                | {{review.reviewer.username}}
+                                                | {{review.reviewer.username}}&nbsp;
+                                                if admin
+                                                    i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                             select.custom-select(ng-model='review.comments[blockIndex][questionIndex]', ng-options="option.value as option.text for option in langArray(question.i18n, 'options')", disabled, style="margin-bottom:10px;")
                                     div(ng-if="question.type=='scale'")
                                         table.custom(style="overflow: scroll;")
@@ -200,7 +204,8 @@ block content
                                                 tr(ng-repeat="review in reviewComments track by $index")
                                                     td
                                                         span {{review.reviewer.username}} &nbsp;
-                                                        i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
+                                                        if admin
+                                                            i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                                     td(ng-bind="review.comments[blockIndex][questionIndex]")
                                                 tr
                                                     td(style="background-color: #FFA9A9;") {{"document.review.ratingAve" | translate}}
@@ -356,13 +361,17 @@ block content
                                 div(ng-repeat="review in reviewComments track by $index")
                                     span
                                         i.fas.fa-user-edit &nbsp;
-                                        | {{review.reviewer.username}}
+                                        | {{review.reviewer.username}} &nbsp;
+                                        if admin
+                                            i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                     div(style="border: solid 1px #666;margin-bottom:10px;", ng-bind-html="trust(review.comments[blockIndex][questionIndex])")
                             div(ng-if="question.type=='select'")
                                 div(ng-repeat="review in reviewComments track by $index")
                                     span
                                         i.fas.fa-user-edit &nbsp;
-                                        | {{review.reviewer.username}}
+                                        | {{review.reviewer.username}} &nbsp;
+                                        if admin
+                                            i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                     select.custom-select(ng-model='review.comments[blockIndex][questionIndex]', ng-options="option.value as option.text for option in langArray(question.i18n, 'options')", disabled, style="margin-bottom:10px;")
                             div(ng-if="question.type=='scale'")
                                 table.custom(style="overflow: scroll;")
@@ -374,7 +383,10 @@ block content
                                             th {{"document.review.rating" | translate}}
                                     tbody
                                         tr(ng-repeat="review in reviewComments track by $index")
-                                            td(ng-bind="review.reviewer.username")
+                                            td
+                                                span {{review.reviewer.username}} &nbsp;
+                                                if admin
+                                                    i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                             td(ng-bind="review.comments[blockIndex][questionIndex]")
                                         tr
                                             td(style="background-color: #FFA9A9;") {{"document.review.ratingAve" | translate}}
