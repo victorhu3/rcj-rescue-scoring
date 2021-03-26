@@ -10,7 +10,13 @@ append scripts
     var leagueId = "#{lid}"
   script(src='/javascripts/documents_result.js')
 
-
+append css
+    style.
+      .scroll-table table {
+        display: block;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+      }
 
 block location
     a.breadcrumb-item(ng-click="go('/home')") Home
@@ -60,25 +66,25 @@ block content
                 | {{"common.totalScore" | translate}}
             
       
-      
-      table.custom(style="margin-bottom:20px;")
-        thead
-            tr
-              th {{"common.teamCode" | translate}}
-              th {{"common.team" | translate}}
-              th {{"common.region" | translate}}
-              th {{"common.league" | translate}}
-              th(ng-repeat="b in scaleBlock track by $index" ng-bind="blockTitle[$index]" ng-style="{backgroundColor: activeSortKey == b ? '#f1c40f':'#3498db'}")
-              th(ng-style="{backgroundColor: activeSortKey == -1 ? '#f1c40f':'#e74c3c'}")
-                i.fas.fa-calculator &nbsp;
-                | {{"common.totalScore" | translate}}
-              
-        tbody
-            tr(ng-repeat='team in teams | filter:list_filter')
-              td(ng-bind='team.teamCode')
-              td
-                a(ng-click="go('/document/reviewed/' + team._id + '?return=/admin/' + team.competition + '/documents/' + team.league + '/results')" ng-bind='team.name' style="color: #006699;") 
-              td(ng-bind='team.country')
-              td(ng-bind='team.league')
-              td(ng-repeat="b in scaleBlock" ng-bind="rateScoreAve(team._id, b)" ng-style="{backgroundColor: activeSortKey == b ? '#f6e58d':'#dff9fb'}")
-              td(ng-if="scaleBlock.length>0" ng-bind="rateScoreTotal(team._id)" ng-style="{backgroundColor: activeSortKey == -1 ? '#f6e58d':'#ff7979'}")
+      .scroll-table
+        table.custom(style="margin-bottom:20px;")
+          thead
+              tr
+                th {{"common.teamCode" | translate}}
+                th {{"common.team" | translate}}
+                th {{"common.region" | translate}}
+                th {{"common.league" | translate}}
+                th(ng-repeat="b in scaleBlock track by $index" ng-bind="blockTitle[$index]" ng-style="{backgroundColor: activeSortKey == b ? '#f1c40f':'#3498db'}")
+                th(ng-style="{backgroundColor: activeSortKey == -1 ? '#f1c40f':'#e74c3c'}")
+                  i.fas.fa-calculator &nbsp;
+                  | {{"common.totalScore" | translate}}
+                
+          tbody
+              tr(ng-repeat='team in teams | filter:list_filter')
+                td(ng-bind='team.teamCode')
+                td
+                  a(ng-click="go('/document/reviewed/' + team._id + '?return=/admin/' + team.competition + '/documents/' + team.league + '/results')" ng-bind='team.name' style="color: #006699;") 
+                td(ng-bind='team.country')
+                td(ng-bind='team.league')
+                td(ng-repeat="b in scaleBlock" ng-bind="rateScoreAve(team._id, b, 2)" ng-style="{backgroundColor: activeSortKey == b ? '#f6e58d':'#dff9fb'}")
+                td(ng-if="scaleBlock.length>0" ng-bind="rateScoreTotal(team._id, 2)" ng-style="{backgroundColor: activeSortKey == -1 ? '#f6e58d':'#ff7979'}")

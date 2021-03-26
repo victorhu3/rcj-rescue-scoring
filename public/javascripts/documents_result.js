@@ -145,19 +145,25 @@ app.controller('DocumentResultController', ['$scope', '$uibModal', '$log', '$htt
 
         return totalNumber / arr.length;
     };
-    $scope.rateScoreAve = function(team, block){
-      if(!$scope.rating || !$scope.rating[team] || !$scope.rating[team][block]) return 0;
+    $scope.rateScoreAve = function(team, block, disp=0){
+        if(!$scope.rating || !$scope.rating[team] || !$scope.rating[team][block]) return 0;
         let score = 0;
         for(let q of $scope.rating[team][block]){
             score += average(q)
         }
+        if(disp){
+            score = Math.round(score * 10**disp) / 10**disp;
+        }
         return(score);
     }
 
-    $scope.rateScoreTotal = function(team){
+    $scope.rateScoreTotal = function(team, disp=0){
         let score = 0;
         for(let b of $scope.scaleBlock){
             score += $scope.rateScoreAve(team, b);
+        }
+        if(disp){
+            score = Math.round(score * 10**disp) / 10**disp;
         }
         return(score);
     }
