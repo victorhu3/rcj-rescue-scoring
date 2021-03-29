@@ -1114,6 +1114,9 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
               Receiver {
                 channel 1
               }
+              Emitter {
+                channel 1
+              }
             ]
             supervisor TRUE
             controller "MainSupervisor"
