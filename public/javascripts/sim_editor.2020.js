@@ -439,7 +439,10 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             return {'background': 'linear-gradient(' + gradient + ')'};
 
         }
-
+        if (x % 2 == 1 && y % 2 == 1)
+            return {'background-color': cell.tile.color};
+        else
+            return {};
     };
 
     function wallCheck(cell){
@@ -1134,8 +1137,8 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         let humanRotation = [3.14, 1.57, 0, -1.57]
         let halfWallVicPos = [[-0.075, -0.136], [-0.014, -0.075], [-0.075, -0.014], [-0.136, -0.075], 
                             [0.075, -0.136], [0.136, -0.075], [0.075, -0.014], [0.014, -0.074], 
-                            [-0.075, 0.014], [-0.014, 0.075], [-0.075, 0.1376], [-0.1376, 0.075],
-                            [0.075, 0.014], [0.1376, 0.075], [0.075, 0.1376], [0.014, 0.075]];
+                            [-0.075, 0.014], [-0.014, 0.075], [-0.075, 0.136], [-0.136, 0.075],
+                            [0.075, 0.014], [0.136, 0.075], [0.075, 0.136], [0.014, 0.075]];
         //Offsets for visual and thermal humans
         let humanOffset = [[0, -0.1375 * tileScale[2]], [0.1375 * tileScale[0], 0], [0, 0.1375 * tileScale[2]], [-0.1375 * tileScale[0], 0]]
         let humanOffsetThermal = [[0, -0.136 * tileScale[2]], [0.136 * tileScale[0], 0], [0, 0.136 * tileScale[2]], [-0.136 * tileScale[0], 0]]
@@ -1350,8 +1353,8 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     if(walls[z][x][6] == 4){
                         humanPos[0] = humanPos[0] + humanOffsetThermal[walls[z][x][7]][0] + randomOffset[0]
                         humanPos[1] = humanPos[1] + humanOffsetThermal[walls[z][x][7]][1] + randomOffset[1]
-                        let score = 30
-                        if(walls[z][x][8]) score = 10
+                        let score = 15
+                        if(walls[z][x][8]) score = 5
                         allHumans = allHumans + thermalHumanPart({x: humanPos[0], z: humanPos[1], rot: humanRot, id: humanId, score: score})
                         humanId = humanId + 1
                     }
@@ -1365,8 +1368,8 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     }else{ //humans
                         humanPos[0] = humanPos[0] + humanOffset[walls[z][x][7]][0] + randomOffset[0]
                         humanPos[1] = humanPos[1] + humanOffset[walls[z][x][7]][1] + randomOffset[1]
-                        let score = 30
-                        if(walls[z][x][8]) score = 10
+                        let score = 15
+                        if(walls[z][x][8]) score = 5
                         allHumans = allHumans + visualHumanPart({x: humanPos[0], z: humanPos[1], rot: humanRot, id: humanId, type: humanTypesVisual[walls[z][x][6] - 1], score: score})
                         humanId = humanId + 1
                     }
@@ -1379,17 +1382,22 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                         let j = 0
                         if(walls[z][x][8]) score = 10
                         if (walls[z][x][13][i] == 4) {
+                            score = score / 2;
                             if (Math.abs(halfWallVicPos[i][0]) == 0.075)
                                 j = 1;
                             humanPos[j] *= (Math.abs(halfWallVicPos[i][0]) < 0.1) ? 1 : 1;
                             allHumans = allHumans + thermalHumanPart({x: humanPos[0] + halfWallVicPos[i][0] * tileScale[0], z: humanPos[1] + halfWallVicPos[i][1] * tileScale[2], rot: humanRotation[i % 4], id: humanId, score: score})
-                            console.log(z, x, walls[z][x][13][i])
+                            humanId = humanId + 1
                         }
-                        else {
+                        else if (walls[z][x][13][i] >= 0 && walls[z][x][13][i] <= 3) {
+                            score = score / 2;
                             allHumans = allHumans + visualHumanPart({x: humanPos[0] + halfWallVicPos[i][0] * tileScale[0], z: humanPos[1] + halfWallVicPos[i][1] * tileScale[2], rot: humanRotation[i % 4], id: humanId, type: humanTypesVisual[walls[z][x][13][i] - 1], score: score})
-                            console.log(z, x, walls[z][x][13][i])
+                            humanId = humanId + 1
                         }
-                        humanId = humanId + 1
+                        else if (walls[z][x][13][i] >= 5 && walls[z][x][13][i] <= 8) {
+                            allHazards = allHazards + hazardPart({x: humanPos[0] + halfWallVicPos[i][0] * tileScale[0], z: humanPos[1] + halfWallVicPos[i][1] * tileScale[2], rot: humanRotation[i % 4], id: hazardId, type: hazardTypes[walls[z][x][13][i] - 5], score: score})
+                            hazardId = hazardId + 1
+                        }
                     }
                 }
                 //Obstacle
@@ -1659,18 +1667,6 @@ app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, x, y, z
     $scope.blackChanged = function () {
        $scope.$parent.recalculateLinear();
     }
-
-    $scope.colorChanged = function () {
-        document.getElementById(x + ',' + y + ',' + z).style.setProperty("--tileColor", $scope.cells[index].tile.color);
-        /*var i;
-        for (var index in $scope.cells) {
-            i = (parseInt(index.charAt(2)) - 1) / 2 * $scope.width + (parseInt(index.charAt(0)) - 1) / 2;
-            if ($scope.cells[index].tile && $scope.cells[index].tile.color) {
-                //console.log($scope.cell);
-                $(".tile").get(i).style.setProperty("--tileColor", $scope.cells[index].tile.color);
-            }
-        }*/
-     }
 
      $scope.isHalfWall = function(r, c) {
         var ind = -1, tmp = r * 10 + c;
