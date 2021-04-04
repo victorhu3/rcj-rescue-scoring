@@ -1499,31 +1499,44 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             }, false);
         }
 
+    function unselectRoom1() {
+
+        var room1Button = document.getElementById('room1Button');
+        room1Button.innerHTML = "Select Room 2 Tiles (Half-Walls)";
+        room1Button.style.backgroundColor = "#ffc107";
+    }
+    function unselectRoom2() {
+
+        var room2Button = document.getElementById('room2Button');
+        room2Button.innerHTML = "Select Room 3 Tiles (Curved Walls)";
+        room2Button.style.backgroundColor = "#ffc107";
+    }
+
     $scope.selectRoom1 = function() {
         var room1Button = document.getElementById('room1Button');
         if ($scope.selectRoom != 0) {
+            if($scope.selectRoom != -1) unselectRoom2();
             $scope.selectRoom = 0;
             room1Button.innerHTML = "Selecting Room 2 Tiles...";
             room1Button.style.backgroundColor = "#359ef4";
         }
         else {
             $scope.selectRoom = -1;
-            room1Button.innerHTML = "Select Room 2 Tiles (Half-Walls)";
-            room1Button.style.backgroundColor = "#ffc107";
+            unselectRoom1();
         }
     }
 
     $scope.selectRoom2 = function() {
         var room2Button = document.getElementById('room2Button');
         if ($scope.selectRoom != 1) {
+            if($scope.selectRoom != -1) unselectRoom1();
             $scope.selectRoom = 1;
             room2Button.innerHTML = "Selecting Room 3 Tiles...";
             room2Button.style.backgroundColor = "#ed9aef";
         }
         else {
             $scope.selectRoom = -1;
-            room2Button.innerHTML = "Select Room 3 Tiles (Curved Walls)";
-            room2Button.style.backgroundColor = "#ffc107";
+            unselectRoom2();
         }
     }
 
