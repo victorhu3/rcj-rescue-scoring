@@ -21,6 +21,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
     $scope.height = 1;
     $scope.width = 1;
     $scope.length = 1;
+    $scope.time = 480;
     $scope.name = "Awesome Testbana";
     $scope.cells = {};
     $scope.dice = [];
@@ -1111,7 +1112,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         }
         `;
 
-        const supervisorPart = `
+        const supervisorPart = ({time}) => `
         DEF MAINSUPERVISOR Robot {
             children [
               Receiver {
@@ -1123,6 +1124,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             ]
             supervisor TRUE
             controller "MainSupervisor"
+            customData "${data}"
             window "MainSupervisorWindow"
             showWindow TRUE
           }
@@ -1453,7 +1455,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         fileData = fileData + groupPart({data: allObstacles, name: "OBSTACLES"})
         fileData = fileData + groupPart({data: allHumans, name: "HUMANGROUP"})
         fileData = fileData + groupPart({data: allHazards, name: "HAZARDGROUP"})
-        fileData = fileData + supervisorPart
+        fileData = fileData + supervisorPart({time: time})
         return fileData
 
     }
@@ -1484,6 +1486,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
                     $scope.width = data.width;
                     $scope.length = data.length;
                     $scope.name = data.name;
+                    $scope.time = time;
                     $scope.finished = data.finished;
 
                     if(data.startTile) $scope.cells[data.startTile.x + ',' + data.startTile.y + ',' + data.startTile.z].tile.checkpoint = false;

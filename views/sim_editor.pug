@@ -56,6 +56,10 @@ block content
                     .input-group-append
                         span.input-group-text {{"admin.simMapEditor.length" | translate}}
                     input.form-control(type='number', ng-model='length', min='1')
+                    .input-group-append
+                        span.input-group-text Time Limit (sec):
+                    input.form-control(type='number', ng-model='time', min = '1')
+                    .input-group-append
                 .input-group.mb-3
                     .input-group-append
                         button.btn.btn-warning(type='button', id='room1Button', ng-click='selectRoom1()') Select Room 2 Tiles (Half-Walls)
