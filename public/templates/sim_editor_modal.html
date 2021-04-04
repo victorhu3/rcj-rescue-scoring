@@ -36,7 +36,7 @@
     <tr>
       <th width="20%">&nbsp;</th>
       <th width="12%"><img src="/images/no_victims.png" alt="None" height="20"></th>
-      <th width="12%"><img src="/images/thermometer.png" alt="Heat" height="20"></th>
+      <!--<th width="12%"><img src="/images/thermometer.png" alt="Heat" height="20"></th>-->
       <th width="12%">H</th>
       <th width="12%">S</th>
       <th width="12%">U</th>
@@ -48,7 +48,7 @@
     <tr>
       <th class="col">{{"admin.simMapEditor.top" | translate}}</th>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="None" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <!--<td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>-->
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.top" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
@@ -60,7 +60,7 @@
     <tr>
       <th class="col">{{"admin.simMapEditor.bottom" | translate}}</th>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="None" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <!--<td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>-->
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.bottom" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
@@ -72,7 +72,7 @@
     <tr>
       <th class="col">{{"admin.simMapEditor.left" | translate}}</th>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="None" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <!--<td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>-->
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.left" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
@@ -84,7 +84,7 @@
     <tr>
       <th class="col">{{"admin.simMapEditor.right" | translate}}</th>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="None" style="display: block;" ng-click="cell.tile.victims={}"></td>
-      <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>
+      <!--<td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="Heated" style="display: block;" ng-click="cell.tile.victims={}"></td>-->
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="H" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="S" style="display: block;" ng-click="cell.tile.victims={}"></td>
       <td><input type="radio" name="victim" ng-model="cell.tile.victims.right" value="U" style="display: block;" ng-click="cell.tile.victims={}"></td>
@@ -159,10 +159,10 @@
           <th width="10%">U</th>
           <td width="6%" height="50%" ng-repeat="c in range(8)"> <input type="radio" ng-model="cell.tile.halfWallVic[i * 8 + c]" value="2" style="display: block;"> </td>
         </tr>
-        <tr>
+        <!--<tr>
           <th width="10%">Heat</th>
           <td width="6%" height="50%" ng-repeat="c in range(8)"> <input type="radio" ng-model="cell.tile.halfWallVic[i * 8 + c]" value="4" style="display: block;"> </td>
-        </tr>
+        </tr>-->
         <tr>
           <th width="10%">F</th>
           <td width="6%" height="50%" ng-repeat="c in range(8)"> <input type="radio" ng-model="cell.tile.halfWallVic[i * 8 + c]" value="5" style="display: block;"> </td>
