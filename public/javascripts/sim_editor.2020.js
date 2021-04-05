@@ -1124,7 +1124,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
             ]
             supervisor TRUE
             controller "MainSupervisor"
-            customData "${data}"
+            customData "${time}"
             window "MainSupervisorWindow"
             showWindow TRUE
           }
@@ -1455,7 +1455,7 @@ app.controller('SimEditorController', ['$scope', '$uibModal', '$log', '$http','$
         fileData = fileData + groupPart({data: allObstacles, name: "OBSTACLES"})
         fileData = fileData + groupPart({data: allHumans, name: "HUMANGROUP"})
         fileData = fileData + groupPart({data: allHazards, name: "HAZARDGROUP"})
-        fileData = fileData + supervisorPart({time: time})
+        fileData = fileData + supervisorPart({time: $scope.time})
         return fileData
 
     }
