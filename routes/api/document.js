@@ -29,6 +29,8 @@ const { time } = require('console');
 
 const competitiondb = require('../../models/competition');
 const { LEAGUES_JSON } = competitiondb;
+const { LEAGUES } = competitiondb;
+
 const dateformat = require('dateformat');
 let read = require('fs-readdir-recursive');
 const logger = require('../../config/logger').mainLogger;
@@ -318,15 +320,6 @@ publicRouter.post('/files/:teamId/:token/:fileName', function (req, res, next) {
                               console.log(`an error happened: ${err.message}`);
                             });
 
-                          if (ft != 'video/mp4') {
-                            original
-                              .output(`${filepath}.mp4`)
-                              .on('error', function (err) {
-                                console.log(
-                                  `an error happened: ${err.message}`
-                                );
-                              });
-                          }
                         } catch (err) {}
                       });
                     }
@@ -520,6 +513,163 @@ publicRouter.get('/files/:teamId/:token/:fileName', function (req, res, next) {
     });
 });
 
+publicRouter.post('/files/usercontent/:teamId/:token', function (req, res, next) {
+  const { teamId } = req.params;
+  const { token } = req.params;
+
+  if (!ObjectId.isValid(teamId)) {
+    return next();
+  }
+
+  competitiondb.team
+    .findOne({
+      _id: ObjectId(teamId),
+      'document.token': token,
+    })
+    .populate('competition')
+    .select('competition document.deadline document.enabled')
+    .exec(function (err, dbTeam) {
+      if (err || dbTeam == null) {
+        if (!err) err = { message: 'No team found' };
+        res.status(400).send({
+          msg: 'Could not get team',
+          err: err.message,
+        });
+      } else if (dbTeam) {
+        const userAuth = auth.authCompetition(
+          req.user,
+          dbTeam.competition._id,
+          ACCESSLEVELS.JUDGE
+        );
+        if (
+          (dbTeam.competition.documents.enable && dbTeam.document.enabled) ||
+          userAuth
+        ) {
+          const teamDeadline = dbTeam.document.deadline;
+          let { deadline } = dbTeam.competition.documents;
+          if (teamDeadline != null) deadline = teamDeadline;
+
+          const now = new Date();
+          const timestamp = Math.floor(now.getTime() / 1000);
+
+          if (deadline >= timestamp || userAuth) {
+            fs.mkdirs(`${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/usercontent`, (err) => {
+              let fileName = new Date().getTime();
+              const storage = multer.diskStorage({
+                destination(req, file, callback) {
+                  callback(
+                    null,
+                    `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/usercontent`
+                  );
+                },
+                filename(req, file, callback) {
+                  callback(null, fileName + path.extname(file.originalname));
+                },
+              });
+
+              const upload = multer({
+                storage,
+              }).single('image');
+
+              upload(req, res, function (err) {
+                res.status(200).send({
+                  msg: 'Image is uploaded',
+                  fileName: req.file.filename,
+                  url: `/api/document/files/usercontent/${teamId}/${token}/${req.file.filename}`
+                });
+
+                writeLog(
+                  req,
+                  dbTeam.competition._id,
+                  dbTeam._id,
+                  `File uploaded! File name: ${fileName} (UserContent)`
+                );
+              });
+            });
+          } else {
+            res.status(400).send({
+              msg: 'The deadline has passed.',
+            });
+            writeLog(
+              req,
+              dbTeam.competition._id,
+              dbTeam._id,
+              `They have attempted to upload a file, but it has expired the deadline. File name: ${sanitize(fileName)}`
+            );
+          }
+        } else {
+          res.status(401).send({
+            msg: 'Operation not permited',
+          });
+          writeLog(
+            req,
+            dbTeam.competition._id,
+            dbTeam._id,
+            `They have attempted to upload a file, but this operation is not allowed. File name: ${sanitize(fileName)}`
+          );
+        }
+      }
+    });
+});
+
+publicRouter.get('/files/usercontent/:teamId/:token/:fileName', function (req, res, next) {
+  const { teamId } = req.params;
+  const { token } = req.params;
+  const { fileName } = req.params;
+
+  if (!ObjectId.isValid(teamId)) {
+    return next();
+  }
+
+  competitiondb.team
+    .findOne({
+      _id: ObjectId(teamId),
+      $or: [{ 'document.token': token }, { 'document.public': true }],
+    })
+    .populate('competition')
+    .select('competition document.enabled')
+    .exec(function (err, dbTeam) {
+      if (err || dbTeam == null) {
+        if (!err) err = { message: 'No team found' };
+        res.status(400).send({
+          msg: 'Could not get team',
+          err: err.message,
+        });
+      } else if (dbTeam) {
+        if (
+          (dbTeam.competition.documents.enable && dbTeam.document.enabled) ||
+          auth.authCompetition(
+            req.user,
+            dbTeam.competition._id,
+            ACCESSLEVELS.VIEW
+          )
+        ) {
+          const path = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/usercontent/${sanitize(fileName)}`;
+          fs.stat(path, (err, stat) => {
+            // Handle file not found
+            if (err !== null && err.code === 'ENOENT') {
+              res.status(404).send({
+                msg: 'File not found',
+              });
+              return;
+            }
+            
+            fs.readFile(path, function (err, data) {
+              res.writeHead(200, {
+                'Content-Type': mime.getType(path),
+              });
+              res.end(data);
+            });
+          });
+        } else {
+          res.status(401).send({
+            msg: 'Operation not permited',
+          });
+        }
+      }
+    });
+});
+
 /// / for reviwer & admin
 
 privateRouter.get('/review/:teamId', function (req, res, next) {
@@ -569,6 +719,103 @@ privateRouter.get('/review/:teamId', function (req, res, next) {
       });
     }
   });
+});
+
+adminRouter.delete('/review/:reviewId/:block/:question', function (req, res, next) {
+  const { reviewId } = req.params;
+  const { block } = req.params;
+  const { question } = req.params;
+
+  if (!ObjectId.isValid(reviewId)) {
+    return next();
+  }
+
+  documentDb.review
+    .findOne({ _id: reviewId})
+    .exec(function (err, dbReview) {
+      if (err) {
+        if (!err) err = { message: 'No review found' };
+        res.status(400).send({
+          msg: 'Could not get review',
+          err: err.message,
+        });
+      } else if (dbReview) {
+        if(auth.authCompetition(req.user, dbReview.competition, ACCESSLEVELS.ADMIN)){
+          if(block == -1){ // Delete whole review
+            documentDb.review.deleteOne({ '_id': reviewId }, (err) => {
+              if(err){
+                res.status(400).send({
+                  msg: 'Delete error',
+                  err: err.message,
+                });
+              }else{
+                res.status(200).send({
+                  msg: 'Deleted',
+                });
+              }
+            });
+          }else{
+            if(dbReview.comments.length > block && dbReview.comments[block].length > question){
+              dbReview.comments[block][question] = '';
+              dbReview.markModified('comments');
+              dbReview.save(function(err) {
+                if(err){
+                  res.status(400).send({
+                    msg: 'Delete error',
+                    err: err.message,
+                  });
+                }else{
+                  res.status(200).send({
+                    msg: 'Deleted',
+                  });
+                }
+              })
+            }else{
+              res.status(400).send({
+                msg: 'Delete posititon error'
+              });
+            }
+          }
+        }else{
+          res.status(400).send({
+            msg: 'Competition auth error :('
+          });
+        }
+      }
+    });
+});
+
+adminRouter.get('/reviews/:competition', function (req, res, next) {
+  const { competition } = req.params;
+
+  if (!ObjectId.isValid(competition)) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, competition, ACCESSLEVELS.ADMIN)) {
+    documentDb.review
+      .find({
+        competition,
+        team: { $ne: null }
+      })
+      .populate('reviewer', 'username')
+      .populate('team', 'league')
+      .exec(function (err, dbReview) {
+        if (err) {
+          if (!err) err = { message: 'No review found' };
+          res.status(400).send({
+            msg: 'Could not get review',
+            err: err.message,
+          });
+        } else if (dbReview) {
+          res.send(dbReview);
+        }
+      });
+  } else {
+    res.status(401).send({
+      msg: 'Operation not permited',
+    });
+  }
 });
 
 privateRouter.put('/review/:teamId', function (req, res, next) {
@@ -663,6 +910,8 @@ privateRouter.put('/review/:teamId', function (req, res, next) {
     }
   });
 });
+
+
 
 privateRouter.post(
   '/review/files/:teamId/:fileName',
@@ -771,15 +1020,7 @@ privateRouter.post(
                                     );
                                   });
 
-                                if (ft != 'video/mp4') {
-                                  original
-                                    .output(`${filepath}.mp4`)
-                                    .on('error', function (err) {
-                                      console.log(
-                                        `an error happened: ${err.message}`
-                                      );
-                                    });
-                                }
+                                
                               } catch (err) {}
                             }
                           );
@@ -931,6 +1172,134 @@ privateRouter.get(
                   res.end(data);
                 });
               }
+            });
+          } else {
+            res.status(401).send({
+              msg: 'Operation not permited',
+            });
+          }
+        }
+      });
+  }
+);
+
+privateRouter.post(
+  '/review/files/usercontent/:teamId',
+  function (req, res, next) {
+    const { teamId } = req.params;
+
+    if (!ObjectId.isValid(teamId)) {
+      return next();
+    }
+
+    competitiondb.team
+      .findById(teamId)
+      .select('competition')
+      .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+          if (!err) err = { message: 'No team found' };
+          res.status(400).send({
+            msg: 'Could not get team',
+            err: err.message,
+          });
+        } else if (dbTeam) {
+          const userAuth = auth.authCompetition(
+            req.user,
+            dbTeam.competition,
+            ACCESSLEVELS.JUDGE
+          );
+          if (userAuth) {
+            fs.mkdirs(
+              `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}/usercontent`,
+              (err) => {
+                let fileName = new Date().getTime();
+                const storage = multer.diskStorage({
+                  destination(req, file, callback) {
+                    callback(
+                      null,
+                      `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${req.user.username}/usercontent`
+                    );
+                  },
+                  filename(req, file, callback) {
+                    callback(null, fileName + path.extname(file.originalname));
+                  },
+                });
+
+                const upload = multer({
+                  storage,
+                }).single('image');
+
+                upload(req, res, function (err) {
+                  res.status(200).send({
+                    msg: 'Image is uploaded',
+                    fileName: req.file.filename,
+                    url: `/api/document/review/files/usercontent/${teamId}/${req.user.username}/${req.file.filename}`
+                  });
+
+                  writeLog(
+                    req,
+                    dbTeam.competition._id,
+                    dbTeam._id,
+                    `File uploaded! File name: ${fileName} (ReviewUserContent)`
+                  );
+                });
+              }
+            );
+          } else {
+            res.status(401).send({
+              msg: 'Operation not permited',
+            });
+          }
+        }
+      });
+  }
+);
+
+privateRouter.get(
+  '/review/files/usercontent/:teamId/:userName/:fileName',
+  function (req, res, next) {
+    const { teamId } = req.params;
+    const { userName } = req.params;
+    const { fileName } = req.params;
+
+    if (!ObjectId.isValid(teamId)) {
+      return next();
+    }
+
+    competitiondb.team
+      .findById(teamId)
+      .select('competition')
+      .exec(function (err, dbTeam) {
+        if (err || dbTeam == null) {
+          if (!err) err = { message: 'No team found' };
+          res.status(400).send({
+            msg: 'Could not get team',
+            err: err.message,
+          });
+        } else if (dbTeam) {
+          if (
+            auth.authCompetition(
+              req.user,
+              dbTeam.competition,
+              ACCESSLEVELS.VIEW
+            )
+          ) {
+            const path = `${__dirname}/../../documents/${dbTeam.competition._id}/${teamId}/review/${userName}/usercontent/${sanitize(fileName)}`;
+            fs.stat(path, (err, stat) => {
+              // Handle file not found
+              if (err !== null && err.code === 'ENOENT') {
+                res.status(404).send({
+                  msg: 'File not found',
+                });
+                return;
+              }
+
+              fs.readFile(path, function (err, data) {
+                res.writeHead(200, {
+                  'Content-Type': mime.getType(path),
+                });
+                res.end(data);
+              });
             });
           } else {
             res.status(401).send({

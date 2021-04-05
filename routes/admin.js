@@ -29,6 +29,18 @@ router.get('/restore', function (req, res) {
   res.render('admin_restore', { user: req.user });
 });
 
+router.get('/mailTemplates', function (req, res) {
+  res.render('mail_templates', { user: req.user });
+});
+
+router.get('/mailTemplates/editor', function (req, res) {
+  res.render('mail_template_editor', { user: req.user, subject: ""});
+});
+
+router.get('/mailTemplates/editor/:subject', function (req, res) {
+  res.render('mail_template_editor', { user: req.user, subject: req.params.subject});
+});
+
 router.get('/:competitionid', function (req, res, next) {
   const id = req.params.competitionid;
 
@@ -170,6 +182,27 @@ router.get('/:competitionid/documents/teams', function (req, res, next) {
   else res.render('access_denied', { user: req.user });
 });
 
+router.get('/:competitionid/documents/:lid/results', function (req, res, next) {
+  const id = req.params.competitionid;
+  const { lid } = req.params;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (
+    LEAGUES.filter(function (elm) {
+      return elm.indexOf(lid) != -1;
+    }).length == 0
+  ) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
+    res.render('documents_result', { id, lid, user: req.user });
+  else res.render('access_denied', { user: req.user });
+});
+
 router.get('/:competitionid/documents/:lid/form', function (req, res, next) {
   const id = req.params.competitionid;
   const { lid } = req.params;
@@ -230,6 +263,31 @@ router.get('/:competitionid/documents/:lid/preview', function (req, res, next) {
 
   if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
     res.render('documents_form_preview', { id, lid, user: req.user });
+  else res.render('access_denied', { user: req.user });
+});
+
+router.get('/:competitionid/application', function (req, res, next) {
+  const id = req.params.competitionid;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
+    res.render('application_admin', { id, user: req.user });
+  else res.render('access_denied', { user: req.user });
+});
+
+router.get('/:competitionid/application/:league', function (req, res, next) {
+  const id = req.params.competitionid;
+  const league = req.params.league;
+
+  if (!ObjectId.isValid(id)) {
+    return next();
+  }
+
+  if (auth.authCompetition(req.user, id, ACCESSLEVELS.ADMIN))
+    res.render('application_admin_league', { id, league, user: req.user });
   else res.render('access_denied', { user: req.user });
 });
 

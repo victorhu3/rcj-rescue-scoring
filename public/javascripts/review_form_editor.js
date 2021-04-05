@@ -9,22 +9,22 @@ app.constant('NG_QUILL_CONFIG', {
       toolbar: [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
         ['blockquote', 'code-block'],
-  
+
         [{ 'header': 1 }, { 'header': 2 }],               // custom button values
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
         [{ 'script': 'sub' }, { 'script': 'super' }],     // superscript/subscript
         [{ 'indent': '-1' }, { 'indent': '+1' }],         // outdent/indent
         [{ 'direction': 'rtl' }],                         // text direction
-  
+
         [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  
+
         [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
         [{ 'font': [] }],
         [{ 'align': [] }],
-  
+
         ['clean'],                                         // remove formatting button
-  
+
         ['link', 'image', 'video']                         // link and image, video
       ],
       imageResize: {
@@ -39,11 +39,11 @@ app.constant('NG_QUILL_CONFIG', {
     bounds: document.body,
     scrollContainer: null
   })
-  
+
   app.config([
     'ngQuillConfigProvider',
     'NG_QUILL_CONFIG',
-  
+
     function (ngQuillConfigProvider, NG_QUILL_CONFIG) {
       ngQuillConfigProvider.set(NG_QUILL_CONFIG)
     }
@@ -65,7 +65,7 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
     }, function (translationId) {
     // = translationId;
     });
-    
+
 
     $translate('document.review_editor.import').then(function (val) {
         $("#select").fileinput({
@@ -79,17 +79,19 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
         });
     }, function (translationId) {
         // = translationId;
-    });    
+    });
 
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
     })
 
     $http.get("/api/competitions/" + competitionId + "/documents/" + leagueId + "/review").then(function (response) {
-        $scope.blocks = response.data.review;
-        $scope.notifications = response.data.notifications;
-        $scope.languages = response.data.languages;
-        console.log($scope.languages);
+        if(response.data.blocks) $scope.blocks = response.data.review;
+        else $scope.blocks = []
+        if(response.data.notifications) $scope.notifications = response.data.notifications;
+        else $scope.notifications = []
+        if(response.data.languages) $scope.languages = response.data.languages;
+        else $scope.languages = []
         if($scope.languages == null || $scope.languages.length != availableLangs.length){
             $scope.languages = [];
             for(let l of availableLangs){
@@ -109,7 +111,7 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
     const availableLangs =  $translate.getAvailableLanguageKeys();
 
     $scope.blocks = [];
-    
+
     $scope.addBlock = function (number){
         let i18n = [{
             language: currentLang,
@@ -124,7 +126,7 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 });
             }
         }
-        
+
         let tmp = {
             i18n: i18n,
             color: '2980b9',
@@ -178,7 +180,11 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
             i18n: i18n,
             type: type,
             required: true,
-            fileName: ''
+            fileName: '',
+            scale: {
+                least: 1,
+                most: 5
+            }
         };
         $scope.blocks[block].questions.splice(number,0,tmp);
         $scope.save();
@@ -211,18 +217,18 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
         $scope.blocks[blockNo].questions[questionNo].i18n[i18nNo].options[origin].text = temp;
         $scope.save();
     };
-    
+
     $scope.removeOption = function (blockNo, questionNo, i18nNo, number){
         $scope.blocks[blockNo].questions[questionNo].i18n[i18nNo].options.splice(number,1);
         $scope.save();
     }
-    
+
     $scope.go = function (path) {
         window.location = path
     }
 
-    
-    
+
+
     $scope.save = function () {
         let data = {
             documents: {
@@ -231,7 +237,7 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
                 languages: $scope.languages
             }
         }
-      
+
         $http.put("/api/competitions/" + competitionId, data).then(function (response) {
             Toast.fire({
                 type: 'success',
@@ -255,8 +261,8 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
             }
         }
     }
-    
-    
+
+
 
     $scope.export = function () {
         var data = {
@@ -291,8 +297,7 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
             // ファイル読み取りに成功したとき
             reader.onload = function () {
                 var data = JSON.parse(reader.result);
-                $scope.notifications = data.notifications;
-                $scope.blocks = data.blocks;
+                $scope.blocks = data.review;
                 $scope.languages = data.languages;
                 console.log(data)
                 $scope.$apply();
@@ -304,6 +309,3 @@ app.controller('FormEditorController', ['$scope', '$uibModal', '$log', '$http', 
     }
 
 }]);
-
-
-

@@ -32,6 +32,55 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
     // = translationId;
     });
 
+    let deleted;
+    $translate('common.deleted').then(function (val) {
+        deleted = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deleteReview;
+    $translate('document.review.deleteReview').then(function (val) {
+        deleteReview = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deleteType;
+    $translate('document.review.deleteType').then(function (val) {
+        deleteType = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deletePart;
+    $translate('document.review.deletePart').then(function (val) {
+        deletePart = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deleteWhole;
+    $translate('document.review.deleteWhole').then(function (val) {
+        deleteWhole = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deletePartMes;
+    $translate('document.review.deletePartMes').then(function (val) {
+        deletePartMes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
+    let deleteWholeMes;
+    $translate('document.review.deleteWholeMes').then(function (val) {
+        deleteWholeMes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
 
     const currentLang = $translate.proposedLanguage() || $translate.use();
     const availableLangs =  $translate.getAvailableLanguageKeys();
@@ -47,7 +96,11 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
     $scope.videoRefresh = false;
 
+    $scope.rangeS =  (start, end) => [...Array((end - start) + 1)].map((_, i) => start + i);
+
     $scope.comments = "";
+
+    $scope.scaleFlag = false;
 
     $http.get("/api/competitions/" + competitionId).then(function (response) {
         $scope.competition = response.data
@@ -83,16 +136,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
                 }
             });
 
-            $http.get("/api/document/review/" + teamId).then(function (response) {
-                $scope.reviewComments = response.data;
-                for(let c of $scope.reviewComments){
-                    if(!c.reviewer){
-                        c.reviewer = {
-                            username: c.name
-                        };
-                    }
-                }
-            })
+            updateReviewList();
             
             //Check 1st lang
             for(let l of $scope.languages){
@@ -110,6 +154,37 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
         
     })
+
+    function updateReviewList(){
+        $http.get("/api/document/review/" + teamId).then(function (response) {
+            $scope.reviewComments = response.data;
+            for(let c of $scope.reviewComments){
+                if(!c.reviewer){
+                    c.reviewer = {
+                        username: c.name
+                    };
+                }
+            }
+
+            $scope.rating=[];
+            if(!$scope.reviewComments) return 0;
+            for(let c of $scope.reviewComments){
+                for(let b in c.comments){
+                    for(let q in c.comments[b]){
+                        if($scope.review[b].questions[q].type != 'scale') continue;
+                        if(c.comments[b][q] == ''){
+                            c.comments[b][q] = 0;
+                        }
+                        let r = Number(c.comments[b][q]);
+                        if(!$scope.rating[b]) $scope.rating[b] = [];
+                        if(!$scope.rating[b][q]) $scope.rating[b][q] = [];
+                        $scope.rating[b][q].push(r);
+                        $scope.scaleFlag = true;
+                    }
+                }
+            }
+        })
+    }
 
     
 
@@ -163,6 +238,37 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
         if($scope.getParam("return")) $scope.go($scope.getParam("return"));
         else window.history.back(-1);
         return false;
+    }
+
+
+    const sum  = function(arr) {  
+        return arr.reduce(function(prev, current, i, arr) {
+            if(isNaN(current)) return prev;
+            return prev+current;
+        });
+    };
+
+    const isNumberCount = function(arr){
+        let count = 0;
+        for(let a of arr){
+            if(!isNaN(a)) count += 1;
+        }
+        return count;
+    }
+
+    $scope.calcAve = function(blockIndex, questionIndex){
+        if(!$scope.rating || !$scope.rating[blockIndex] || !$scope.rating[blockIndex][questionIndex] || $scope.rating[blockIndex][questionIndex].length == 0 ) return 0;
+        return sum($scope.rating[blockIndex][questionIndex]) / isNumberCount($scope.rating[blockIndex][questionIndex]);
+    }
+    $scope.calcScore = function(){
+        let score = 0;
+        for(let b in $scope.rating){
+            for(let q in $scope.rating[b]){
+                if($scope.review[b].questions[q].type != 'scale') continue;
+                score += $scope.calcAve(b, q);
+            }
+        }
+        return score;
     }
 
 
@@ -233,6 +339,88 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
 
     $scope.getThumbnailLinkReview = function(name, user){
         return("/api/document/review/files/" + $scope.team._id + "/" + $scope.nameUploadedReview(name+'-thumbnail', user) + '?v=' + $scope.updateTime);
+    }
+
+    
+    $scope.removeComment = function(id, block, question){
+        console.log(id);
+        console.log(block);
+        console.log(question);
+        Swal({
+            title: deleteReview,
+            type: 'warning',
+            html:
+                `<p>${deleteType}</p>` +
+                `<button id="part" class="btn btn-lg btn-warning" style="margin:10px"><i class="fas fa-eraser"></i>&nbsp;${deletePart}</button>` +
+                `<button id="whole" class="btn btn-lg btn-danger" style="margin:10px"><i class="fas fa-trash"></i>&nbsp;${deleteWhole}</button><br>`,
+            showCancelButton: true,
+            showConfirmButton: false,
+            onBeforeOpen: () => {
+                const content = Swal.getContent()
+                const $ = content.querySelector.bind(content)
+
+                const part = $('#part')
+                const whole = $('#whole')
+
+                part.addEventListener('click', () => {
+                    Swal({
+                        title: deleteReview,
+                        html: `<p>${deletePartMes}</p>`,
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                      }).then((result) => {
+                        if (result.value) {
+                            $http.delete(`/api/document/review/${id}/${block}/${question}`).then(function (response) {
+                                Toast.fire({
+                                    type: 'success',
+                                    title: deleted
+                                })
+                                updateReviewList();
+                            }, function (response) {
+                                Toast.fire({
+                                    type: 'error',
+                                    title: "Error: " + response.statusText,
+                                    html: response.data.msg
+                                })
+                            });
+                        }
+                      })
+                })
+
+                whole.addEventListener('click', () => {
+                    Swal({
+                        title: deleteReview,
+                        html: `<p>${deleteWholeMes}</p>`,
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                      }).then((result) => {
+                        if (result.value) {
+                            $http.delete(`/api/document/review/${id}/-1/-1`).then(function (response) {
+                                Toast.fire({
+                                    type: 'success',
+                                    title: deleted
+                                })
+                                updateReviewList();
+                            }, function (response) {
+                                Toast.fire({
+                                    type: 'error',
+                                    title: "Error: " + response.statusText,
+                                    html: response.data.msg
+                                })
+                            });
+                        }
+                      })
+                })
+            },
+            onClose: () => {
+            }
+        })
     }
 
     var A = parseInt($('#ANSWER').width(), 10),

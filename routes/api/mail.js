@@ -91,25 +91,76 @@ adminRouter.get('/templates/:fileName', function (req, res, next) {
   });
 });
 
+adminRouter.post('/templates/:fileName', function (req, res, next) {
+  const { fileName } = req.params;
+
+  const path = `${__dirname}/../../templates/mail/${sanitizeFilename(fileName)}`;
+  fs.writeFile(path, req.body.content, function (err) {
+    if (err) {
+      res.status(404).send({
+        msg: 'File could not create',
+      });
+      return;
+    }else{
+      res.status(200).send({
+        msg: 'Success',
+        name: fileName
+      });
+    }
+  });
+});
+
+adminRouter.delete('/templates/:fileName', function (req, res, next) {
+  const { fileName } = req.params;
+
+  const path = `${__dirname}/../../templates/mail/${sanitizeFilename(fileName)}`;
+  fs.unlink(path, function (err) {
+    if (err) {
+      res.status(404).send({
+        msg: 'File could not delete',
+      });
+      return;
+    }else{
+      res.status(200).send({
+        msg: 'Successfully deleted',
+        name: fileName
+      });
+    }
+  });
+});
+
 adminRouter.post('/send', function (req, res, next) {
   const teams = req.body;
   let smtp;
   if (
     process.env.MAIL_SMTP &&
     process.env.MAIL_PORT &&
-    process.env.MAIL_USER &&
-    process.env.MAIL_PASS &&
     process.env.MAIL_FROM
   ) {
-    smtp = nodemailer.createTransport({
-      host: process.env.MAIL_SMTP,
-      port: process.env.MAIL_PORT,
-      secure: process.env.MAIL_PORT == 465,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+
+    let smtp_conf;
+    if(process.env.MAIL_USER && process.env.MAIL_PASS){
+      smtp_conf = {
+        host: process.env.MAIL_SMTP,
+        port: process.env.MAIL_PORT,
+        secure: process.env.MAIL_PORT == 465,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      };
+    }else{
+      //No auth
+      smtp_conf = {
+        host: process.env.MAIL_SMTP,
+        port: process.env.MAIL_PORT,
+        use_authentication: false,
+        tls: {
+            rejectUnauthorized: false
+        }
+      };
+    }
+    smtp = nodemailer.createTransport(smtp_conf);
   } else {
     res.status(500).send({
       msg: 'Please check smtp parameters',

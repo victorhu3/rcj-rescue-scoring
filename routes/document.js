@@ -101,6 +101,7 @@ privateRouter.get('/reviewed/:teamId', function (req, res, next) {
             team: teamId,
             user: req.user,
             token: dbTeam.document.token,
+            admin: auth.authCompetition(req.user, dbTeam.competition, ACCESSLEVELS.ADMIN)
           });
         } else {
           res.render('access_denied', { user: req.user });

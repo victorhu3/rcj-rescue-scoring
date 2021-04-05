@@ -53,7 +53,9 @@ block content
       button(ng-click="go('/admin/' + competitionId + '/settings')" class='btn btn-outline-dark btn-lg btn-block')
         i.fas.fa-cogs &nbsp;
         | {{"admin.competition.settings" | translate}}
-      button(ng-click="go('/admin/' + competitionId + '/backup')" class='btn btn-outline-dark btn-lg btn-block') {{"admin.competition.backup" | translate}}
+      button(ng-click="go('/admin/' + competitionId + '/backup')" class='btn btn-outline-dark btn-lg btn-block')
+        i.fas.fa-archive &nbsp;
+        | {{"admin.competition.backup" | translate}}
       br
 
 

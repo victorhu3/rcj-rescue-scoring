@@ -15,6 +15,7 @@ append scripts
   script(src='/components/ngQuill/src/ng-quill.js')
   script(src='/components/quill-image-resize-module/image-resize.min.js')
   script(src='/components/quill-image-drop-and-paste/quill-image-drop-and-paste.min.js')
+  script(src='/components/quill-image-upload/image-upload.min.js')
   script(src="/components/bootstrap-fileinput/js/fileinput.min.js")
   script(src="/components/bootstrap-fileinput/themes/fa/theme.min.js")
   script(src="/components/bootstrap-fileinput/js/locales/ja.js")
@@ -25,7 +26,10 @@ append css
     style.
         p{
             margin-bottom: 0;
-        }    
+        }
+        img {
+            max-width: 100%;
+        }
     link(rel='stylesheet', href='/components/quill.snow/index.css')
     link(href="/components/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet")
     link(rel='stylesheet',href='/components/lightbox2/dist/css/lightbox.min.css')
@@ -108,8 +112,8 @@ block content
                     div(style="font-size:15px;")
                         p(ng-bind-html="langContent(question.i18n, 'description')")
                         p(ng-if="question.type=='picture'") {{"document.form.max5" | translate}}
-                        p(ng-if="question.type=='movie'") {{"document.form.max50" | translate}}
-                        p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max10" | translate}}
+                        p(ng-if="question.type=='movie'") {{"document.form.max500" | translate}}
+                        p(ng-if="question.type=='pdf'") {{"document.form.pdfOnly" | translate}}{{"document.form.max20" | translate}}
                         p(ng-if="question.type=='zip'") {{"document.form.zipOnly" | translate}}{{"document.form.max50" | translate}}
                     if editable
                         div(style="text-align:center;margin:10px 0px;")
@@ -126,6 +130,13 @@ block content
                             select.custom-select(ng-model='answers[blockIndex][questionIndex]', ng-change="save()", ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
                         else
                             select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                    div(ng-if="question.type=='scale'")
+                        if editable
+                            .btn-group
+                                button.btn.btn-outline-primary(type='button', ng-click='answers[blockIndex][questionIndex] = ans; save()', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
+                        else
+                            .btn-group
+                                button.btn.btn-outline-primary(type='button', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
                     div(ng-if="question.type=='picture'")
                         .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                             .col-12
@@ -155,11 +166,13 @@ block content
                                 div(style="text-align:center;margin:10px 0px;")
                                     video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                         source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+                                    br
+                                    a(ng-href="{{getVideoLink(getVideoList(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                         if editable  
                             .d-sm-flex.flex-row
                                 div
-                                    button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='5000MB')
+                                    button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='video/*' ngf-max-size='500MB')
                                         i.far.fa-folder-open
                                         | {{"document.form.selectFile" | translate}}
                                 div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")
@@ -179,7 +192,7 @@ block content
                         if editable
                             .d-sm-flex.flex-row
                                 div
-                                    button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='application/pdf' ngf-max-size='10MB')
+                                    button.btn.btn-warning(type='file' ngf-select='uploadFiles(question, $file, $invalidFiles)' accept='application/pdf' ngf-max-size='20MB')
                                         i.far.fa-folder-open
                                         | {{"document.form.selectFile" | translate}}
                                 div(style="color:#e74c3c;margin-left:10px;", ng-if="question.errFile.$error")

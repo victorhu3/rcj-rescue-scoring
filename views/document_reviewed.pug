@@ -54,6 +54,9 @@ append css
             flex-direction: column;
             align-items: center;
         }
+        img {
+            max-width: 100%;
+        }
     link(rel='stylesheet', href='/components/quill.snow/index.css')
     link(href="/components/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet")
     link(rel='stylesheet',href='/components/lightbox2/dist/css/lightbox.min.css')
@@ -119,6 +122,9 @@ block content
                                     div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
                                 div(ng-if="question.type=='select'")
                                     select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                                div(ng-if="question.type=='scale'")
+                                    .btn-group
+                                        button.btn.btn-outline-primary(type='button', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
                                 div(ng-if="question.type=='picture'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                         .col-12
@@ -132,6 +138,9 @@ block content
                                             div(style="text-align:center;margin:10px 0px;")
                                                 video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                                     source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+                                                br
+                                                a(ng-href="{{getVideoLink(getVideoList(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
+
 
                                 div(ng-if="question.type=='pdf'")
                                     .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
@@ -150,6 +159,8 @@ block content
                                 hr(ng-if="!$last")
             #COMMENTS(style="padding:5px 15px 0 0;margin-right: -15px;")
                 div(style="margin: 0 5px;")
+                    div(ng-if="scaleFlag", style="margin: 10px 0")
+                        i.fas.fa-calculator.fa-2x(aria-hidden='true') &nbsp; {{calcScore()}} {{'common.point' | translate}}
                     div(ng-repeat="(blockIndex, block) in review track by $index")
                         .card(ng-style="{border: '3px solid #' + block.color}", style="margin-bottom:20px;")
                             h5.card-header(ng-bind="langContent(block.i18n, 'title')")
@@ -169,14 +180,38 @@ block content
                                         div(ng-repeat="review in reviewComments track by $index")
                                             span
                                                 i.fas.fa-user-edit &nbsp;
-                                                | {{review.reviewer.username}}
+                                                | {{review.reviewer.username}} &nbsp;
+                                                if admin
+                                                    i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                             div(style="border: solid 1px #666;margin-bottom:10px;", ng-bind-html="trust(review.comments[blockIndex][questionIndex])")
                                     div(ng-if="question.type=='select'")
                                         div(ng-repeat="review in reviewComments track by $index")
                                             span
                                                 i.fas.fa-user-edit &nbsp;
-                                                | {{review.reviewer.username}}
+                                                | {{review.reviewer.username}}&nbsp;
+                                                if admin
+                                                    i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                             select.custom-select(ng-model='review.comments[blockIndex][questionIndex]', ng-options="option.value as option.text for option in langArray(question.i18n, 'options')", disabled, style="margin-bottom:10px;")
+                                    div(ng-if="question.type=='scale'")
+                                        table.custom(style="overflow: scroll;")
+                                            thead 
+                                                tr 
+                                                    th
+                                                        i.fas.fa-user-edit &nbsp;
+                                                        | {{"document.review.user" | translate}}
+                                                    th {{"document.review.rating" | translate}}
+                                            tbody
+                                                tr(ng-repeat="review in reviewComments track by $index")
+                                                    td
+                                                        span {{review.reviewer.username}} &nbsp;
+                                                        if admin
+                                                            i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
+                                                    td(ng-bind="review.comments[blockIndex][questionIndex]")
+                                                tr
+                                                    td(style="background-color: #FFA9A9;") {{"document.review.ratingAve" | translate}}
+                                                    td(ng-bind="calcAve(blockIndex, questionIndex)" style="background-color: #FFA9A9;")
+
+
                                     div(ng-if="question.type=='picture'")
                                         div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
                                             span
@@ -198,6 +233,8 @@ block content
                                                     div(style="text-align:center;margin:10px 0px;")
                                                         video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLinkReview(question.fileName, review.reviewer.username)}}")
                                                             source(ng-src="{{getVideoLinkReview(v)}}", ng-repeat="v in getVideoListReview(question.fileName, review.reviewer.username)")
+                                                        br
+                                                        a(ng-href="{{getVideoLinkReview(getVideoListReview(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                                     div(ng-if="question.type=='pdf'")
                                         div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
@@ -221,6 +258,7 @@ block content
                                                             | {{"document.form.uploaded" | translate}}
 
                                     hr(ng-if="!$last")
+                    
             #DRUG
                 i.fas.fa-ellipsis-v(style="margin-top:10vh;")
                 i.fas.fa-ellipsis-v(style="margin-top:30vh;")
@@ -268,6 +306,9 @@ block content
                             div(style="margin-top:10px;padding:10px;border: 1px solid #555", ng-bind-html="answers[blockIndex][questionIndex]")
                         div(ng-if="question.type=='select'")
                             select.custom-select(ng-model='answers[blockIndex][questionIndex]', disabled , ng-options="option.value as option.text for option in langArray(question.i18n, 'options')")
+                        div(ng-if="question.type=='scale'")
+                            .btn-group
+                                button.btn.btn-outline-primary(type='button', ng-repeat='ans in rangeS(question.scale.least, question.scale.most)', ng-class='{active: answers[blockIndex][questionIndex] == ans}')  {{ans}}
                         div(ng-if="question.type=='picture'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
                                 .col-12
@@ -280,6 +321,9 @@ block content
                                     div(style="text-align:center;margin:10px 0px;")
                                         video(style="max-width:100%;max-height:80vh;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLink(question.fileName)}}")
                                             source(ng-src="{{getVideoLink(v)}}", ng-repeat="v in getVideoList(question.fileName)")
+                                        br
+                                        a(ng-href="{{getVideoLink(getVideoList(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
+
 
                         div(ng-if="question.type=='pdf'")
                             .row(ng-if="checkUploaded(question.fileName)", style="width:100%;")
@@ -317,14 +361,37 @@ block content
                                 div(ng-repeat="review in reviewComments track by $index")
                                     span
                                         i.fas.fa-user-edit &nbsp;
-                                        | {{review.reviewer.username}}
+                                        | {{review.reviewer.username}} &nbsp;
+                                        if admin
+                                            i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                     div(style="border: solid 1px #666;margin-bottom:10px;", ng-bind-html="trust(review.comments[blockIndex][questionIndex])")
                             div(ng-if="question.type=='select'")
                                 div(ng-repeat="review in reviewComments track by $index")
                                     span
                                         i.fas.fa-user-edit &nbsp;
-                                        | {{review.reviewer.username}}
+                                        | {{review.reviewer.username}} &nbsp;
+                                        if admin
+                                            i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
                                     select.custom-select(ng-model='review.comments[blockIndex][questionIndex]', ng-options="option.value as option.text for option in langArray(question.i18n, 'options')", disabled, style="margin-bottom:10px;")
+                            div(ng-if="question.type=='scale'")
+                                table.custom(style="overflow: scroll;")
+                                    thead 
+                                        tr 
+                                            th
+                                                i.fas.fa-user-edit &nbsp;
+                                                | {{"document.review.user" | translate}}
+                                            th {{"document.review.rating" | translate}}
+                                    tbody
+                                        tr(ng-repeat="review in reviewComments track by $index")
+                                            td
+                                                span {{review.reviewer.username}} &nbsp;
+                                                if admin
+                                                    i.fas.fa-eraser(style="color: #e74c3c;" ng-click="removeComment(review._id, blockIndex, questionIndex)")
+                                            td(ng-bind="review.comments[blockIndex][questionIndex]")
+                                        tr
+                                            td(style="background-color: #FFA9A9;") {{"document.review.ratingAve" | translate}}
+                                            td(ng-bind="calcAve(blockIndex, questionIndex)" style="background-color: #FFA9A9;")
+
                             div(ng-if="question.type=='picture'")
                                 div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")
                                     span
@@ -346,6 +413,8 @@ block content
                                             div(style="text-align:center;margin:10px 0px;")
                                                 video(style="max-width:100%;max-height:600px;", controls, preload="metadata", ng-attr-poster="{{getThumbnailLinkReview(question.fileName, review.reviewer.username)}}")
                                                     source(ng-src="{{getVideoLinkReview(v)}}", ng-repeat="v in getVideoListReview(question.fileName, review.reviewer.username)")
+                                                br
+                                                a(ng-href="{{getVideoLinkReview(getVideoListReview(question.fileName)[0])}}" download) {{"document.form.cantplay" | translate}}
 
                             div(ng-if="question.type=='pdf'")
                                 div(ng-repeat="review in reviewComments track by $index",ng-if="checkUploadedReview(question.fileName, review.reviewer.username)")

@@ -1,6 +1,6 @@
 // register the directive with your app module
 var app = angular.module('DocumentReview', ['ngTouch','ngAnimate', 'ui.bootstrap', 'pascalprecht.translate', 'ngCookies', 'ngQuill', 'ngSanitize', 'ngFileUpload']);
-
+let uploading_mes;
 app.constant('NG_QUILL_CONFIG', {
     /*
      * @NOTE: this config/output is not localizable.
@@ -30,6 +30,37 @@ app.constant('NG_QUILL_CONFIG', {
       imageResize: {
       },
       imageDropAndPaste: {
+      },
+      imageUpload: {
+        url: `/api/document/review/files/usercontent/${teamId}`, // server url. If the url is empty then the base64 returns
+        method: 'POST', // change query method, default 'POST'
+        name: 'image', // custom form name
+        withCredentials: false, // withCredentials
+        headers: {}, // add custom headers, example { token: 'your-token'}
+        // personalize successful callback and call next function to insert new url to the editor
+        callbackOK: (serverResponse, next) => {
+            next(serverResponse.url);
+            Swal.close()
+        },
+        // personalize failed callback
+        callbackKO: serverError => {
+            console.log(serverError)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: serverError.type
+            })
+        },
+        checkBeforeSend: (file, next) => {
+            Swal.fire({
+                title: uploading_mes,
+                allowOutsideClick : false,
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                }
+            })
+            next(file); // go back to component and send to the server
+        }
       }
     },
     theme: 'snow',
@@ -80,6 +111,12 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
     // = translationId;
     });
 
+    $translate('document.form.uploading').then(function (val) {
+        uploading_mes = val;
+    }, function (translationId) {
+    // = translationId;
+    });
+
 
     const currentLang = $translate.proposedLanguage() || $translate.use();
     const availableLangs =  $translate.getAvailableLanguageKeys();
@@ -94,6 +131,7 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
     $scope.updateTime = new Date().getTime()/1000;
 
     $scope.videoRefresh = false;
+    $scope.rangeS =  (start, end) => [...Array((end - start) + 1)].map((_, i) => start + i);
 
     $scope.comments = "";
 
@@ -188,6 +226,12 @@ app.controller('DocumentReviewController', ['$scope', '$uibModal', '$log', '$htt
                 html: response.data.msg
             })
         });
+    }
+
+    $scope.scaleAnswer = function(b, q, a){
+        if(!$scope.myComments[b]) $scope.myComments[b] = [];
+        $scope.myComments[b][q] = a;
+        $scope.save();
     }
 
     $scope.langContent = function(data, target){

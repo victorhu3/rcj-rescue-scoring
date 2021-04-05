@@ -117,6 +117,9 @@ app.controller('FormPreviewController', ['$scope', '$uibModal', '$log', '$http',
         $scope.league = response.data
     });
 
+
+    $scope.rangeS =  (start, end) => [...Array((end - start) + 1)].map((_, i) => start + i);
+    
     $scope.save = function () {
         console.log($scope.answers);
         Toast.fire({
@@ -160,7 +163,8 @@ app.controller('FormPreviewController', ['$scope', '$uibModal', '$log', '$http',
             focusConfirm: true
           })
     }
-    
+
+ 
     $scope.go = function (path) {
         window.location = path
     }

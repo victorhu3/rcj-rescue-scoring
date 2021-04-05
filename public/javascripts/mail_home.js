@@ -98,10 +98,22 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
         window.location = path
     }
 
+    $scope.selectedAll = false;
     $scope.selectAll = function () {
-        angular.forEach($scope.teams, function (team) {
-            if($scope.list_filter(team) && team.email.length>0) team.checked = true;
-        });
+        if($scope.selectedAll){
+            angular.forEach($scope.teams, function (team) {
+                team.checked = false;
+            });
+            $scope.selectedAll = false;
+        }else{
+            angular.forEach($scope.teams, function (team) {
+                if($scope.list_filter(team) && $scope.validEmail(team.email)){
+                    team.checked = true;
+                    $scope.selectedAll = true;
+                }
+            });
+        }
+        
     }
 
     $scope.newEmail2SelectedTeam = function () {
@@ -137,6 +149,24 @@ app.controller('MailHomeController', ['$scope', '$uibModal', '$log', '$http', '$
         }
         $scope.mode = "write";
         window.scrollTo(0,0);
+    }
+
+    $scope.validEmail = function(mail){
+        function MailCheck(mail) {
+            var mail_regex1 = new RegExp( '(?:[-!#-\'*+/-9=?A-Z^-~]+\.?(?:\.[-!#-\'*+/-9=?A-Z^-~]+)*|"(?:[!#-\[\]-~]|\\\\[\x09 -~])*")@[-!#-\'*+/-9=?A-Z^-~]+(?:\.[-!#-\'*+/-9=?A-Z^-~]+)*' );
+            var mail_regex2 = new RegExp( '^[^\@]+\@[^\@]+$' );
+            if( mail.match( mail_regex1 ) && mail.match( mail_regex2 ) ) {
+                if( mail.match( /[^a-zA-Z0-9\!\"\#\$\%\&\'\(\)\=\~\|\-\^\\\@\[\;\:\]\,\.\/\\\<\>\?\_\`\{\+\*\} ]/ ) ) { return false; }
+                if( !mail.match( /\.[a-z]+$/ ) ) { return false; }
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if(!mail || mail.length == 0) return false;
+        for(let m of mail){
+            if(MailCheck(m)) return true;
+        }
     }
 
     $scope.newMail = function(team){

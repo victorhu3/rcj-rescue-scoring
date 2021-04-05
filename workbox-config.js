@@ -9,7 +9,6 @@ module.exports = {
     "images/**/*"
   ],
     "swDest": "public/sw.js",
-    //importWorkboxFrom: 'local',
     skipWaiting: true,
     // Define runtime caching rules.
     runtimeCaching: [

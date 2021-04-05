@@ -136,7 +136,10 @@
         "edit": "編集",
         "copy": "コピー",
         "inspection": "検査",
-        "checkin": "チェックイン"
+        "checkin": "チェックイン",
+        "totalScore": "合計得点",
+        "sort": "ソート",
+        "deleted": "正常に削除しました"
     },
     "accessDenied":{
         "title" : "アクセス拒絶",
@@ -753,6 +756,19 @@
             "exportW": "このマップをErebus用ワールドファイルにエクスポート",
             "oneVictim": "１体の被災者のみ配置できます",
             "obstacle": "障害物"
+        },
+        "mailTemplates": {
+            "title": "メールテンプレート編集",
+            "create": "新規作成",
+            "subject": "件題",
+            "delete": "削除",
+            "edit": "編集",
+            "4duplicate": "複製するには，元のテンプレートの編集画面から，件題を変更して保存してください．",
+            "js": {
+                "complete": "保存完了",
+                "completeMes": "テンプレートを保存しました",
+                "deleted": "正常に削除しました"
+            }
         }
     },
     "document": {
@@ -765,13 +781,17 @@
             "access": "アクセス有効化",
             "team": "チーム設定",
             "question": "質問設定",
-            "review": "レビュー設定"
+            "review": "レビュー設定",
+            "result": "評価結果"
         },
         "teamAdmin":{
             "title": "チーム個別設定",
             "access": "アクセス可否",
             "log": "ログ",
             "public": "一般公開"
+        },
+        "result": {
+            "title": "レビュー結果確認"
         },
         "editor": {
             "title": "ドキュメント　フォームエディタ",
@@ -794,6 +814,7 @@
             "questionType": "設問タイプ",
             "writing": "記述式",
             "select": "選択式",
+            "scale": "評価尺度",
             "picture": "画像",
             "video": "動画",
             "pdf": "PDFファイル",
@@ -806,7 +827,9 @@
             "hints": "ヒント",
             "choices": "選択肢",
             "fileName": "ファイル名",
-            "extension": "拡張子はシステムによって自働付加されますので，ここで指定しないでください．"
+            "extension": "拡張子はシステムによって自働付加されますので，ここで指定しないでください．",
+            "least": "最低",
+            "most": "最高"
         },
         "review_editor": {
             "title": "ドキュメント　レビューフォームエディタ",
@@ -823,17 +846,30 @@
             "optional": "@:document.editor.optional",
             "max5": "最大サイズは5MBです．",
             "max10": "最大サイズは10MBです．",
+            "max20": "最大サイズは20MBです．",
             "max50": "最大サイズは50MBです．",
+            "max500": "最大サイズは500MBです．",
             "pdfOnly": "PDF形式のみ受け付けます．",
             "zipOnly": "ZIP形式のみ受け付けます．",
             "hints": "@:document.editor.hints",
             "selectFile": "ファイルを選ぶ",
             "overwrite": "ファイルが既にアップロードされています．新しいファイルをアップロードすると，古いものを上書きします．",
-            "uploaded": "アップロード済ファイル"
+            "uploaded": "アップロード済ファイル",
+            "cantplay": "動画が正しく再生できない場合は，ここをクリックしてダウンロードしてみてください．",
+            "uploading": "アップロード中..."
         },
         "review":{
             "reviewer": "ログインしているレビュアー：",
-            "comments": "レビューコメント"
+            "comments": "レビューコメント",
+            "user": "レビュアー",
+            "rating": "評点",
+            "ratingAve": "評点平均",
+            "deleteReview": "レビュー削除",
+            "deleteType": "削除の種類を選んでください．",
+            "deletePart": "部分削除",
+            "deleteWhole": "全体削除",
+            "deletePartMes": "このレビューを部分削除します．この操作は取り消しできません．",
+            "deleteWholeMes": "このレビューを全体削除します．この操作は取り消しできません．"
         },
         "inspection":{
             "do": "検査実施",

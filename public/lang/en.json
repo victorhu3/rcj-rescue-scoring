@@ -136,7 +136,10 @@
         "edit": "Edit",
         "copy": "Copy",
         "inspection": "Inspection",
-        "checkin": "Check in"
+        "checkin": "Check in",
+        "totalScore": "Total score",
+        "sort": "Sorting",
+        "deleted": "Successfully deleted!"
     },
     "accessDenied":{
         "title" : "Access denied",
@@ -621,7 +624,6 @@
             "ramp": "Ramp",
             "cp" : "Check point",
             "black" : "Black tile",
-            "curve" : "Curved Wall",
             "down": "Bottom horizontal tile at ramp",
             "up": "Top horizontal tile at ramp",
             "top": "@:admin.lineMapEditor.top",
@@ -758,6 +760,19 @@
             "oneVictim": "Only one victim can be placed.",
             "obstacle": "Obstacle",
             "cellColor": "Cell Color:  "
+        },
+        "mailTemplates": {
+            "title": "Edit email template",
+            "create": "Create new",
+            "subject": "Subject",
+            "delete": "Delete",
+            "edit": "Edit",
+            "4duplicate": "To duplicate a template, go to the edit page of the original template, change the subject, and save it.",
+            "js": {
+                "complete": "Successfully saved",
+                "completeMes": "You have saved the template",
+                "deleted": "Successfully deleted"
+            }
         }
     },
     "document": {
@@ -767,10 +782,11 @@
         "admin":{
             "title": "Document submission system settings",
             "overall": "General settings",
-            "access": "Access Activation",
+            "access": "Access activation",
             "team": "Team setting",
-            "question": "Question Setting",
-            "review": "Review Setting"
+            "question": "Question setting",
+            "review": "Review setting",
+            "result": "Review results"
         },
         "teamAdmin":{
             "title": "Individual team settings",
@@ -799,6 +815,7 @@
             "questionType": "Question type",
             "writing": "Descriptive Formula",
             "select": "Selectable",
+            "scale": "Rating scale",
             "picture": "Picture",
             "video": "Video",
             "pdf": "PDF file",
@@ -811,7 +828,9 @@
             "hints": "Hints",
             "choices": "Options",
             "fileName": "File name",
-            "extension": "The extension will automatically added by the system, so do not specify it here."
+            "extension": "The extension will automatically added by the system, so do not specify it here.",
+            "least": "Least",
+            "most": "Most"
         },
         "review_editor": {
             "title": "Document Review Form Editor",
@@ -828,17 +847,30 @@
             "optional": "@:document.editor.optional",
             "max5": "The maximum size is 5MB.",
             "max10": "The maximum size is 10MB.",
+            "max20": "The maximum size is 20MB.",
             "max50": "The maximum size is 50MB.",
+            "max500": "The maximum size is 500MB.",
             "pdfOnly": "Only PDF format is accepted.",
             "zipOnly": "Only ZIP format is accepted.",
             "hints": "@:document.editor.hints",
             "selectFile": "Select a file",
             "overwrite": "A file has already been uploaded. When you upload a new file, it will overwrite the old one.",
-            "uploaded": "Uploaded files"
+            "uploaded": "Uploaded files",
+            "cantplay": "If the video does not play properly, click here to downloading it.",
+            "uploading": "Uploading..."
         },
         "review":{
             "reviewer": "Logged in reviewer: ",
-            "comments": "Review Comments"
+            "comments": "Review Comments",
+            "user": "Reviewer",
+            "rating": "Rating",
+            "ratingAve": "Rating average",
+            "deleteReview": "Delete review",
+            "deleteType": "Please select the type of deletion.",
+            "deletePart": "Partial deletion",
+            "deleteWhole": "Whole deletion",
+            "deletePartMes": "Partial deletion of this review. This operation cannot be undone.",
+            "deleteWholeMes": "Whole deletion of this review. This operation cannot be undone."
         },
         "inspection":{
             "do": "Inspections carried out",
